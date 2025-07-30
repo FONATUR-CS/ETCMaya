@@ -7,20 +7,25 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // 2. Cargar GeoJSON de estados clicables
 fetch('data/Estados_1.geojson')
-  .then(r=>r.json())
-  .then(geojson=>{
+  .then(res => res.json())
+  .then(geojson => {
     L.geoJSON(geojson, {
-      style:{ color:'#2E8B57', weight:2 },
-      onEachFeature:(f,layer)=>{
-        layer.on('click',()=>{
-          const slug = f.properties.ESTADO
-            .toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-            .replace(/\s+/g,'_');
+      style: { color: '#2E8B57', weight: 2 },
+      onEachFeature: function(feature, layer) {
+        // feature es el objeto GeoJSON, layer es la capa de Leaflet
+        layer.on('click', function() {
+          // Ahora feature siempre está definido aquí
+          const slug = feature.properties.ESTADO
+            .toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/\s+/g, '_');
+          // Redirige a la carpeta estados/
           window.location.href = `estados/${slug}.html`;
         });
       }
     }).addTo(map);
   });
+
 
 // 3. Capítulos según página
 const chaptersByPage = {
