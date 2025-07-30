@@ -4,26 +4,47 @@
   <meta charset="UTF-8">
   <title>Turismo Comunitario – México</title>
 
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
-  <!-- Estilos del proyecto -->
+  <!-- Leaflet CSS (CDN sin integridad) -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <!-- Tu CSS principal -->
   <link rel="stylesheet" href="css/styles.css" />
+  
+  <!-- Para diagnóstico rápido (puedes quitarlo luego) -->
+  <style>
+    /* Asegurarnos de que #story y #main-nav tienen borde para verlos */
+    #main-nav { border-bottom: 2px solid blue !important; }
+    #story    { border-right: 2px solid green !important; }
+  </style>
 </head>
 <body>
 
-  <nav id="main-nav">…</nav>
+  <!-- NAVEGACIÓN FIJA -->
+  <nav id="main-nav">
+    <ul>
+      <li><a href="index.html" class="active">Inicio</a></li>
+      <li><a href="estados/baja_california_sur.html">B. California Sur</a></li>
+      <li><a href="estados/hidalgo.html">Hidalgo</a></li>
+      <li><a href="estados/michoacan.html">Michoacán</a></li>
+      <li><a href="estados/morelos.html">Morelos</a></li>
+      <li><a href="estados/nayarit.html">Nayarit</a></li>
+      <li><a href="estados/oaxaca.html">Oaxaca</a></li>
+      <li><a href="estados/puebla.html">Puebla</a></li>
+      <li><a href="estados/tlaxcala.html">Tlaxcala</a></li>
+      <li><a href="estados/veracruz.html">Veracruz</a></li>
+    </ul>
+  </nav>
 
+  <!-- CONTENEDOR PRINCIPAL -->
   <div id="container">
-    <div id="story">…</div>
-    <div id="map"></div>
-  </div>
-
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Scrollama JS -->
-  <script src="https://unpkg.com/scrollama@2.2.4/dist/scrollama.min.js"></script>
-  <!-- Lógica personalizada -->
-  <script src="js/main.js"></script>
-</body>
-</html>
+    <!-- PANEL IZQUIERDO: NARRATIVA -->
+    <div id="story">
+      <section data-index="0">
+        <h2>Turismo Comunitario en México</h2>
+        <p>Selecciona un estado para explorar su oferta de turismo comunitario:</p>
+        <ul>
+          <li><a href="estados/veracruz.html">Veracruz</a></li>
+          <li><a href="estados/baja_california_sur.html">Baja California Sur</a></li>
+          <li><a href="
