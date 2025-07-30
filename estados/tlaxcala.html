@@ -2,18 +2,44 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Turismo Comunitario – <span id="state-name"></span></title>
-  <link rel="stylesheet" href="../css/style.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <title>Tlaxcala – Turismo Comunitario</title>
+  <link rel="stylesheet" href="js/leaflet.css">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <nav><a href="../index.html">← Volver</a></nav>
-  <div id="narrative"></div>
-  <div id="map"></div>
+  <nav id="main-nav">
+    <ul>
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="baja_california_sur.html">B. California Sur</a></li>
+      <li><a href="hidalgo.html" class="active">Hidalgo</a></li>
+      <li><a href="michoacan.html">Michoacán</a></li>
+      <li><a href="morelos.html">Morelos</a></li>
+      <li><a href="nayarit.html">Nayarit</a></li>
+      <li><a href="oaxaca.html">Oaxaca</a></li>
+      <li><a href="puebla.html">Puebla</a></li>
+      <li><a href="tlaxcala.html">Tlaxcala</a></li>
+      <li><a href="veracruz.html">Veracruz</a></li>
+    </ul>
+  </nav>
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/scrollama"></script>
-  <script src="../js/script.js"></script>
-  <script src="../js/template.js"></script>
+  <div id="container">
+    <div id="map"></div>
+    <div id="story">
+      <section data-index="0">
+        <h2>Tlaxcala – Turismo Comunitario</h2>
+        <p>Bienvenido a las experiencias de turismo comunitario en Tlaxcala</p>
+        <img src="img/Tlaxcala.png" alt="Hidalgo" loading="lazy">
+      </section>
+      <section data-index="1">
+        <h2>Comunidades Otomí y Tepehua</h2>
+        <p>Descubre las tradiciones, artesanías y senderismo en estas regiones.</p>
+        <img src="img/hidalgo_comunidad.jpg" alt="Comunidad Otomí" loading="lazy">
+      </section>
+    </div>
+  </div>
+
+  <script src="js/leaflet.js"></script>
+  <script src="js/scrollama.min.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
