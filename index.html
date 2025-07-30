@@ -3,25 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>Turismo Comunitario – México</title>
-
-  <!-- Leaflet CSS (CDN sin integridad) -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
-  <!-- Tu CSS principal -->
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="js/leaflet.css" />
+  <!-- Proyecto CSS -->
   <link rel="stylesheet" href="css/styles.css" />
-  
-  <!-- Para diagnóstico rápido (puedes quitarlo luego) -->
-  <style>
-    /* Asegurarnos de que #story y #main-nav tienen borde para verlos */
-    #main-nav { border-bottom: 2px solid blue !important; }
-    #story    { border-right: 2px solid green !important; }
-  </style>
 </head>
 <body>
 
-  <!-- NAVEGACIÓN FIJA -->
+  <!-- Navegación fija -->
   <nav id="main-nav">
     <ul>
       <li><a href="index.html" class="active">Inicio</a></li>
@@ -37,14 +26,34 @@
     </ul>
   </nav>
 
-  <!-- CONTENEDOR PRINCIPAL -->
+  <!-- Contenedor principal -->
   <div id="container">
-    <!-- PANEL IZQUIERDO: NARRATIVA -->
+    <!-- Panel izquierdo: encabezado + listado -->
     <div id="story">
+      <img src="img/title.png" alt="Turismo Comunitario" loading="lazy">
       <section data-index="0">
-        <h2>Turismo Comunitario en México</h2>
-        <p>Selecciona un estado para explorar su oferta de turismo comunitario:</p>
+        <h2>Explora los estados</h2>
+        <p>Haz clic en un estado en el mapa o en el listado para conocerlo más a fondo:</p>
         <ul>
-          <li><a href="estados/veracruz.html">Veracruz</a></li>
           <li><a href="estados/baja_california_sur.html">Baja California Sur</a></li>
-          <li><a href="
+          <li><a href="estados/hidalgo.html">Hidalgo</a></li>
+          <li><a href="estados/michoacan.html">Michoacán</a></li>
+          <li><a href="estados/morelos.html">Morelos</a></li>
+          <li><a href="estados/nayarit.html">Nayarit</a></li>
+          <li><a href="estados/oaxaca.html">Oaxaca</a></li>
+          <li><a href="estados/puebla.html">Puebla</a></li>
+          <li><a href="estados/tlaxcala.html">Tlaxcala</a></li>
+          <li><a href="estados/veracruz.html">Veracruz</a></li>
+        </ul>
+      </section>
+    </div>
+    <!-- Panel derecho: mapa -->
+    <div id="map"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/leaflet.js"></script>
+  <script src="js/scrollama.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
