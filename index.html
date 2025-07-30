@@ -3,44 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <title>Turismo Comunitario – México</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="js/leaflet.css">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <nav>
-    <a href="index.html">Inicio</a>
-  </nav>
-  <div id="sidebar">
-    <h1>Turismo Comunitario en México</h1>
-    <p>Selecciona un estado para explorar su oferta de turismo comunitario:</p>
+  <nav id="main-nav">
     <ul>
-      <li><a href="estados/veracruz.html">Veracruz</a></li>
-      <li><a href="estados/baja_california_sur.html">Baja California Sur</a></li>
-      <li><a href="estados/hidalgo.html">Hidalgo</a></li>
-      <li><a href="estados/michoacan.html">Michoacán</a></li>
-      <li><a href="estados/morelos.html">Morelos</a></li>
-      <li><a href="estados/nayarit.html">Nayarit</a></li>
-      <li><a href="estados/oaxaca.html">Oaxaca</a></li>
-      <li><a href="estados/puebla.html">Puebla</a></li>
-      <li><a href="estados/tlaxcala.html">Tlaxcala</a></li>
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="baja_california_sur.html">B. California Sur</a></li>
+      <li><a href="hidalgo.html">Hidalgo</a></li>
+      <li><a href="michoacan.html">Michoacán</a></li>
+      <li><a href="morelos.html">Morelos</a></li>
+      <li><a href="nayarit.html">Nayarit</a></li>
+      <li><a href="oaxaca.html">Oaxaca</a></li>
+      <li><a href="puebla.html">Puebla</a></li>
+      <li><a href="tlaxcala.html">Tlaxcala</a></li>
+      <li><a href="veracruz.html">Veracruz</a></li>
     </ul>
-  </div>
-  <div id="map"></div>
+  </nav>
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/scrollama"></script>
-  <script src="js/script.js"></script>
-  <script>
-    // Inicialización del mapa general
-    initMap({
-      container: 'map',
-      geojson: 'data/Estados_1.geojson',
-      defaultView: [23.0, -102.0],
-      defaultZoom: 5,
-      onEachFeature: (feature, layer) => {
-        layer.bindPopup(`<strong>${feature.properties.Estado}</strong>`);
-      }
-    });
-  </script>
+  <div id="container">
+    <div id="map"></div>
+    <div id="story">
+      <section data-index="0">
+        <h2>Bienvenido a Turismo Comunitario</h2>
+        <p>Descubre los rincones más auténticos de México.</p>
+        <img src="img/tittle.png" alt="Portada" loading="lazy">
+      </section>
+    </div>
+  </div>
+
+  <script src="js/leaflet.js"></script>
+  <script src="js/scrollama.min.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
