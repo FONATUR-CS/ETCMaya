@@ -2,6 +2,8 @@
 
 // 1. Obtén el “slug” del estado de la URL, p.ej. “veracruz”
 const slug = location.pathname.split('/').pop().replace('.html','');
+console.log('Estado detectado:', slug);
+
 
 // 2. Configura los datos por estado
 const chapters = {
