@@ -16,7 +16,7 @@ fetch('data/Estados_1.geojson')
           const slug = f.properties.ESTADO
             .toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
             .replace(/\s+/g,'_');
-          window.location.href = `${slug}.html`;
+          window.location.href = `estados/${slug}.html`;
         });
       }
     }).addTo(map);
