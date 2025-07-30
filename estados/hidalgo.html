@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Hidalgo – Turismo Comunitario</title>
-  <link rel="stylesheet" href="../js/leaflet.css">
-  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../js/leaflet.css" />
+  <link rel="stylesheet" href="../css/styles.css" />
 </head>
 <body>
+
   <nav id="main-nav">
     <ul>
       <li><a href="../index.html">Inicio</a></li>
@@ -23,13 +24,16 @@
   </nav>
 
   <div id="container">
-    <!-- Primero el texto -->
+    <!-- Panel izquierdo: scroll-story -->
     <div id="story">
+      <img src="../img/title.png" alt="Turismo Comunitario" loading="lazy">
+      
       <section data-index="0">
         <h2>Hidalgo – Turismo Comunitario</h2>
         <p>Bienvenido a las experiencias de turismo comunitario en Hidalgo.</p>
         <img src="../img/hidalgo_1.jpg" alt="Panorámica de Hidalgo" loading="lazy">
       </section>
+
       <section data-index="1">
         <h2>Comunidades Otomí y Tepehua</h2>
         <p>Descubre las tradiciones, artesanías y senderismo en estas regiones.</p>
@@ -37,17 +41,12 @@
       </section>
     </div>
 
-    <!-- Luego el mapa fijo a la derecha -->
+    <!-- Panel derecho: mapa centrado en Hidalgo -->
     <div id="map"></div>
   </div>
 
-  <!-- Leaflet JS (CDN sin SRI) -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Scrollama JS (CDN sin SRI) -->
-  <script src="https://unpkg.com/scrollama@2.2.4/dist/scrollama.min.js"></script>
-  <!-- Tu lógica personalizada -->
-  <script src="js/main.js"></script>
-</body>
-
+  <script src="../js/leaflet.js"></script>
+  <script src="../js/scrollama.min.js"></script>
+  <script src="../js/main.js"></script>
 </body>
 </html>
