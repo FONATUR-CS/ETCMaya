@@ -3,12 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <title>Turismo Comunitario – México</title>
-  <link rel="stylesheet" href="js/leaflet.css">
+
+  <!-- Leaflet CSS CDN -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-XQoYMqMTK8LvdlxU0n2BMg6rq/V/0s8eM8Q+v5tX+R0="
+    crossorigin=""
+  />
+
+  <!-- Tu styles.css -->
   <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Diagnóstico rápido: asegúrate de que se está cargando tu styles.css -->
+  <style>
+    /* BORDE ROJO en #map para ver si tu CSS lo está sobrescribiendo */
+    #map { border: 3px solid red !important; }
+
+    /* Altura fallback si tu CSS no aplica height */
+    #map { height: 100vh !important; }
+  </style>
 </head>
 <body>
 
-   <nav id="main-nav">
+  <!-- NAVEGACIÓN -->
+  <nav id="main-nav">
     <ul>
       <li><a href="index.html" class="active">Inicio</a></li>
       <li><a href="estados/baja_california_sur.html">B. California Sur</a></li>
@@ -23,7 +42,9 @@
     </ul>
   </nav>
 
+  <!-- CONTENEDOR -->
   <div id="container">
+    <!-- PANEL IZQUIERDO -->
     <div id="story">
       <section data-index="0">
         <h2>Turismo Comunitario en México</h2>
@@ -45,11 +66,20 @@
         <p>Haz scroll para acercarte y ver más detalles.</p>
       </section>
     </div>
+
+    <!-- PANEL DERECHO (MAPA) -->
     <div id="map"></div>
   </div>
 
-  <script src="js/leaflet.js"></script>
-  <script src="js/scrollama.min.js"></script>
+  <!-- Leaflet JS CDN -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-pG4xyxQoxjYhS0bYhZP8TnE+6l0+kFvYhMTcGmKp0hM="
+    crossorigin=""
+  ></script>
+  <!-- Scrollama CDN -->
+  <script src="https://unpkg.com/scrollama@2.2.4/dist/scrollama.min.js"></script>
+  <!-- Tu main.js -->
   <script src="js/main.js"></script>
 </body>
 </html>
