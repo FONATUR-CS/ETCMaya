@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <title>Veracruz – Turismo Comunitario</title>
-  <link rel="stylesheet" href="js/leaflet.css">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="../js/leaflet.css" />
+  <link rel="stylesheet" href="../css/styles.css" />
 </head>
 <body>
+
   <nav id="main-nav">
     <ul>
-      <li><a href="index.html">Inicio</a></li>
-      <li><a href="baja_california_sur.html">Baja California Sur</a></li>
+      <li><a href="../index.html">Inicio</a></li>
+      <li><a href="baja_california_sur.html">B. California Sur</a></li>
       <li><a href="hidalgo.html" class="active">Hidalgo</a></li>
       <li><a href="michoacan.html">Michoacán</a></li>
       <li><a href="morelos.html">Morelos</a></li>
@@ -23,23 +24,29 @@
   </nav>
 
   <div id="container">
-    <div id="map"></div>
+    <!-- Panel izquierdo: scroll-story -->
     <div id="story">
+      <img src="../img/tittle.png" alt="Turismo Comunitario" loading="lazy">
+      
       <section data-index="0">
         <h2>Veracruz – Turismo Comunitario</h2>
-        <p>Bienvenido a las experiencias de turismo comunitario en Veracruz</p>
-        <img src="img/Veracruz.png" alt="Hidalgo" loading="lazy">
+        <p>Bienvenido a las experiencias de turismo comunitario en Veracruz.</p>
+        <img src="../img/Veracruz.png" alt="Panorámica de Veracruz" loading="lazy">
       </section>
+
       <section data-index="1">
         <h2>Comunidades Otomí y Tepehua</h2>
         <p>Descubre las tradiciones, artesanías y senderismo en estas regiones.</p>
-        <img src="img/hidalgo_comunidad.jpg" alt="Comunidad Otomí" loading="lazy">
+        <img src="../img/Veracruz.png" alt="Comunidad Otomí" loading="lazy">
       </section>
     </div>
+
+    <!-- Panel derecho: mapa centrado en Hidalgo -->
+    <div id="map"></div>
   </div>
 
-  <script src="js/leaflet.js"></script>
-  <script src="js/scrollama.min.js"></script>
-  <script src="js/main.js"></script>
+  <script src="../js/leaflet.js"></script>
+  <script src="../js/scrollama.min.js"></script>
+  <script src="../js/main.js"></script>
 </body>
 </html>
