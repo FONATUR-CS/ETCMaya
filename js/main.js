@@ -9,8 +9,9 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// Función auxiliar para crear slugs
+// Función auxiliar segura para crear slugs
 function slugify(name) {
+  if (typeof name !== 'string') return '';
   return name
     .toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -20,7 +21,7 @@ function slugify(name) {
 // Identifica la clave de página: 'index' o el slug (sin extensión)
 const pageKey = (() => {
   if (!isStatePage) return 'index';
-  const file = window.location.pathname.split('/').pop(); // ej. "michoacan.html"
+  const file = window.location.pathname.split('/').pop(); // e.g. "michoacan.html"
   return file.replace('.html', '');                      // "michoacan"
 })();
 
@@ -33,10 +34,13 @@ fetch(basePath + 'data/Estados_1.geojson')
       L.geoJSON(geojson, {
         style: { color: '#2E8B57', weight: 2 },
         onEachFeature(feature, layer) {
-          layer.on('click', () => {
-            const slug = slugify(feature.properties.ESTADO);
-            window.location.href = `estados/${slug}.html`;
-          });
+          const name = feature.properties && feature.properties.ESTADO;
+          if (typeof name === 'string') {
+            layer.on('click', () => {
+              const slug = slugify(name);
+              window.location.href = `estados/${slug}.html`;
+            });
+          }
         }
       }).addTo(map);
 
@@ -44,18 +48,24 @@ fetch(basePath + 'data/Estados_1.geojson')
       // Página de estado: filtrar solo el polígono cuyo slug empieza con pageKey
       const stateLayer = L.geoJSON(geojson, {
         filter(feature) {
-          const s = slugify(feature.properties.ESTADO);
+          const name = feature.properties && feature.properties.ESTADO;
+          if (typeof name !== 'string') return false;
+          const s = slugify(name);
           return s.startsWith(pageKey);
         },
         style: { color: '#2E8B57', weight: 3, fillOpacity: 0.2 }
       }).addTo(map);
 
-      // Si encontramos el polígono, haz zoom a sus límites
-      const bounds = stateLayer.getBounds();
-      if (bounds.isValid && bounds.isValid()) {
-        map.fitBounds(bounds, { padding: [20, 20] });
+      // Zoom al bounds de la capa si existe
+      if (stateLayer && stateLayer.getBounds) {
+        const bounds = stateLayer.getBounds();
+        if (bounds.isValid && bounds.isValid()) {
+          map.fitBounds(bounds, { padding: [20, 20] });
+        } else {
+          console.error('Bounds inválido para el estado:', pageKey);
+        }
       } else {
-        console.error('No se encontró límite válido para el estado:', pageKey);
+        console.error('No se pudo crear la capa del estado:', pageKey);
       }
     }
   })
