@@ -1,15 +1,15 @@
-// Determinar si cargamos desde carpeta estados/ o desde raíz
+// Determina si estamos en una página de estado (en carpeta /estados/)
 const isStatePage = window.location.pathname.includes('/estados/');
 const basePath = isStatePage ? '../' : '';
 
-// Inicializar Leaflet
+// Inicializa Leaflet
 const map = L.map('map', { zoomControl: false })
   .setView([23.6345, -102.5528], 5);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// Helper: generar slug a partir de nombre de estado
+// Función auxiliar para crear slugs
 function slugify(name) {
   return name
     .toLowerCase()
@@ -17,59 +17,52 @@ function slugify(name) {
     .replace(/\s+/g, '_');
 }
 
-// Obtener la clave de la página: 'index' o el slug del estado
+// Identifica la clave de página: 'index' o el slug (sin extensión)
 const pageKey = (() => {
   if (!isStatePage) return 'index';
-  const file = window.location.pathname.split('/').pop();      // e.g. "michoacan.html"
-  return file.replace('.html', '');                            // "michoacan"
+  const file = window.location.pathname.split('/').pop(); // ej. "michoacan.html"
+  return file.replace('.html', '');                      // "michoacan"
 })();
 
-// Cargar GeoJSON
+// Carga el GeoJSON
 fetch(basePath + 'data/Estados_1.geojson')
   .then(res => res.json())
   .then(geojson => {
     if (pageKey === 'index') {
-      // Índice: dibujar todos y hacer clic para navegar
+      // Página principal: dibuja todos los estados y clic para navegar
       L.geoJSON(geojson, {
         style: { color: '#2E8B57', weight: 2 },
-        onEachFeature: function(feature, layer) {
+        onEachFeature(feature, layer) {
           layer.on('click', () => {
             const slug = slugify(feature.properties.ESTADO);
             window.location.href = `estados/${slug}.html`;
           });
         }
       }).addTo(map);
+
     } else {
-      // Página de estado: filtrar sólo ese estado
-      const targetName = (() => {
-        // Reconstruir nombre original a partir del slug
-        // Buscamos en geojson una feature cuyo slug coincida
-        for (const f of geojson.features) {
-          if (slugify(f.properties.ESTADO) === pageKey) {
-            return f.properties.ESTADO;
-          }
-        }
-        return null;
-      })();
-
-      if (!targetName) {
-        console.error('Estado no encontrado en GeoJSON:', pageKey);
-        return;
-      }
-
-      const layer = L.geoJSON(geojson, {
-        filter: f => f.properties.ESTADO === targetName,
+      // Página de estado: filtrar solo el polígono cuyo slug empieza con pageKey
+      const stateLayer = L.geoJSON(geojson, {
+        filter(feature) {
+          const s = slugify(feature.properties.ESTADO);
+          return s.startsWith(pageKey);
+        },
         style: { color: '#2E8B57', weight: 3, fillOpacity: 0.2 }
       }).addTo(map);
 
-      // Zoom al bounds de la capa
-      map.fitBounds(layer.getBounds(), { padding: [20, 20] });
+      // Si encontramos el polígono, haz zoom a sus límites
+      const bounds = stateLayer.getBounds();
+      if (bounds.isValid && bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [20, 20] });
+      } else {
+        console.error('No se encontró límite válido para el estado:', pageKey);
+      }
     }
   })
   .catch(err => console.error('Error cargando GeoJSON:', err));
 
-// Inicializar Scrollama (sólo para páginas con #story)
-if (document.querySelector('#story section')) {
+// Configura Scrollama si hay secciones
+if (document.querySelectorAll('#story section').length) {
   const scroller = scrollama();
   scroller
     .setup({ step: '#story section', offset: 0.7 })
