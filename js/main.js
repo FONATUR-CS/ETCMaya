@@ -72,7 +72,12 @@ if (pageKey === 'index') {
   };
 
   loadGeoJSON(basePath + 'data/Estados_1.geojson', {
-    style: { color: '#2E8B57', weight: 2 },
+    style: feature => ({
+      color: '#2E8B57',
+      weight: 2,
+      fillOpacity: 0.3,
+      interactive: true
+    }),
     onEachFeature(feature, layer) {
       const name = feature.properties && feature.properties.ESTADO;
       if (typeof name === 'string') {
@@ -81,17 +86,17 @@ if (pageKey === 'index') {
           const el = layer.getElement();
           if (el) el.style.cursor = 'pointer';
         });
-        // al hacer clic, navega a la página del estado con logs de depuración
+        // al hacer clic, comprobamos y redirigimos
         layer.on('click', () => {
-          console.log('Click STATE:', name);
+          console.log('CLICK en polígono:', name);
           const slugFromMap = slugMap[name];
           const slugFromGen = slugify(name);
           const slug = slugFromMap || slugFromGen;
-          console.log(' → slugMap[name]:', slugFromMap,
+          console.log('→ slugMap[name]:', slugFromMap,
                       '| slugify(name):', slugFromGen,
                       '| usando slug:', slug);
           const targetUrl = `estados/${slug}.html`;
-          console.log(' → redirigiendo a:', targetUrl);
+          console.log('→ redirigiendo a:', targetUrl);
           window.location.href = targetUrl;
         });
       }
