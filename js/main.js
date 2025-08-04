@@ -1,15 +1,15 @@
-// Determina si estamos en una página de estado (en carpeta /estados/)
+// ¿Estamos en una página de estado?
 const isStatePage = window.location.pathname.includes('/estados/');
-const basePath = isStatePage ? '../' : '';
+const basePath    = isStatePage ? '../' : '';
 
-// Inicializa Leaflet
+// inicializa Leaflet (igual que antes)
 const map = L.map('map', { zoomControl: false })
   .setView([23.6345, -102.5528], 5);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// Función auxiliar segura para crear slugs
+// helper slugify (igual que antes)
 function slugify(name) {
   if (typeof name !== 'string') return '';
   return name
@@ -18,68 +18,48 @@ function slugify(name) {
     .replace(/\s+/g, '_');
 }
 
-// Identifica la clave de página: 'index' o el slug (sin extensión)
+// determina pageKey: 'index' o slug del archivo (sin .html)
 const pageKey = (() => {
   if (!isStatePage) return 'index';
-  const file = window.location.pathname.split('/').pop(); // e.g. "michoacan.html"
-  return file.replace('.html', '');                      // "michoacan"
+  return window.location.pathname.split('/').pop().replace('.html','');
 })();
 
-// Carga el GeoJSON
-fetch(basePath + 'data/Estados_1.geojson')
-  .then(res => res.json())
-  .then(geojson => {
-    if (pageKey === 'index') {
-      // Página principal: dibuja todos los estados y clic para navegar
-      L.geoJSON(geojson, {
-        style: { color: '#2E8B57', weight: 2 },
-        onEachFeature(feature, layer) {
-          const name = feature.properties && feature.properties.ESTADO;
-          if (typeof name === 'string') {
-            layer.on('click', () => {
-              const slug = slugify(name);
-              window.location.href = `estados/${slug}.html`;
-            });
-          }
-        }
-      }).addTo(map);
+// función para cargar un GeoJSON y añadir al mapa
+function loadGeoJSON(path, options = {}) {
+  fetch(path)
+    .then(r => r.json())
+    .then(gj => L.geoJSON(gj, options).addTo(map))
+    .catch(err => console.error('Error cargando', path, err));
+}
 
-    } else {
-      // Página de estado: filtrar solo el polígono cuyo slug empieza con pageKey
-      const stateLayer = L.geoJSON(geojson, {
-        filter(feature) {
-          const name = feature.properties && feature.properties.ESTADO;
-          if (typeof name !== 'string') return false;
-          const s = slugify(name);
-          return s.startsWith(pageKey);
-        },
-        style: { color: '#2E8B57', weight: 3, fillOpacity: 0.2 }
-      }).addTo(map);
-
-      // Zoom al bounds de la capa si existe
-      if (stateLayer && stateLayer.getBounds) {
-        const bounds = stateLayer.getBounds();
-        if (bounds.isValid && bounds.isValid()) {
-          map.fitBounds(bounds, { padding: [20, 20] });
-        } else {
-          console.error('Bounds inválido para el estado:', pageKey);
-        }
-      } else {
-        console.error('No se pudo crear la capa del estado:', pageKey);
+if (pageKey === 'index') {
+  // --- PÁGINA PRINCIPAL: carga global y clic para navegar ---
+  loadGeoJSON(basePath + 'data/Estados_1.geojson', {
+    style: { color: '#2E8B57', weight: 2 },
+    onEachFeature(f, layer) {
+      const name = f.properties && f.properties.ESTADO;
+      if (name) {
+        layer.on('click', () => {
+          const slug = slugify(name);
+          window.location.href = `estados/${slug}.html`;
+        });
       }
     }
-  })
-  .catch(err => console.error('Error cargando GeoJSON:', err));
+  });
 
-// Configura Scrollama si hay secciones
-if (document.querySelectorAll('#story section').length) {
-  const scroller = scrollama();
-  scroller
-    .setup({ step: '#story section', offset: 0.7 })
-    .onStepEnter(resp => {
-      document.querySelectorAll('#story section')
-        .forEach(s => s.classList.remove('is-active'));
-      resp.element.classList.add('is-active');
-    });
-  window.addEventListener('resize', scroller.resize);
+} else {
+  // --- PÁGINA DE ESTADO: carga solo su GeoJSON ---
+  const geoPath = `${basePath}data/${pageKey}.geojson`;
+  loadGeoJSON(geoPath, {
+    style: { color: '#2E8B57', weight: 3, fillOpacity: 0.2 }
+  });
+  // tras cargar, ajusta zoom automáticamente una vez el tileLayer esté listo
+  map.whenReady(() => {
+    fetch(geoPath)
+      .then(r => r.json())
+      .then(gj => {
+        const layer = L.geoJSON(gj);
+        map.fitBounds(layer.getBounds(), { padding: [20, 20] });
+      });
+  });
 }
