@@ -36,9 +36,15 @@ if (pageKey === 'index') {
   // --- PÁGINA PRINCIPAL: carga global y clic para navegar ---
   loadGeoJSON(basePath + 'data/Estados_1.geojson', {
     style: { color: '#2E8B57', weight: 2 },
-    onEachFeature(f, layer) {
-      const name = f.properties && f.properties.ESTADO;
-      if (name) {
+    onEachFeature(feature, layer) {
+      const name = feature.properties && feature.properties.ESTADO;
+      if (typeof name === 'string') {
+        // cambiar cursor al pasar por encima
+        layer.on('mouseover', () => {
+          const el = layer.getElement();
+          if (el) el.style.cursor = 'pointer';
+        });
+        // al hacer clic, navega a la página del estado
         layer.on('click', () => {
           const slug = slugify(name);
           window.location.href = `estados/${slug}.html`;
