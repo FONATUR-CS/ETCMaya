@@ -2,7 +2,7 @@
 const isStatePage = window.location.pathname.includes('/estados/');
 const basePath    = isStatePage ? '../' : '';
 
-// inicializa Leaflet (igual que antes)
+// inicializa Leaflet
 const map = L.map('map', { zoomControl: false })
   .setView([23.6345, -102.5528], 5);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -34,6 +34,43 @@ function loadGeoJSON(path, options = {}) {
 
 if (pageKey === 'index') {
   // --- PÁGINA PRINCIPAL: carga global y clic para navegar ---
+
+  // Mapeo explícito de nombre de ESTADO → slug de archivo
+  const slugMap = {
+    'Aguascalientes':               'aguascalientes',
+    'Baja California':              'baja_california',
+    'Baja California Sur':          'baja_california_sur',
+    'Campeche':                     'campeche',
+    'Chiapas':                      'chiapas',
+    'Chihuahua':                    'chihuahua',
+    'Ciudad de México':             'ciudad_de_mexico',
+    'Coahuila de Zaragoza':         'coahuila',
+    'Colima':                       'colima',
+    'Durango':                      'durango',
+    'Guanajuato':                   'guanajuato',
+    'Guerrero':                     'guerrero',
+    'Hidalgo':                      'hidalgo',
+    'Jalisco':                      'jalisco',
+    'México':                       'estado_de_mexico',
+    'Michoacán de Ocampo':          'michoacan',
+    'Morelos':                      'morelos',
+    'Nayarit':                      'nayarit',
+    'Nuevo León':                   'nuevo_leon',
+    'Oaxaca':                       'oaxaca',
+    'Puebla':                       'puebla',
+    'Querétaro':                    'queretaro',
+    'Quintana Roo':                 'quintana_roo',
+    'San Luis Potosí':              'san_luis_potosi',
+    'Sinaloa':                      'sinaloa',
+    'Sonora':                       'sonora',
+    'Tabasco':                      'tabasco',
+    'Tamaulipas':                   'tamaulipas',
+    'Tlaxcala':                     'tlaxcala',
+    'Veracruz de Ignacio de la Llave': 'veracruz',
+    'Yucatán':                      'yucatan',
+    'Zacatecas':                    'zacatecas'
+  };
+
   loadGeoJSON(basePath + 'data/Estados_1.geojson', {
     style: { color: '#2E8B57', weight: 2 },
     onEachFeature(feature, layer) {
@@ -46,7 +83,8 @@ if (pageKey === 'index') {
         });
         // al hacer clic, navega a la página del estado
         layer.on('click', () => {
-          const slug = slugify(name);
+          // primero busca en slugMap, si no existe usa slugify genérico
+          const slug = slugMap[name] || slugify(name);
           window.location.href = `estados/${slug}.html`;
         });
       }
