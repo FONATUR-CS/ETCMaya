@@ -81,11 +81,18 @@ if (pageKey === 'index') {
           const el = layer.getElement();
           if (el) el.style.cursor = 'pointer';
         });
-        // al hacer clic, navega a la página del estado
+        // al hacer clic, navega a la página del estado con logs de depuración
         layer.on('click', () => {
-          // primero busca en slugMap, si no existe usa slugify genérico
-          const slug = slugMap[name] || slugify(name);
-          window.location.href = `estados/${slug}.html`;
+          console.log('Click STATE:', name);
+          const slugFromMap = slugMap[name];
+          const slugFromGen = slugify(name);
+          const slug = slugFromMap || slugFromGen;
+          console.log(' → slugMap[name]:', slugFromMap,
+                      '| slugify(name):', slugFromGen,
+                      '| usando slug:', slug);
+          const targetUrl = `estados/${slug}.html`;
+          console.log(' → redirigiendo a:', targetUrl);
+          window.location.href = targetUrl;
         });
       }
     }
