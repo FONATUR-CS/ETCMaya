@@ -94,6 +94,7 @@ html, body {
 #story p {
   margin-bottom: 1em;
   line-height: 1.6;
+  text-align: justify;
 }
 #story ul {
   margin-left: 1.2em;
