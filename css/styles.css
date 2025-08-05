@@ -1,6 +1,14 @@
 /* Importa Noto Sans */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap');
 
+/* ——————————————————————————————————————————————————————————————
+   VARIABLES TEMA
+   —————————————————————————————————————————————————————————————— */
+:root {
+  --primary:   #2E8B57;
+  --light-bg:  #fafafa;
+}
+
 /* RESET */
 * {
   box-sizing: border-box;
