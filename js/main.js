@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Clave exacta en tu GeoJSON
       const nameKey = 'Estado';
 
+      // Añadimos la capa de GeoJSON
       const layer = L.geoJSON(geojson, {
         style: feature => ({
           color: '#2E8B57',
@@ -70,7 +71,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }).addTo(map);
 
-      // Si es página de estado, ajustar vista
+      // ─── Cambio: ajustar vista inicial en página principal ───
+      if (pageKey === 'index') {
+        const initialBounds = layer.getBounds();
+        if (initialBounds.isValid && initialBounds.isValid()) {
+          map.fitBounds(initialBounds, { padding: [20,20] });
+        }
+      }
+      // ─────────────────────────────────────────────────────────
+
+      // Si es página de estado, ajustar vista a su bounds
       if (pageKey !== 'index') {
         const bounds = layer.getBounds();
         if (bounds.isValid && bounds.isValid()) {
@@ -80,13 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // ─────────── Scrollama (solo en index) ───────────
       if (pageKey === 'index') {
-        // Coordenadas y zoom para cada sección en orden
-        const coords = [
-          [23.6345, -102.5528, 5],    // sección 0: vista general
-          [23.4166, -100.0000, 7],    // sección 1: ejemplo de estado 1
-          [20.1000, -98.7500, 7],     // sección 2: ejemplo de estado 2
-          // … añade una tupla [lat, lng, zoom] por cada <section> en tu HTML
-        ];
+        // Extraemos cada subcapa en orden
+        const featureLayers = layer.getLayers();
 
         const scroller = scrollama();
         scroller
@@ -96,16 +101,16 @@ document.addEventListener('DOMContentLoaded', () => {
             progress: true
           })
           .onStepEnter(response => {
-            // resaltar sección activa
+            // Resaltar sección activa
             document.querySelectorAll('#story section')
               .forEach(s => s.classList.remove('is-active'));
             response.element.classList.add('is-active');
 
-            // volar al mapa
-            const idx = response.index;
-            if (coords[idx]) {
-              const [lat, lng, zoom] = coords[idx];
-              map.flyTo([lat, lng], zoom, { duration: 1.2 });
+            // Ajustar vista al bounds del layer correspondiente
+            const lyr = featureLayers[response.index];
+            if (lyr) {
+              const b = lyr.getBounds();
+              map.fitBounds(b, { padding: [20,20], maxZoom: 8 });
             }
           });
 
