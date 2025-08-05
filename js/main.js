@@ -9,33 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }).addTo(map);
   import scrollama from 'scrollama';  // o asume que ya lo has cargado via <script>
 
-const scroller = scrollama();
-scroller
-  .setup({
-    step: '#story section[data-step]',
-    offset: 0.6,            // cuando el 60% del step entra en viewport
-    progress: true
-  })
-  .onStepEnter(({ element, index }) => {
-    // resalta la sección activa
-    document.querySelectorAll('#story section')
-      .forEach(s => s.classList.remove('is-active'));
-    element.classList.add('is-active');
-
-    // centra o vuela el mapa a una coordenada predefinida
-    const coords = [
-      [23.6345, -102.5528],   // index 0 → vista general
-      [19.7026, -101.1926],   // index 1 → Hidalgo, por ejemplo
-      // … añade coords por index
-    ];
-    map.flyTo(coords[index], 7, { duration: 1.2 });
-  })
-  .onStepExit(({ element, index, direction }) => {
-    // opcional: quita clase o aplica otra animación
-  });
-
-window.addEventListener('resize', scroller.resize);
-
   // Determinar pageKey
   const pageKey = isStatePage
     ? window.location.pathname.split('/').pop().replace('.html','')
