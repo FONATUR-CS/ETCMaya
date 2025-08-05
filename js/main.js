@@ -35,7 +35,6 @@ function loadGeoJSON(path, options = {}) {
 if (pageKey === 'index') {
   // --- PÁGINA PRINCIPAL: carga global y clic para navegar ---
 
-  // Mapeo explícito de nombre de ESTADO → slug de archivo
   const slugMap = {
     'Aguascalientes':               'aguascalientes',
     'Baja California':              'baja_california',
@@ -81,14 +80,15 @@ if (pageKey === 'index') {
     onEachFeature(feature, layer) {
       const name = feature.properties && feature.properties.ESTADO;
       if (typeof name === 'string') {
-        // cambiar cursor al pasar por encima
+        // cursor de mano
         layer.on('mouseover', () => {
           const el = layer.getElement();
           if (el) el.style.cursor = 'pointer';
         });
-        // al hacer clic, comprobamos y redirigimos
+        // test de clic: alert + console.log
         layer.on('click', () => {
           console.log('CLICK en polígono:', name);
+          alert('Has hecho clic en: ' + name);
           const slugFromMap = slugMap[name];
           const slugFromGen = slugify(name);
           const slug = slugFromMap || slugFromGen;
@@ -97,7 +97,8 @@ if (pageKey === 'index') {
                       '| usando slug:', slug);
           const targetUrl = `estados/${slug}.html`;
           console.log('→ redirigiendo a:', targetUrl);
-          window.location.href = targetUrl;
+          // Descomenta la siguiente línea una vez verifiques el alert
+          // window.location.href = targetUrl;
         });
       }
     }
@@ -109,7 +110,6 @@ if (pageKey === 'index') {
   loadGeoJSON(geoPath, {
     style: { color: '#2E8B57', weight: 3, fillOpacity: 0.2 }
   });
-  // tras cargar, ajusta zoom automáticamente una vez el tileLayer esté listo
   map.whenReady(() => {
     fetch(geoPath)
       .then(r => r.json())
