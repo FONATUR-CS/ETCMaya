@@ -16,40 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
     : 'index';
   console.log('pageKey:', pageKey);
 
-  // 3. Slug map para redirecciones
+  // 3. Slug map para redirecciones (añade aquí todos tus estados)
   const slugMap = {
-    'Aguascalientes':               'aguascalientes',
-    'Baja California':              'baja_california',
-    'Baja California Sur':          'baja_california_sur',
-    'Campeche':                     'campeche',
-    'Chiapas':                      'chiapas',
-    'Chihuahua':                    'chihuahua',
-    'Ciudad de México':             'ciudad_de_mexico',
-    'Coahuila de Zaragoza':         'coahuila',
-    'Colima':                       'colima',
-    'Durango':                      'durango',
-    'Guanajuato':                   'guanajuato',
-    'Guerrero':                     'guerrero',
-    'Hidalgo':                      'hidalgo',
-    'Jalisco':                      'jalisco',
-    'México':                       'estado_de_mexico',
-    'Michoacán de Ocampo':          'michoacan',
-    'Morelos':                      'morelos',
-    'Nayarit':                      'nayarit',
-    'Nuevo León':                   'nuevo_leon',
-    'Oaxaca':                       'oaxaca',
-    'Puebla':                       'puebla',
-    'Querétaro':                    'queretaro',
-    'Quintana Roo':                 'quintana_roo',
-    'San Luis Potosí':              'san_luis_potosi',
-    'Sinaloa':                      'sinaloa',
-    'Sonora':                       'sonora',
-    'Tabasco':                      'tabasco',
-    'Tamaulipas':                   'tamaulipas',
-    'Tlaxcala':                     'tlaxcala',
-    'Veracruz de Ignacio de la Llave': 'veracruz',
-    'Yucatán':                      'yucatan',
-    'Zacatecas':                    'zacatecas'
+    'Michoacán de Ocampo': 'michoacan',
+    'Baja California Sur': 'baja_california_sur',
+    // …otros mapeos…
   };
 
   // 4. URL de GeoJSON
@@ -68,6 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(geojson => {
       console.log('GeoJSON recibido, features:', geojson.features.length);
 
+      // Detectar clave de nombre de estado
+      const sampleProps = geojson.features[0].properties;
+      const nameKey = 'ESTADO' in sampleProps
+        ? 'ESTADO'
+        : Object.keys(sampleProps).find(k => typeof sampleProps[k] === 'string');
+      console.log('Propiedad usada para nombre:', nameKey);
+
       const layer = L.geoJSON(geojson, {
         style: feature => ({
           color: '#2E8B57',
@@ -75,33 +53,30 @@ document.addEventListener('DOMContentLoaded', () => {
           fillOpacity: pageKey === 'index' ? 0.3 : 0.2
         }),
         onEachFeature: (feature, lyr) => {
-          lyr.options.interactive = true;  // asegurar interactividad
+          lyr.options.interactive = true;
 
-          const name = feature.properties && feature.properties.ESTADO;
+          const name = feature.properties && feature.properties[nameKey];
           if (pageKey === 'index') {
-            // página principal: clic para navegar
             lyr.on('mouseover', () => lyr.getElement().style.cursor = 'pointer');
             lyr.on('click', () => {
-              console.log('CLICK en polígono:', name);
+              console.log('CLICK en polígono, raw name:', name);
               const slug = slugMap[name] || slugify(name);
               const targetUrl = `estados/${slug}.html`;
               console.log('→ redirigiendo a:', targetUrl);
               window.location.href = targetUrl;
             });
           } else {
-            // página de estado: popup con info
+            // Popup en página de estado
             const props = feature.properties || {};
             let html = '<table>';
             for (let key in props) {
               html += `<tr><th>${key}</th><td>${props[key]}</td></tr>`;
             }
-            html += '</table>';
             lyr.bindPopup(html);
           }
         }
       }).addTo(map);
 
-      // 6. Ajustar vista en página de estado
       if (pageKey !== 'index') {
         const bounds = layer.getBounds();
         console.log('Bounds:', bounds);
