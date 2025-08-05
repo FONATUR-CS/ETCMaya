@@ -74,9 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // ─── Cambio: ajustar vista inicial en página principal ───
       if (pageKey === 'index') {
-        const initialBounds = layerGroup.getBounds();
-        if (initialBounds.isValid && initialBounds.isValid()) {
-          map.fitBounds(initialBounds, { padding: [20,20] });
+        const fullBounds = layerGroup.getBounds();
+        if (fullBounds.isValid && fullBounds.isValid()) {
+          map.fitBounds(fullBounds, { padding: [20,20] });
         }
       }
       // ─────────────────────────────────────────────────────────
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
               .forEach(s => s.classList.remove('is-active'));
             response.element.classList.add('is-active');
 
-            // ─── Modificación: sección 0 = vista completa
+            // ─── Sección 0: vista completa ───
             if (response.index === 0) {
               const fullBounds = layerGroup.getBounds();
               if (fullBounds.isValid && fullBounds.isValid()) {
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
               }
               return;
             }
-            // ───────────────────────────────────────────────
+            // ───────────────────────────────────
 
             // Para índice ≥1, zoom al estado correspondiente
             const lyr = featureLayers[response.index - 1];
