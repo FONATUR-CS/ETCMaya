@@ -59,11 +59,23 @@ html, body {
   padding: 30px 40px;
   background: #ffffff;
 }
-#story img {
+
+/* Imagen de cabecera (title.png) ocupa ancho completo */
+#story > img {
   display: block;
-  max-width: 200px;
-  margin: 0 auto 20px;
+  width: 100%;
+  height: auto;
+  margin-bottom: 20px;
 }
+
+/* Imágenes dentro de secciones ocupan ancho completo */
+#story section img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 1em 0;
+}
+
 #story section {
   margin-bottom: 50px;
   padding-bottom: 20px;
