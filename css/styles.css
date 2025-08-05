@@ -1,53 +1,131 @@
+/* Importa Noto Sans */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap');
+
 /* RESET */
-* { box-sizing:border-box; margin:0; padding:0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html, body {
+  height: 100%;
+  font-family: 'Noto Sans', sans-serif;
+  color: #333;
+  background: #f5f5f5;
+}
 
 /* NAV FIJA */
 #main-nav {
   position: fixed;
   top: 0; left: 0; width: 100%;
-  background: rgba(255,255,255,0.95);
-  padding: 10px 20px;
+  background: #ffffffee;
+  backdrop-filter: blur(6px);
+  padding: 10px 30px;
   z-index: 1000;
-  border-bottom: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-#main-nav ul { list-style: none; display: flex; }
-#main-nav li+li { margin-left: 1em; }
-#main-nav a { text-decoration: none; color: #333; font-weight: bold; }
+#main-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.2em;
+}
+#main-nav a {
+  text-decoration: none;
+  color: #555;
+  font-weight: 700;
+  padding: 6px 8px;
+  border-radius: 4px;
+  transition: background 0.3s, color 0.3s;
+}
+#main-nav a:hover,
+#main-nav a.active {
+  background: #2E8B57;
+  color: #fff;
+}
 
 /* CONTENEDOR PRINCIPAL */
 #container {
   display: flex;
-  height: 100vh;
-  margin-top: 50px; /* deja espacio para el nav */
+  height: calc(100vh - 60px);
+  margin-top: 60px;
 }
 
 /* PANEL IZQUIERDO */
 #story {
   width: 50%;
-  margin-left: 0 !important; /* elimina márgenes anteriores */
   position: relative;
-  z-index: 1;               /* debajo del mapa */
+  z-index: 1;
   overflow-y: auto;
-  padding: 20px 30px;
-  background: #fafafa;
+  padding: 30px 40px;
+  background: #ffffff;
 }
 #story img {
-  max-width: 100%; display: block; margin-bottom: 20px;
+  display: block;
+  max-width: 200px;
+  margin: 0 auto 20px;
 }
-#story section { margin-bottom: 40px; }
-#story h2 { font-size: 1.4em; margin-bottom: 0.5em; }
-#story p { margin-bottom: 1em; line-height: 1.5; }
-#story ul { margin-left: 1em; }
-#story li { margin-bottom: 0.4em; }
+#story section {
+  margin-bottom: 50px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  opacity: 0.8;
+  transition: opacity 0.4s;
+}
+#story section.is-active {
+  opacity: 1;
+}
+#story h2 {
+  font-size: 1.8em;
+  margin-bottom: 0.5em;
+  color: #2E8B57;
+}
+#story p {
+  margin-bottom: 1em;
+  line-height: 1.6;
+}
+#story ul {
+  margin-left: 1.2em;
+  list-style-type: disc;
+}
+#story li {
+  margin-bottom: 0.6em;
+  transition: color 0.3s;
+}
+#story li a {
+  text-decoration: none;
+  color: #2E8B57;
+}
+#story li a:hover {
+  text-decoration: underline;
+  color: #196742;
+}
 
 /* PANEL DERECHO (MAPA) */
 #map {
   position: fixed;
-  top: 50px;   /* justo debajo de la nav de 50px */
+  top: 60px;
   right: 0;
   width: 50%;
-  height: calc(100% - 50px);
-  z-index: 500;              /* encima de #story */
-  border-left: 1px solid #ccc;
-  pointer-events: auto;      /* habilita eventos de puntero */
+  height: calc(100% - 60px);
+  z-index: 500;
+  border-left: 2px solid #e0e0e0;
+  box-shadow: -2px 0 4px rgba(0,0,0,0.05);
+  background: #fafafa;
+  pointer-events: auto;
+}
+
+/* Scrollbar personalizado para #story */
+#story::-webkit-scrollbar {
+  width: 8px;
+}
+#story::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+#story::-webkit-scrollbar-thumb {
+  background: #cccccc;
+  border-radius: 4px;
+}
+#story::-webkit-scrollbar-thumb:hover {
+  background: #aaaaaa;
 }
