@@ -1,40 +1,22 @@
-// ¿Estamos en una página de estado?
-const isStatePage = window.location.pathname.includes('/estados/');
-const basePath    = isStatePage ? '../' : '';
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('🔥 main.js cargado y corriendo —', new Date().toISOString());
 
-// inicializa Leaflet
-const map = L.map('map', { zoomControl: false })
-  .setView([23.6345, -102.5528], 5);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap'
-}).addTo(map);
+  // 1. Inicializar el mapa
+  const isStatePage = window.location.pathname.includes('/estados/');
+  const basePath    = isStatePage ? '../' : '';
+  const map = L.map('map', { zoomControl: false })
+    .setView([23.6345, -102.5528], 5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
 
-// helper slugify (igual que antes)
-function slugify(name) {
-  if (typeof name !== 'string') return '';
-  return name
-    .toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, '_');
-}
+  // 2. Determinar pageKey
+  const pageKey = isStatePage
+    ? window.location.pathname.split('/').pop().replace('.html','')
+    : 'index';
+  console.log('pageKey:', pageKey);
 
-// determina pageKey: 'index' o slug del archivo (sin .html)
-const pageKey = (() => {
-  if (!isStatePage) return 'index';
-  return window.location.pathname.split('/').pop().replace('.html','');
-})();
-
-// función para cargar un GeoJSON y añadir al mapa
-function loadGeoJSON(path, options = {}) {
-  fetch(path)
-    .then(r => r.json())
-    .then(gj => L.geoJSON(gj, options).addTo(map))
-    .catch(err => console.error('Error cargando', path, err));
-}
-
-if (pageKey === 'index') {
-  // --- PÁGINA PRINCIPAL: carga global y clic para navegar ---
-
+  // 3. Slug map para redirecciones
   const slugMap = {
     'Aguascalientes':               'aguascalientes',
     'Baja California':              'baja_california',
@@ -70,48 +52,77 @@ if (pageKey === 'index') {
     'Zacatecas':                    'zacatecas'
   };
 
-  loadGeoJSON(basePath + 'data/Estados_1.geojson', {
-    interactive: true,         // habilita eventos sobre todo el polígono
-    style: feature => ({       // estilo visual
-      color: '#2E8B57',
-      weight: 2,
-      fillOpacity: 0.3
-    }),
-    onEachFeature(feature, layer) {
-      const name = feature.properties && feature.properties.ESTADO;
-      if (typeof name === 'string') {
-        layer.on('mouseover', () => {
-          const el = layer.getElement();
-          if (el) el.style.cursor = 'pointer';
-        });
-        layer.on('click', () => {
-          console.log('CLICK en polígono:', name);
-          alert('Has hecho clic en: ' + name);
-          const slug = slugMap[name] || slugify(name);
-          console.log('→ slugMap[name]:', slugMap[name],
-                      '| slugify(name):', slugify(name),
-                      '| usando slug:', slug);
-          const targetUrl = `estados/${slug}.html`;
-          console.log('→ redirigiendo a:', targetUrl);
-          // Descomenta al validar el alert:
-          // window.location.href = targetUrl;
-        });
-      }
-    }
-  });
+  // 4. URL de GeoJSON
+  const geoUrl = pageKey === 'index'
+    ? `${basePath}data/Estados_1.geojson`
+    : `${basePath}data/${pageKey}.geojson`;
+  console.log('Fetch GeoJSON desde:', geoUrl);
 
-} else {
-  // --- PÁGINA DE ESTADO: carga solo su GeoJSON ---
-  const geoPath = `${basePath}data/${pageKey}.geojson`;
-  loadGeoJSON(geoPath, {
-    style: { color: '#2E8B57', weight: 3, fillOpacity: 0.2 }
-  });
-  map.whenReady(() => {
-    fetch(geoPath)
-      .then(r => r.json())
-      .then(gj => {
-        const layer = L.geoJSON(gj);
-        map.fitBounds(layer.getBounds(), { padding: [20, 20] });
-      });
-  });
+  // 5. Cargar y añadir GeoJSON
+  fetch(geoUrl)
+    .then(res => {
+      console.log('Fetch status:', res.status);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })
+    .then(geojson => {
+      console.log('GeoJSON recibido, features:', geojson.features.length);
+
+      const layer = L.geoJSON(geojson, {
+        style: feature => ({
+          color: '#2E8B57',
+          weight: pageKey === 'index' ? 2 : 3,
+          fillOpacity: pageKey === 'index' ? 0.3 : 0.2
+        }),
+        onEachFeature: (feature, lyr) => {
+          lyr.options.interactive = true;  // asegurar interactividad
+
+          const name = feature.properties && feature.properties.ESTADO;
+          if (pageKey === 'index') {
+            // página principal: clic para navegar
+            lyr.on('mouseover', () => lyr.getElement().style.cursor = 'pointer');
+            lyr.on('click', () => {
+              console.log('CLICK en polígono:', name);
+              const slug = slugMap[name] || slugify(name);
+              const targetUrl = `estados/${slug}.html`;
+              console.log('→ redirigiendo a:', targetUrl);
+              window.location.href = targetUrl;
+            });
+          } else {
+            // página de estado: popup con info
+            const props = feature.properties || {};
+            let html = '<table>';
+            for (let key in props) {
+              html += `<tr><th>${key}</th><td>${props[key]}</td></tr>`;
+            }
+            html += '</table>';
+            lyr.bindPopup(html);
+          }
+        }
+      }).addTo(map);
+
+      // 6. Ajustar vista en página de estado
+      if (pageKey !== 'index') {
+        const bounds = layer.getBounds();
+        console.log('Bounds:', bounds);
+        if (bounds.isValid && bounds.isValid()) {
+          map.fitBounds(bounds, { padding: [20,20] });
+        }
+      }
+    })
+    .catch(err => {
+      console.error('Error cargando/parsing GeoJSON:', err);
+      if (pageKey === 'index') {
+        alert('No se pudo cargar el mapa de estados. Revisa la consola.');
+      }
+    });
+});
+
+// helper slugify
+function slugify(name) {
+  if (typeof name !== 'string') return '';
+  return name
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '_');
 }
