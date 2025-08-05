@@ -15,15 +15,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 3. Slug map para redirecciones
   const slugMap = {
-    'Baja California Sur':              'baja_california_sur',
-    'Hidalgo':                          'hidalgo',
-    'Michoacán de Ocampo':              'michoacan',
-    'Morelos':                          'morelos',
-    'Nayarit':                          'nayarit',
-    'Oaxaca':                           'oaxaca',
-    'Puebla':                           'puebla',
-    'Tlaxcala':                         'tlaxcala',
-    'Veracruz de Ignacio de la Llave':  'veracruz'
+    'Baja California Sur':             'baja_california_sur',
+    'Hidalgo':                         'hidalgo',
+    'Michoacán de Ocampo':             'michoacan',
+    'Morelos':                         'morelos',
+    'Nayarit':                         'nayarit',
+    'Oaxaca':                          'oaxaca',
+    'Puebla':                          'puebla',
+    'Tlaxcala':                        'tlaxcala',
+    'Veracruz de Ignacio de la Llave': 'veracruz'
     // …añade aquí los demás estados…
   };
 
@@ -39,10 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
       return res.json();
     })
     .then(geojson => {
+      // Clave exacta en tu GeoJSON
       const nameKey = 'Estado';
 
-      // Añadimos la capa y la guardamos
-      const layerGroup = L.geoJSON(geojson, {
+      const layer = L.geoJSON(geojson, {
         style: feature => ({
           color: '#2E8B57',
           weight: pageKey === 'index' ? 2 : 3,
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }),
         onEachFeature: (feature, lyr) => {
           lyr.options.interactive = true;
-          const name = feature.properties[nameKey];
+          const name = feature.properties && feature.properties[nameKey];
 
           if (pageKey === 'index') {
             lyr.on('mouseover', () => lyr.getElement().style.cursor = 'pointer');
@@ -59,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
               window.location.href = `estados/${slug}.html`;
             });
           } else {
-            // Popup con propiedades en página de estado
             const props = feature.properties || {};
             let html = '<table>';
             for (let key in props) {
@@ -71,9 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }).addTo(map);
 
-      // Si es página de estado, ajustar vista a la extensión total
+      // Si es página de estado, ajustar vista
       if (pageKey !== 'index') {
-        const bounds = layerGroup.getBounds();
+        const bounds = layer.getBounds();
         if (bounds.isValid && bounds.isValid()) {
           map.fitBounds(bounds, { padding: [20,20] });
         }
@@ -81,8 +80,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // ─────────── Scrollama (solo en index) ───────────
       if (pageKey === 'index') {
-        // Extraemos cada subcapa en orden
-        const featureLayers = layerGroup.getLayers();
+        // Coordenadas y zoom para cada sección en orden
+        const coords = [
+          [23.6345, -102.5528, 5],    // sección 0: vista general
+          [23.4166, -100.0000, 7],    // sección 1: ejemplo de estado 1
+          [20.1000, -98.7500, 7],     // sección 2: ejemplo de estado 2
+          // … añade una tupla [lat, lng, zoom] por cada <section> en tu HTML
+        ];
 
         const scroller = scrollama();
         scroller
@@ -92,16 +96,16 @@ document.addEventListener('DOMContentLoaded', () => {
             progress: true
           })
           .onStepEnter(response => {
-            // Resaltar sección activa
+            // resaltar sección activa
             document.querySelectorAll('#story section')
               .forEach(s => s.classList.remove('is-active'));
             response.element.classList.add('is-active');
 
-            // Ajustar vista al bounds del layer correspondiente
-            const lyr = featureLayers[response.index];
-            if (lyr) {
-              const b = lyr.getBounds();
-              map.fitBounds(b, { padding: [20,20], maxZoom: 8 });
+            // volar al mapa
+            const idx = response.index;
+            if (coords[idx]) {
+              const [lat, lng, zoom] = coords[idx];
+              map.flyTo([lat, lng], zoom, { duration: 1.2 });
             }
           });
 
