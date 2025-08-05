@@ -16,10 +16,17 @@ document.addEventListener('DOMContentLoaded', () => {
     : 'index';
   console.log('pageKey:', pageKey);
 
-  // 3. Slug map para redirecciones (añade aquí todos tus estados)
+  // 3. Slug map para redirecciones (ajusta si faltan estados)
   const slugMap = {
-    'Michoacán de Ocampo': 'michoacan',
-    'Baja California Sur': 'baja_california_sur',
+    'Baja California Sur':             'baja_california_sur',
+    'Hidalgo':                         'hidalgo',
+    'Michoacán de Ocampo':             'michoacan',
+    'Morelos':                         'morelos',
+    'Nayarit':                         'nayarit',
+    'Oaxaca':                          'oaxaca',
+    'Puebla':                          'puebla',
+    'Tlaxcala':                        'tlaxcala',
+    'Veracruz de Ignacio de la Llave':'veracruz'
     // …otros mapeos…
   };
 
@@ -39,12 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(geojson => {
       console.log('GeoJSON recibido, features:', geojson.features.length);
 
-      // Detectar clave de nombre de estado
-      const sampleProps = geojson.features[0].properties;
-      const nameKey = 'ESTADO' in sampleProps
-        ? 'ESTADO'
-        : Object.keys(sampleProps).find(k => typeof sampleProps[k] === 'string');
-      console.log('Propiedad usada para nombre:', nameKey);
+      // ─── PARTE 1: Forzar la clave exacta de tu GeoJSON ───
+      const nameKey = 'Estado';
+      console.log('⚙️ Usando nameKey =', nameKey);
+      // ──────────────────────────────────────────────────────
 
       const layer = L.geoJSON(geojson, {
         style: feature => ({
@@ -54,29 +59,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }),
         onEachFeature: (feature, lyr) => {
           lyr.options.interactive = true;
-
           const name = feature.properties && feature.properties[nameKey];
+          console.log('Feature name:', name);
+
           if (pageKey === 'index') {
+            // página principal: clic para navegar
             lyr.on('mouseover', () => lyr.getElement().style.cursor = 'pointer');
             lyr.on('click', () => {
-              console.log('CLICK en polígono, raw name:', name);
+              console.log('CLICK en polígono:', name);
               const slug = slugMap[name] || slugify(name);
               const targetUrl = `estados/${slug}.html`;
               console.log('→ redirigiendo a:', targetUrl);
               window.location.href = targetUrl;
             });
           } else {
-            // Popup en página de estado
+            // página de estado: mostrar popup con la tabla de propiedades
             const props = feature.properties || {};
             let html = '<table>';
             for (let key in props) {
               html += `<tr><th>${key}</th><td>${props[key]}</td></tr>`;
             }
+            html += '</table>';
             lyr.bindPopup(html);
           }
         }
       }).addTo(map);
 
+      // Ajustar vista en página de estado
       if (pageKey !== 'index') {
         const bounds = layer.getBounds();
         console.log('Bounds:', bounds);
