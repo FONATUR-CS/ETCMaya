@@ -3,48 +3,51 @@
 
 /* NAV FIJA */
 #main-nav {
-  position:fixed; top:0; left:0; width:100%;
-  background:rgba(255,255,255,0.95);
-  padding:10px 20px; z-index:1000; border-bottom:1px solid #ccc;
+  position: fixed;
+  top: 0; left: 0; width: 100%;
+  background: rgba(255,255,255,0.95);
+  padding: 10px 20px;
+  z-index: 1000;
+  border-bottom: 1px solid #ccc;
 }
-#main-nav ul { list-style:none; display:flex; }
-#main-nav li+li { margin-left:1em; }
-#main-nav a { text-decoration:none; color:#333; font-weight:bold; }
+#main-nav ul { list-style: none; display: flex; }
+#main-nav li+li { margin-left: 1em; }
+#main-nav a { text-decoration: none; color: #333; font-weight: bold; }
 
 /* CONTENEDOR PRINCIPAL */
 #container {
-  display:flex;
-  height:100vh;
-  margin-top:60px; /* compensa la nav de 60px */
+  display: flex;
+  height: 100vh;
+  margin-top: 50px; /* deja espacio para el nav */
 }
 
 /* PANEL IZQUIERDO */
 #story {
-  width:50%;
-  /* elimina márgenes que pudieran desplazar sobre el mapa */
-  margin-left: 0 !important;
+  width: 50%;
+  margin-left: 0 !important; /* elimina márgenes anteriores */
   position: relative;
-  z-index: 1;               /* por debajo del mapa */
-  overflow-y:auto;
-  padding:20px 30px;
-  background:#fafafa;
+  z-index: 1;               /* debajo del mapa */
+  overflow-y: auto;
+  padding: 20px 30px;
+  background: #fafafa;
 }
 #story img {
-  max-width:100%; display:block; margin-bottom:20px;
+  max-width: 100%; display: block; margin-bottom: 20px;
 }
-#story section { margin-bottom:40px; }
-#story h2 { font-size:1.4em; margin-bottom:0.5em; }
-#story p { margin-bottom:1em; line-height:1.5; }
-#story ul { margin-left:1em; }
-#story li { margin-bottom:0.4em; }
+#story section { margin-bottom: 40px; }
+#story h2 { font-size: 1.4em; margin-bottom: 0.5em; }
+#story p { margin-bottom: 1em; line-height: 1.5; }
+#story ul { margin-left: 1em; }
+#story li { margin-bottom: 0.4em; }
 
 /* PANEL DERECHO (MAPA) */
 #map {
-  position:fixed;
-  top:60px;    /* justo debajo de la nav de 60px */
-  right:0;
-  width:50%;
-  height:calc(100% - 60px);
-  z-index:500; /* encima de #story */
-  border-left:1px solid #ccc;
+  position: fixed;
+  top: 50px;   /* justo debajo de la nav de 50px */
+  right: 0;
+  width: 50%;
+  height: calc(100% - 50px);
+  z-index: 500;              /* encima de #story */
+  border-left: 1px solid #ccc;
+  pointer-events: auto;      /* habilita eventos de puntero */
 }
