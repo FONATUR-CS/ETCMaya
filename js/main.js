@@ -42,8 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // Clave exacta en tu GeoJSON
       const nameKey = 'Estado';
 
-      // Añadimos la capa de GeoJSON
-      const layer = L.geoJSON(geojson, {
+      // Añadimos la capa de GeoJSON y la guardamos en layerGroup
+      const layerGroup = L.geoJSON(geojson, {
         style: feature => ({
           color: '#2E8B57',
           weight: pageKey === 'index' ? 2 : 3,
@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
               window.location.href = `estados/${slug}.html`;
             });
           } else {
+            // En páginas de estado: popup con propiedades
             const props = feature.properties || {};
             let html = '<table>';
             for (let key in props) {
@@ -73,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // ─── Cambio: ajustar vista inicial en página principal ───
       if (pageKey === 'index') {
-        const initialBounds = layer.getBounds();
+        const initialBounds = layerGroup.getBounds();
         if (initialBounds.isValid && initialBounds.isValid()) {
           map.fitBounds(initialBounds, { padding: [20,20] });
         }
@@ -82,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Si es página de estado, ajustar vista a su bounds
       if (pageKey !== 'index') {
-        const bounds = layer.getBounds();
+        const bounds = layerGroup.getBounds();
         if (bounds.isValid && bounds.isValid()) {
           map.fitBounds(bounds, { padding: [20,20] });
         }
@@ -91,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // ─────────── Scrollama (solo en index) ───────────
       if (pageKey === 'index') {
         // Extraemos cada subcapa en orden
-        const featureLayers = layer.getLayers();
+        const featureLayers = layerGroup.getLayers();
 
         const scroller = scrollama();
         scroller
@@ -106,8 +107,18 @@ document.addEventListener('DOMContentLoaded', () => {
               .forEach(s => s.classList.remove('is-active'));
             response.element.classList.add('is-active');
 
-            // Ajustar vista al bounds del layer correspondiente
-            const lyr = featureLayers[response.index];
+            // ─── Modificación: sección 0 = vista completa
+            if (response.index === 0) {
+              const fullBounds = layerGroup.getBounds();
+              if (fullBounds.isValid && fullBounds.isValid()) {
+                map.fitBounds(fullBounds, { padding: [20,20] });
+              }
+              return;
+            }
+            // ───────────────────────────────────────────────
+
+            // Para índice ≥1, zoom al estado correspondiente
+            const lyr = featureLayers[response.index - 1];
             if (lyr) {
               const b = lyr.getBounds();
               map.fitBounds(b, { padding: [20,20], maxZoom: 8 });
