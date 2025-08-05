@@ -1,7 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🔥 main.js cargado y corriendo —', new Date().toISOString());
-
-  // 1. Inicializar el mapa
+  // Inicializar el mapa
   const isStatePage = window.location.pathname.includes('/estados/');
   const basePath    = isStatePage ? '../' : '';
   const map = L.map('map', { zoomControl: false })
@@ -10,46 +8,39 @@ document.addEventListener('DOMContentLoaded', () => {
     attribution: '© OpenStreetMap'
   }).addTo(map);
 
-  // 2. Determinar pageKey
+  // Determinar pageKey
   const pageKey = isStatePage
     ? window.location.pathname.split('/').pop().replace('.html','')
     : 'index';
-  console.log('pageKey:', pageKey);
 
-  // 3. Slug map para redirecciones (ajusta si faltan estados)
+  // Mapeo de slugs para redirecciones
   const slugMap = {
-    'Baja California Sur':             'baja_california_sur',
-    'Hidalgo':                         'hidalgo',
-    'Michoacán de Ocampo':             'michoacan',
-    'Morelos':                         'morelos',
-    'Nayarit':                         'nayarit',
-    'Oaxaca':                          'oaxaca',
-    'Puebla':                          'puebla',
-    'Tlaxcala':                        'tlaxcala',
-    'Veracruz de Ignacio de la Llave':'veracruz'
-    // …otros mapeos…
+    'Baja California Sur':              'baja_california_sur',
+    'Hidalgo':                          'hidalgo',
+    'Michoacán de Ocampo':              'michoacan',
+    'Morelos':                          'morelos',
+    'Nayarit':                          'nayarit',
+    'Oaxaca':                           'oaxaca',
+    'Puebla':                           'puebla',
+    'Tlaxcala':                         'tlaxcala',
+    'Veracruz de Ignacio de la Llave':  'veracruz'
+    // …añade aquí los demás estados…
   };
 
-  // 4. URL de GeoJSON
+  // Elegir URL de GeoJSON
   const geoUrl = pageKey === 'index'
     ? `${basePath}data/Estados_1.geojson`
     : `${basePath}data/${pageKey}.geojson`;
-  console.log('Fetch GeoJSON desde:', geoUrl);
 
-  // 5. Cargar y añadir GeoJSON
+  // Cargar y añadir GeoJSON
   fetch(geoUrl)
     .then(res => {
-      console.log('Fetch status:', res.status);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return res.json();
     })
     .then(geojson => {
-      console.log('GeoJSON recibido, features:', geojson.features.length);
-
-      // ─── PARTE 1: Forzar la clave exacta de tu GeoJSON ───
+      // Clave exacta en tu GeoJSON
       const nameKey = 'Estado';
-      console.log('⚙️ Usando nameKey =', nameKey);
-      // ──────────────────────────────────────────────────────
 
       const layer = L.geoJSON(geojson, {
         style: feature => ({
@@ -60,20 +51,15 @@ document.addEventListener('DOMContentLoaded', () => {
         onEachFeature: (feature, lyr) => {
           lyr.options.interactive = true;
           const name = feature.properties && feature.properties[nameKey];
-          console.log('Feature name:', name);
 
           if (pageKey === 'index') {
-            // página principal: clic para navegar
             lyr.on('mouseover', () => lyr.getElement().style.cursor = 'pointer');
             lyr.on('click', () => {
-              console.log('CLICK en polígono:', name);
               const slug = slugMap[name] || slugify(name);
-              const targetUrl = `estados/${slug}.html`;
-              console.log('→ redirigiendo a:', targetUrl);
-              window.location.href = targetUrl;
+              window.location.href = `estados/${slug}.html`;
             });
           } else {
-            // página de estado: mostrar popup con la tabla de propiedades
+            // En páginas de estado, mostrar popup con propiedades
             const props = feature.properties || {};
             let html = '<table>';
             for (let key in props) {
@@ -85,10 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }).addTo(map);
 
-      // Ajustar vista en página de estado
+      // Si es página de estado, ajustar vista
       if (pageKey !== 'index') {
         const bounds = layer.getBounds();
-        console.log('Bounds:', bounds);
         if (bounds.isValid && bounds.isValid()) {
           map.fitBounds(bounds, { padding: [20,20] });
         }
