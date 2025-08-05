@@ -13,12 +13,20 @@
 
 /* CONTENEDOR PRINCIPAL */
 #container {
-  display:flex; height:100vh; margin-top:60px;
+  display:flex;
+  height:100vh;
+  margin-top:60px; /* compensa la nav de 60px */
 }
 
 /* PANEL IZQUIERDO */
 #story {
-  width:50%; overflow-y:auto; padding:20px 30px;
+  width:50%;
+  /* elimina márgenes que pudieran desplazar sobre el mapa */
+  margin-left: 0 !important;
+  position: relative;
+  z-index: 1;               /* por debajo del mapa */
+  overflow-y:auto;
+  padding:20px 30px;
   background:#fafafa;
 }
 #story img {
@@ -32,7 +40,11 @@
 
 /* PANEL DERECHO (MAPA) */
 #map {
-  position:fixed; top:60px; right:0;
-  width:50%; height:calc(100% - 60px);
+  position:fixed;
+  top:60px;    /* justo debajo de la nav de 60px */
+  right:0;
+  width:50%;
+  height:calc(100% - 60px);
+  z-index:500; /* encima de #story */
   border-left:1px solid #ccc;
 }
