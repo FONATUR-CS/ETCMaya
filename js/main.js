@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Inicializar el mapa
+  // Inicializar el mapa
   const isStatePage = window.location.pathname.includes('/estados/');
   const basePath    = isStatePage ? '../' : '';
   const map = L.map('map', { zoomControl: false })
@@ -7,43 +7,41 @@ document.addEventListener('DOMContentLoaded', () => {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
   }).addTo(map);
-
-  // 2. Determinar pageKey
+    // Determinar pageKey
   const pageKey = isStatePage
     ? window.location.pathname.split('/').pop().replace('.html','')
     : 'index';
 
-  // 3. Slug map para redirecciones
+  // Mapeo de slugs para redirecciones
   const slugMap = {
-    'Baja California Sur':             'baja_california_sur',
-    'Hidalgo':                         'hidalgo',
-    'Michoacán de Ocampo':             'michoacan',
-    'Morelos':                         'morelos',
-    'Nayarit':                         'nayarit',
-    'Oaxaca':                          'oaxaca',
-    'Puebla':                          'puebla',
-    'Tlaxcala':                        'tlaxcala',
-    'Veracruz de Ignacio de la Llave': 'veracruz'
+    'Baja California Sur':              'baja_california_sur',
+    'Hidalgo':                          'hidalgo',
+    'Michoacán de Ocampo':              'michoacan',
+    'Morelos':                          'morelos',
+    'Nayarit':                          'nayarit',
+    'Oaxaca':                           'oaxaca',
+    'Puebla':                           'puebla',
+    'Tlaxcala':                         'tlaxcala',
+    'Veracruz de Ignacio de la Llave':  'veracruz'
     // …añade aquí los demás estados…
   };
 
-  // 4. URL de GeoJSON
+  // Elegir URL de GeoJSON
   const geoUrl = pageKey === 'index'
-    ? `${basePath}data/Estados_1.geojson`
-    : `${basePath}data/${pageKey}.geojson`;
+    ? ${basePath}data/Estados_1.geojson
+    : ${basePath}data/${pageKey}.geojson;
 
-  // 5. Cargar y añadir GeoJSON
+  // Cargar y añadir GeoJSON
   fetch(geoUrl)
     .then(res => {
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) throw new Error(HTTP ${res.status});
       return res.json();
     })
     .then(geojson => {
       // Clave exacta en tu GeoJSON
       const nameKey = 'Estado';
 
-      // Añadimos la capa de GeoJSON y la guardamos en layerGroup
-      const layerGroup = L.geoJSON(geojson, {
+      const layer = L.geoJSON(geojson, {
         style: feature => ({
           color: '#2E8B57',
           weight: pageKey === 'index' ? 2 : 3,
@@ -57,14 +55,14 @@ document.addEventListener('DOMContentLoaded', () => {
             lyr.on('mouseover', () => lyr.getElement().style.cursor = 'pointer');
             lyr.on('click', () => {
               const slug = slugMap[name] || slugify(name);
-              window.location.href = `estados/${slug}.html`;
+              window.location.href = estados/${slug}.html;
             });
           } else {
-            // En páginas de estado: popup con propiedades
+            // En páginas de estado, mostrar popup con propiedades
             const props = feature.properties || {};
             let html = '<table>';
             for (let key in props) {
-              html += `<tr><th>${key}</th><td>${props[key]}</td></tr>`;
+              html += <tr><th>${key}</th><td>${props[key]}</td></tr>;
             }
             html += '</table>';
             lyr.bindPopup(html);
@@ -72,62 +70,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }).addTo(map);
 
-      // ─── Cambio: ajustar vista inicial en página principal ───
-      if (pageKey === 'index') {
-        const fullBounds = layerGroup.getBounds();
-        if (fullBounds.isValid && fullBounds.isValid()) {
-          map.fitBounds(fullBounds, { padding: [20,20] });
-        }
-      }
-      // ─────────────────────────────────────────────────────────
-
-      // Si es página de estado, ajustar vista a su bounds
+      // Si es página de estado, ajustar vista
       if (pageKey !== 'index') {
-        const bounds = layerGroup.getBounds();
+        const bounds = layer.getBounds();
         if (bounds.isValid && bounds.isValid()) {
           map.fitBounds(bounds, { padding: [20,20] });
         }
       }
-
-      // ─────────── Scrollama (solo en index) ───────────
-      if (pageKey === 'index') {
-        // Extraemos cada subcapa en orden
-        const featureLayers = layerGroup.getLayers();
-
-        const scroller = scrollama();
-        scroller
-          .setup({
-            step: '#story section',
-            offset: 0.7,
-            progress: true
-          })
-          .onStepEnter(response => {
-            // Resaltar sección activa
-            document.querySelectorAll('#story section')
-              .forEach(s => s.classList.remove('is-active'));
-            response.element.classList.add('is-active');
-
-            // ─── Sección 0: vista completa ───
-            if (response.index === 0) {
-              const fullBounds = layerGroup.getBounds();
-              if (fullBounds.isValid && fullBounds.isValid()) {
-                map.fitBounds(fullBounds, { padding: [20,20] });
-              }
-              return;
-            }
-            // ───────────────────────────────────
-
-            // Para índice ≥1, zoom al estado correspondiente
-            const lyr = featureLayers[response.index - 1];
-            if (lyr) {
-              const b = lyr.getBounds();
-              map.fitBounds(b, { padding: [20,20], maxZoom: 8 });
-            }
-          });
-
-        window.addEventListener('resize', scroller.resize);
-      }
-      // ────────────────────────────────────────────────────
     })
     .catch(err => {
       console.error('Error cargando/parsing GeoJSON:', err);
