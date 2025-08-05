@@ -7,9 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
   }).addTo(map);
-  import scrollama from 'scrollama';  // o asume que ya lo has cargado via <script>
-
-  // Determinar pageKey
+    // Determinar pageKey
   const pageKey = isStatePage
     ? window.location.pathname.split('/').pop().replace('.html','')
     : 'index';
