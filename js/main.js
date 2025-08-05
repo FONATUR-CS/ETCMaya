@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
   }).addTo(map);
-    // Determinar pageKey
+
+  // Determinar pageKey
   const pageKey = isStatePage
     ? window.location.pathname.split('/').pop().replace('.html','')
     : 'index';
@@ -28,13 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Elegir URL de GeoJSON
   const geoUrl = pageKey === 'index'
-    ? ${basePath}data/Estados_1.geojson
-    : ${basePath}data/${pageKey}.geojson;
+    ? `${basePath}data/Estados_1.geojson`
+    : `${basePath}data/${pageKey}.geojson`;
 
   // Cargar y añadir GeoJSON
   fetch(geoUrl)
     .then(res => {
-      if (!res.ok) throw new Error(HTTP ${res.status});
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return res.json();
     })
     .then(geojson => {
@@ -55,14 +56,14 @@ document.addEventListener('DOMContentLoaded', () => {
             lyr.on('mouseover', () => lyr.getElement().style.cursor = 'pointer');
             lyr.on('click', () => {
               const slug = slugMap[name] || slugify(name);
-              window.location.href = estados/${slug}.html;
+              window.location.href = `estados/${slug}.html`;
             });
           } else {
             // En páginas de estado, mostrar popup con propiedades
             const props = feature.properties || {};
             let html = '<table>';
             for (let key in props) {
-              html += <tr><th>${key}</th><td>${props[key]}</td></tr>;
+              html += `<tr><th>${key}</th><td>${props[key]}</td></tr>`;
             }
             html += '</table>';
             lyr.bindPopup(html);
