@@ -47,7 +47,7 @@ html, body {
 }
 #main-nav a:hover,
 #main-nav a.active {
-  background: #2E8B57;
+  background: var(--primary);
   color: #fff;
 }
 
@@ -65,7 +65,24 @@ html, body {
   z-index: 1;
   overflow-y: auto;
   padding: 30px 40px;
-  background: #ffffff;
+  background: var(--light-bg);
+}
+
+/* ——————————————————————————————————————————————————————————————
+   A) ANIMACIÓN ENTRADA DE SECCIONES (FADE + SLIDE)
+   —————————————————————————————————————————————————————————————— */
+#story section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  /* Parallax sutil de fondo: */
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+#story section.is-active {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Imagen de cabecera (title.png) ocupa ancho completo */
@@ -84,20 +101,11 @@ html, body {
   margin: 1em 0;
 }
 
-#story section {
-  margin-bottom: 50px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #e0e0e0;
-  opacity: 0.8;
-  transition: opacity 0.4s;
-}
-#story section.is-active {
-  opacity: 1;
-}
 #story h2 {
   font-size: 1.8em;
   margin-bottom: 0.5em;
-  color: #2E8B57;
+  /* C) Color temático en títulos */
+  color: var(--primary);
 }
 #story p {
   margin-bottom: 1em;
@@ -114,7 +122,7 @@ html, body {
 }
 #story li a {
   text-decoration: none;
-  color: #2E8B57;
+  color: var(--primary);
 }
 #story li a:hover {
   text-decoration: underline;
