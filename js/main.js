@@ -71,33 +71,29 @@ if (pageKey === 'index') {
   };
 
   loadGeoJSON(basePath + 'data/Estados_1.geojson', {
-    style: feature => ({
+    interactive: true,         // habilita eventos sobre todo el polígono
+    style: feature => ({       // estilo visual
       color: '#2E8B57',
       weight: 2,
-      fillOpacity: 0.3,
-      interactive: true
+      fillOpacity: 0.3
     }),
     onEachFeature(feature, layer) {
       const name = feature.properties && feature.properties.ESTADO;
       if (typeof name === 'string') {
-        // cursor de mano
         layer.on('mouseover', () => {
           const el = layer.getElement();
           if (el) el.style.cursor = 'pointer';
         });
-        // test de clic: alert + console.log
         layer.on('click', () => {
           console.log('CLICK en polígono:', name);
           alert('Has hecho clic en: ' + name);
-          const slugFromMap = slugMap[name];
-          const slugFromGen = slugify(name);
-          const slug = slugFromMap || slugFromGen;
-          console.log('→ slugMap[name]:', slugFromMap,
-                      '| slugify(name):', slugFromGen,
+          const slug = slugMap[name] || slugify(name);
+          console.log('→ slugMap[name]:', slugMap[name],
+                      '| slugify(name):', slugify(name),
                       '| usando slug:', slug);
           const targetUrl = `estados/${slug}.html`;
           console.log('→ redirigiendo a:', targetUrl);
-          // Descomenta la siguiente línea una vez verifiques el alert
+          // Descomenta al validar el alert:
           // window.location.href = targetUrl;
         });
       }
