@@ -15,15 +15,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 3. Mapeo de slugs para redirecciones
   const slugMap = {
-    'Baja California Sur':              'baja_california_sur',
-    'Hidalgo':                          'hidalgo',
-    'Michoacán de Ocampo':              'michoacan',
-    'Morelos':                          'morelos',
-    'Nayarit':                          'nayarit',
-    'Oaxaca':                           'oaxaca',
-    'Puebla':                           'puebla',
-    'Tlaxcala':                         'tlaxcala',
-    'Veracruz de Ignacio de la Llave':  'veracruz'
+    'Baja California Sur':             'baja_california_sur',
+    'Hidalgo':                         'hidalgo',
+    'Michoacán de Ocampo':             'michoacan',
+    'Morelos':                         'morelos',
+    'Nayarit':                         'nayarit',
+    'Oaxaca':                          'oaxaca',
+    'Puebla':                          'puebla',
+    'Tlaxcala':                        'tlaxcala',
+    'Veracruz de Ignacio de la Llave': 'veracruz'
     // …añade aquí los demás estados…
   };
 
@@ -77,43 +77,39 @@ document.addEventListener('DOMContentLoaded', () => {
         map.fitBounds(initialBounds, { padding: [20,20] });
       }
 
-      // ─────────── Scrollama (index y estados) ───────────
-      // Extraemos cada subcapa en orden
-      const featureLayers = layerGroup.getLayers();
+      // ─────────── Scrollama (solo en index) ───────────
+      if (pageKey === 'index') {
+        // Extraemos cada subcapa en orden
+        const featureLayers = layerGroup.getLayers();
 
-      const scroller = scrollama();
-      scroller.setup({
-        step: '#story section',
-        offset: 0.7,
-        progress: true
-      })
-      .onStepEnter(response => {
-        // Resaltar sección activa
-        document.querySelectorAll('#story section')
-          .forEach(s => s.classList.remove('is-active'));
-        response.element.classList.add('is-active');
+        const scroller = scrollama();
+        scroller.setup({
+          step: '#story section',
+          offset: 0.7,
+          progress: true
+        })
+        .onStepEnter(response => {
+          // Resaltar sección activa
+          document.querySelectorAll('#story section')
+            .forEach(s => s.classList.remove('is-active'));
+          response.element.classList.add('is-active');
 
-        let targetLayer;
-
-        if (pageKey === 'index') {
+          let targetLayer;
           // sección 0 = toda la República; sección ≥1 = estado correspondiente
           if (response.index === 0) {
             targetLayer = layerGroup;
           } else {
             targetLayer = featureLayers[response.index - 1];
           }
-        } else {
-          // en página de estado, cada sección corresponde a cada feature
-          targetLayer = featureLayers[response.index];
-        }
 
-        if (targetLayer) {
-          const b = targetLayer.getBounds();
-          map.fitBounds(b, { padding: [20,20], maxZoom: 8 });
-        }
-      });
+          if (targetLayer) {
+            const b = targetLayer.getBounds();
+            map.fitBounds(b, { padding: [20,20], maxZoom: 8 });
+          }
+        });
 
-      window.addEventListener('resize', scroller.resize);
+        window.addEventListener('resize', scroller.resize);
+      }
       // ────────────────────────────────────────────────────
 
     })
