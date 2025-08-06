@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Inicializar el mapa
+  // 1. Inicializar el mapa
   const isStatePage = window.location.pathname.includes('/estados/');
   const basePath    = isStatePage ? '../' : '';
   const map = L.map('map', { zoomControl: false })
@@ -8,12 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
     attribution: '© OpenStreetMap'
   }).addTo(map);
 
-  // Determinar pageKey
+  // 2. Determinar pageKey
   const pageKey = isStatePage
     ? window.location.pathname.split('/').pop().replace('.html','')
     : 'index';
 
-  // Mapeo de slugs para redirecciones
+  // 3. Mapeo de slugs para redirecciones
   const slugMap = {
     'Baja California Sur':              'baja_california_sur',
     'Hidalgo':                          'hidalgo',
@@ -27,22 +27,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // …añade aquí los demás estados…
   };
 
-  // Elegir URL de GeoJSON
+  // 4. Elegir URL de GeoJSON
   const geoUrl = pageKey === 'index'
     ? `${basePath}data/Estados_1.geojson`
     : `${basePath}data/${pageKey}.geojson`;
 
-  // Cargar y añadir GeoJSON
+  // 5. Cargar y añadir GeoJSON
   fetch(geoUrl)
     .then(res => {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return res.json();
     })
     .then(geojson => {
-      // Clave exacta en tu GeoJSON
       const nameKey = 'Estado';
 
-      const layer = L.geoJSON(geojson, {
+      // Creamos la capa (layerGroup) y la añadimos
+      const layerGroup = L.geoJSON(geojson, {
         style: feature => ({
           color: '#2E8B57',
           weight: pageKey === 'index' ? 2 : 3,
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }),
         onEachFeature: (feature, lyr) => {
           lyr.options.interactive = true;
-          const name = feature.properties && feature.properties[nameKey];
+          const name = feature.properties[nameKey];
 
           if (pageKey === 'index') {
             lyr.on('mouseover', () => lyr.getElement().style.cursor = 'pointer');
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
               window.location.href = `estados/${slug}.html`;
             });
           } else {
-            // En páginas de estado, mostrar popup con propiedades
+            // Popup en páginas de estado
             const props = feature.properties || {};
             let html = '<table>';
             for (let key in props) {
@@ -71,13 +71,51 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }).addTo(map);
 
-      // Si es página de estado, ajustar vista
-      if (pageKey !== 'index') {
-        const bounds = layer.getBounds();
-        if (bounds.isValid && bounds.isValid()) {
-          map.fitBounds(bounds, { padding: [20,20] });
-        }
+      // Ajustar vista inicial para index y para estados
+      const initialBounds = layerGroup.getBounds();
+      if (initialBounds.isValid && initialBounds.isValid()) {
+        map.fitBounds(initialBounds, { padding: [20,20] });
       }
+
+      // ─────────── Scrollama (index y estados) ───────────
+      // Extraemos cada subcapa en orden
+      const featureLayers = layerGroup.getLayers();
+
+      const scroller = scrollama();
+      scroller.setup({
+        step: '#story section',
+        offset: 0.7,
+        progress: true
+      })
+      .onStepEnter(response => {
+        // Resaltar sección activa
+        document.querySelectorAll('#story section')
+          .forEach(s => s.classList.remove('is-active'));
+        response.element.classList.add('is-active');
+
+        let targetLayer;
+
+        if (pageKey === 'index') {
+          // sección 0 = toda la República; sección ≥1 = estado correspondiente
+          if (response.index === 0) {
+            targetLayer = layerGroup;
+          } else {
+            targetLayer = featureLayers[response.index - 1];
+          }
+        } else {
+          // en página de estado, cada sección corresponde a cada feature
+          targetLayer = featureLayers[response.index];
+        }
+
+        if (targetLayer) {
+          const b = targetLayer.getBounds();
+          map.fitBounds(b, { padding: [20,20], maxZoom: 8 });
+        }
+      });
+
+      window.addEventListener('resize', scroller.resize);
+      // ────────────────────────────────────────────────────
+
     })
     .catch(err => {
       console.error('Error cargando/parsing GeoJSON:', err);
