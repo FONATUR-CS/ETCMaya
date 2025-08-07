@@ -24,10 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
     'Puebla':                          'puebla',
     'Tlaxcala':                        'tlaxcala',
     'Veracruz de Ignacio de la Llave': 'veracruz'
-    // …añade aquí los demás estados…
+    // …otros estados…
   };
 
-  // 4. Elegir URL de GeoJSON
+  // 4. Elegir URL de GeoJSON (polígonos de estado o México)
   const geoUrl = pageKey === 'index'
     ? `${basePath}data/Estados_1.geojson`
     : `${basePath}data/${pageKey}.geojson`;
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(geojson => {
       const nameKey = 'Estado';
 
-      // Creamos la capa (layerGroup) y la añadimos
+      // 5a. Capa de polígonos
       const layerGroup = L.geoJSON(geojson, {
         style: feature => ({
           color: '#2E8B57',
@@ -51,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
         onEachFeature: (feature, lyr) => {
           lyr.options.interactive = true;
           const name = feature.properties[nameKey];
-
           if (pageKey === 'index') {
             lyr.on('mouseover', () => lyr.getElement().style.cursor = 'pointer');
             lyr.on('click', () => {
@@ -59,7 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
               window.location.href = `estados/${slug}.html`;
             });
           } else {
-            // Popup en páginas de estado
             const props = feature.properties || {};
             let html = '<table>';
             for (let key in props) {
@@ -71,52 +69,73 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }).addTo(map);
 
-      // Ajustar vista inicial para index y para estados
+      // 5b. Ajustar vista inicial
       const initialBounds = layerGroup.getBounds();
-      if (initialBounds.isValid && initialBounds.isValid()) {
+      if (initialBounds.isValid()) {
         map.fitBounds(initialBounds, { padding: [20,20] });
       }
 
-      // ─────────── Scrollama (solo en index) ───────────
+      // 6. Scrollama para index (sin puntos)
       if (pageKey === 'index') {
-        // Extraemos cada subcapa en orden
         const featureLayers = layerGroup.getLayers();
-
         const scroller = scrollama();
-        scroller.setup({
-          step: '#story section',
-          offset: 0.7,
-          progress: true
-        })
-        .onStepEnter(response => {
-          // Resaltar sección activa
-          document.querySelectorAll('#story section')
-            .forEach(s => s.classList.remove('is-active'));
-          response.element.classList.add('is-active');
+        scroller.setup({ step: '#story section', offset: 0.7, progress: true })
+          .onStepEnter(resp => {
+            document.querySelectorAll('#story section')
+              .forEach(s => s.classList.remove('is-active'));
+            resp.element.classList.add('is-active');
 
-          let targetLayer;
-          // sección 0 = toda la República; sección ≥1 = estado correspondiente
-          if (response.index === 0) {
-            targetLayer = layerGroup;
-          } else {
-            targetLayer = featureLayers[response.index - 1];
-          }
-
-          if (targetLayer) {
-            const b = targetLayer.getBounds();
-            map.fitBounds(b, { padding: [20,20], maxZoom: 8 });
-          }
-        });
-
+            let targetLayer = resp.index === 0
+              ? layerGroup
+              : featureLayers[resp.index - 1];
+            if (targetLayer) {
+              map.fitBounds(targetLayer.getBounds(), { padding: [20,20], maxZoom: 8 });
+            }
+          });
         window.addEventListener('resize', scroller.resize);
       }
-      // ────────────────────────────────────────────────────
+
+      // 7. Scrollama para Baja California Sur con puntos
+      if (pageKey === 'baja_california_sur') {
+        // Carga del GeoJSON de puntos
+        fetch(`${basePath}data/5_Puntos_BCS.geojson`)
+          .then(r => r.json())
+          .then(pointsGeojson => {
+            // Capa de puntos y colección para búsqueda
+            const pointsLayer = L.geoJSON(pointsGeojson,
+              {
+                pointToLayer: (f, latlng) => L.marker(latlng),
+                onEachFeature: (f, lyr) => lyr.bindPopup(f.properties.nombre)
+              }
+            ).addTo(map);
+
+            const points = pointsGeojson.features;
+
+            // Iniciar Scrollama
+            const scroller = scrollama();
+            scroller.setup({ step: '#story section', offset: 0.7 })
+              .onStepEnter(resp => {
+                document.querySelectorAll('#story section')
+                  .forEach(s => s.classList.remove('is-active'));
+                resp.element.classList.add('is-active');
+
+                const id = resp.element.dataset.index; // BCS_1, BCS_2, etc.
+                const feat = points.find(f => f.properties.id === id);
+                if (feat) {
+                  const b = L.geoJSON(feat).getBounds();
+                  map.flyToBounds(b, { padding: [20,20], maxZoom: 14 });
+                }
+              });
+            window.addEventListener('resize', scroller.resize);
+          })
+          .catch(() => console.error('No se pudo cargar 5_Puntos_BCS.geojson'));
+      }
 
     })
     .catch(err => {
       console.error('Error cargando/parsing GeoJSON:', err);
       if (pageKey === 'index') {
-        alert('No se pudo cargar el mapa de estados. Revisa la consola.');
+        alert('No se pudo cargar el mapa de estados.');
       }
     });
 });
@@ -124,8 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // helper slugify
 function slugify(name) {
   if (typeof name !== 'string') return '';
-  return name
-    .toLowerCase()
+  return name.toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .replace(/\s+/g, '_');
 }
