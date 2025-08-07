@@ -75,35 +75,55 @@ document.addEventListener('DOMContentLoaded', () => {
         map.fitBounds(initialBounds, { padding: [20,20] });
       }
 
-      // Scrollama para index …
+      // ─────────── Scrollama para INDEX ───────────
       if (pageKey === 'index') {
-        // … contenido omitido para brevedad …
+        const featureLayers = layerGroup.getLayers();
+        const scroller = scrollama();
+        scroller.setup({
+          step: '#story section',
+          offset: 0.7,
+          progress: true
+        })
+        .onStepEnter(resp => {
+          document.querySelectorAll('#story section')
+            .forEach(s => s.classList.remove('is-active'));
+          resp.element.classList.add('is-active');
+
+          let targetLayer = resp.index === 0
+            ? layerGroup
+            : featureLayers[resp.index - 1];
+          if (targetLayer) {
+            map.fitBounds(targetLayer.getBounds(), { padding: [20,20], maxZoom: 8 });
+          }
+        });
+        window.addEventListener('resize', scroller.resize);
       }
+      // ─────────────────────────────────────────────
 
       // ─────────── Scrollama para Baja California Sur ───────────
       if (pageKey === 'baja_california_sur') {
-        // 1) Icono personalizado (recomiendo guardarlo en /img/eco.svg)
+        // Icono personalizado
         const ecoIcon = L.icon({
           iconUrl: `${basePath}img/eco.svg`,
           iconSize: [32, 32],
           iconAnchor: [16, 32]
         });
 
-        // 2) Carga del GeoJSON de puntos
+        // Carga del GeoJSON de puntos
         fetch(`${basePath}data/5_Puntos_BCS.geojson`)
           .then(r => r.json())
           .then(pointsGeojson => {
             const points = pointsGeojson.features;
 
-            // 3) Añadir capa de puntos con icono eco.svg
+            // Añadir capa de puntos con ecoIcon
             L.geoJSON(pointsGeojson, {
               pointToLayer: (f, latlng) => L.marker(latlng, { icon: ecoIcon }),
               onEachFeature: (f, lyr) => lyr.bindPopup(f.properties.nombre)
             }).addTo(map);
 
-            // 4) Iniciar Scrollama
-            const scroller = scrollama();
-            scroller.setup({
+            // Iniciar Scrollama en BCS
+            const sc = scrollama();
+            sc.setup({
               step: '#story section',
               offset: 0.7
             })
@@ -114,26 +134,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
               const idx = response.element.dataset.index;
               if (idx === '0') {
-                // (1) Regresa a la vista inicial del estado
+                // 1) volver a vista inicial del polígono BCS
                 map.fitBounds(initialBounds, { padding: [20,20] });
               } else {
-                // (2) Zoom al punto correspondiente con 2 niveles menos
+                // 2) zoom al punto con 2 niveles menos
                 const feat = points.find(f => f.properties.id === idx);
                 if (feat) {
                   const bounds = L.geoJSON(feat).getBounds();
-                  // determinar zoom óptimo y restar 2 niveles
                   const optimalZoom = map.getBoundsZoom(bounds);
                   const targetZoom = optimalZoom > 2 ? optimalZoom - 2 : optimalZoom;
                   map.flyToBounds(bounds, { padding: [20,20], maxZoom: targetZoom });
                 }
               }
             });
-
-            window.addEventListener('resize', scroller.resize);
+            window.addEventListener('resize', sc.resize);
           })
           .catch(() => console.error('No se pudo cargar 5_Puntos_BCS.geojson'));
       }
-      // ─────────────────────────────────────────────────────────────
+      // ────────────────────────────────────────────────────────
 
     })
     .catch(err => {
