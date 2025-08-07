@@ -75,61 +75,65 @@ document.addEventListener('DOMContentLoaded', () => {
         map.fitBounds(initialBounds, { padding: [20,20] });
       }
 
-      // 6. Scrollama para index (sin puntos)
+      // Scrollama para index …
       if (pageKey === 'index') {
-        const featureLayers = layerGroup.getLayers();
-        const scroller = scrollama();
-        scroller.setup({ step: '#story section', offset: 0.7, progress: true })
-          .onStepEnter(resp => {
-            document.querySelectorAll('#story section')
-              .forEach(s => s.classList.remove('is-active'));
-            resp.element.classList.add('is-active');
-
-            let targetLayer = resp.index === 0
-              ? layerGroup
-              : featureLayers[resp.index - 1];
-            if (targetLayer) {
-              map.fitBounds(targetLayer.getBounds(), { padding: [20,20], maxZoom: 8 });
-            }
-          });
-        window.addEventListener('resize', scroller.resize);
+        // … contenido omitido para brevedad …
       }
 
-      // 7. Scrollama para Baja California Sur con puntos
+      // ─────────── Scrollama para Baja California Sur ───────────
       if (pageKey === 'baja_california_sur') {
-        // Carga del GeoJSON de puntos
+        // 1) Icono personalizado (recomiendo guardarlo en /img/eco.svg)
+        const ecoIcon = L.icon({
+          iconUrl: `${basePath}img/eco.svg`,
+          iconSize: [32, 32],
+          iconAnchor: [16, 32]
+        });
+
+        // 2) Carga del GeoJSON de puntos
         fetch(`${basePath}data/5_Puntos_BCS.geojson`)
           .then(r => r.json())
           .then(pointsGeojson => {
-            // Capa de puntos y colección para búsqueda
-            const pointsLayer = L.geoJSON(pointsGeojson,
-              {
-                pointToLayer: (f, latlng) => L.marker(latlng),
-                onEachFeature: (f, lyr) => lyr.bindPopup(f.properties.nombre)
-              }
-            ).addTo(map);
-
             const points = pointsGeojson.features;
 
-            // Iniciar Scrollama
-            const scroller = scrollama();
-            scroller.setup({ step: '#story section', offset: 0.7 })
-              .onStepEnter(resp => {
-                document.querySelectorAll('#story section')
-                  .forEach(s => s.classList.remove('is-active'));
-                resp.element.classList.add('is-active');
+            // 3) Añadir capa de puntos con icono eco.svg
+            L.geoJSON(pointsGeojson, {
+              pointToLayer: (f, latlng) => L.marker(latlng, { icon: ecoIcon }),
+              onEachFeature: (f, lyr) => lyr.bindPopup(f.properties.nombre)
+            }).addTo(map);
 
-                const id = resp.element.dataset.index; // BCS_1, BCS_2, etc.
-                const feat = points.find(f => f.properties.id === id);
+            // 4) Iniciar Scrollama
+            const scroller = scrollama();
+            scroller.setup({
+              step: '#story section',
+              offset: 0.7
+            })
+            .onStepEnter(response => {
+              document.querySelectorAll('#story section')
+                .forEach(s => s.classList.remove('is-active'));
+              response.element.classList.add('is-active');
+
+              const idx = response.element.dataset.index;
+              if (idx === '0') {
+                // (1) Regresa a la vista inicial del estado
+                map.fitBounds(initialBounds, { padding: [20,20] });
+              } else {
+                // (2) Zoom al punto correspondiente con 2 niveles menos
+                const feat = points.find(f => f.properties.id === idx);
                 if (feat) {
-                  const b = L.geoJSON(feat).getBounds();
-                  map.flyToBounds(b, { padding: [20,20], maxZoom: 14 });
+                  const bounds = L.geoJSON(feat).getBounds();
+                  // determinar zoom óptimo y restar 2 niveles
+                  const optimalZoom = map.getBoundsZoom(bounds);
+                  const targetZoom = optimalZoom > 2 ? optimalZoom - 2 : optimalZoom;
+                  map.flyToBounds(bounds, { padding: [20,20], maxZoom: targetZoom });
                 }
-              });
+              }
+            });
+
             window.addEventListener('resize', scroller.resize);
           })
           .catch(() => console.error('No se pudo cargar 5_Puntos_BCS.geojson'));
       }
+      // ─────────────────────────────────────────────────────────────
 
     })
     .catch(err => {
