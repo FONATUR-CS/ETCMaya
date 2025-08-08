@@ -117,7 +117,32 @@ document.addEventListener('DOMContentLoaded', () => {
             // guardamos la capa de puntos
             const pointsLayer = L.geoJSON(pointsGeojson, {
               pointToLayer: (f, latlng) => L.marker(latlng, { icon: ecoIcon }),
-              onEachFeature: (f, lyr) => lyr.bindPopup(f.properties.nombre)
+              onEachFeature: (f, lyr) => {
+                lyr.bindPopup(f.properties.nombre);
+
+                // al hacer clic en el icono
+                lyr.on('click', () => {
+                  // ocultar polígonos
+                  if (map.hasLayer(layerGroup)) map.removeLayer(layerGroup);
+
+                  // zoom al punto
+                  const b = L.geoJSON(f).getBounds();
+                  const optZ = map.getBoundsZoom(b);
+                  const tz   = optZ > 4 ? optZ - 4 : optZ;
+                  map.flyToBounds(b, { padding: [20,20], maxZoom: tz });
+
+                  // activar sección correspondiente
+                  const sec = document.querySelector(
+                    `#story section[data-index="${f.properties.id}"]`
+                  );
+                  if (sec) {
+                    document.querySelectorAll('#story section')
+                      .forEach(s => s.classList.remove('is-active'));
+                    sec.classList.add('is-active');
+                    sec.scrollIntoView({ behavior: 'smooth' });
+                  }
+                });
+              }
             }).addTo(map);
 
             // 3) Scrollama en BCS
