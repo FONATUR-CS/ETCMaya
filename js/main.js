@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const sc = scrollama();
         sc.setup({
           step: '#story section',
-          container: '#story',   // escucha el scroll en #story
+          container: storyEl,   // pasamos el elemento, no la cadena
           offset: 0.7,
           progress: true
         })
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const sc = scrollama();
             sc.setup({
               step: '#story section',
-              container: '#story',
+              container: storyEl,   // pasamos el elemento
               offset: 0.7,
               progress: true
             })
