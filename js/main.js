@@ -13,42 +13,80 @@ document.addEventListener('DOMContentLoaded', () => {
     ? window.location.pathname.split('/').pop().replace('.html','')
     : 'index';
 
-  // 3. Slug map ...
-  const slugMap = { /* … */ };
+  // 3. Slug map…
+  const slugMap = {
+    'Baja California Sur':             'baja_california_sur',
+    'Hidalgo':                         'hidalgo',
+    'Michoacán de Ocampo':             'michoacan',
+    'Morelos':                         'morelos',
+    'Nayarit':                         'nayarit',
+    'Oaxaca':                          'oaxaca',
+    'Puebla':                          'puebla',
+    'Tlaxcala':                        'tlaxcala',
+    'Veracruz de Ignacio de la Llave': 'veracruz'
+    // …otros estados…
+  };
 
   // 4. URL de polígonos
   const geoUrl = pageKey === 'index'
     ? `${basePath}data/Estados_1.geojson`
     : `${basePath}data/${pageKey}.geojson`;
 
-  // 5. Fetch polígonos
+  // 5. Cargar polígonos
   fetch(geoUrl)
-    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(r => {
+      if (!r.ok) throw new Error(r.statusText);
+      return r.json();
+    })
     .then(geojson => {
-      const nameKey = 'Estado';
-      const layerGroup = L.geoJSON(geojson, { /* estilo y onEachFeature */ })
-        .addTo(map);
+      // 5a. Capa de polígonos con color original
+      const layerGroup = L.geoJSON(geojson, {
+        style: feature => ({
+          color: '#2E8B57',               // COLOR ORIGINAL
+          weight: pageKey === 'index' ? 2 : 3,
+          fillOpacity: pageKey === 'index' ? 0.3 : 0.2
+        }),
+        onEachFeature: (feature, lyr) => {
+          lyr.options.interactive = true;
+          const name = feature.properties.Estado;
+          if (pageKey === 'index') {
+            lyr.on('mouseover', () => lyr.getElement().style.cursor = 'pointer');
+            lyr.on('click', () => {
+              const slug = slugMap[name] || slugify(name);
+              window.location.href = `estados/${slug}.html`;
+            });
+          } else {
+            const props = feature.properties || {};
+            let html = '<table>';
+            for (let k in props) {
+              html += `<tr><th>${k}</th><td>${props[k]}</td></tr>`;
+            }
+            html += '</table>';
+            lyr.bindPopup(html);
+          }
+        }
+      }).addTo(map);
 
-      // Ajuste inicial
+      // 5b. Ajustar vista inicial
       const initialBounds = layerGroup.getBounds();
       if (initialBounds.isValid()) {
         map.fitBounds(initialBounds, { padding: [20,20] });
       }
 
-      // Referencia al container
+      // Referencia al contenedor de scroll
       const storyEl = document.getElementById('story');
 
-      // ─── Scrollama para INDEX ───
+      // ─────────── Scrollama para INDEX ───────────
       if (pageKey === 'index') {
         const featureLayers = layerGroup.getLayers();
         const sc = scrollama();
         sc.setup({
           step: '#story section',
-          container: '#story',   // escucha dentro de #story
+          container: '#story',   // escucha el scroll en #story
           offset: 0.7,
           progress: true
-        });
-        sc.onStepEnter(resp => {
+        })
+        .onStepEnter(resp => {
           document.querySelectorAll('#story section')
             .forEach(s => s.classList.remove('is-active'));
           resp.element.classList.add('is-active');
@@ -60,24 +98,30 @@ document.addEventListener('DOMContentLoaded', () => {
             map.fitBounds(layer.getBounds(), { padding: [20,20], maxZoom: 8 });
           }
         });
-        // recalcular en load, resize y scroll de story
+        // Forzar recálculo al iniciar y al hacer scroll o resize
         sc.resize();
-        window.addEventListener('resize', () => sc.resize());
         storyEl.addEventListener('scroll', () => sc.resize());
+        window.addEventListener('resize', () => sc.resize());
       }
 
-      // ─── Scrollama para BCS ───
+      // ─────────── Scrollama para BCS ───────────
       if (pageKey === 'baja_california_sur') {
-        // icono eco.svg en /img/eco.svg
+        // Icono eco.svg
         const ecoIcon = L.icon({
           iconUrl: `${basePath}img/eco.svg`,
           iconSize: [32,32],
           iconAnchor: [16,32]
         });
+
+        // Carga de puntos
         fetch(`${basePath}data/5_Puntos_BCS.geojson`)
-          .then(r => r.ok ? r.json() : Promise.reject())
+          .then(r => {
+            if (!r.ok) throw new Error(r.statusText);
+            return r.json();
+          })
           .then(pointsGeojson => {
             const points = pointsGeojson.features;
+
             L.geoJSON(pointsGeojson, {
               pointToLayer: (f, latlng) => L.marker(latlng, { icon: ecoIcon }),
               onEachFeature: (f, lyr) => lyr.bindPopup(f.properties.nombre)
@@ -89,8 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
               container: '#story',
               offset: 0.7,
               progress: true
-            });
-            sc.onStepEnter(resp => {
+            })
+            .onStepEnter(resp => {
               document.querySelectorAll('#story section')
                 .forEach(s => s.classList.remove('is-active'));
               resp.element.classList.add('is-active');
@@ -101,17 +145,16 @@ document.addEventListener('DOMContentLoaded', () => {
               } else {
                 const feat = points.find(f => f.properties.id === idx);
                 if (feat) {
-                  const bounds = L.geoJSON(feat).getBounds();
-                  const optZoom = map.getBoundsZoom(bounds);
-                  const targetZoom = optZoom > 4 ? optZoom - 4 : optZoom;
-                  map.flyToBounds(bounds, { padding: [20,20], maxZoom: targetZoom });
+                  const b = L.geoJSON(feat).getBounds();
+                  const optZ = map.getBoundsZoom(b);
+                  const tz = optZ > 4 ? optZ - 4 : optZ;
+                  map.flyToBounds(b, { padding: [20,20], maxZoom: tz });
                 }
               }
             });
-            // recalcular
             sc.resize();
-            window.addEventListener('resize', () => sc.resize());
             storyEl.addEventListener('scroll', () => sc.resize());
+            window.addEventListener('resize', () => sc.resize());
           })
           .catch(() => console.error('No se pudo cargar 5_Puntos_BCS.geojson'));
       }
@@ -119,11 +162,11 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .catch(err => {
       console.error('Error cargando GeoJSON:', err);
-      if (pageKey === 'index') alert('No se pudo cargar el mapa de Estados.');
+      if (pageKey === 'index') alert('No se pudo cargar el mapa de estados.');
     });
 });
 
-// helper slugify…
+// helper slugify
 function slugify(name) {
   if (typeof name !== 'string') return '';
   return name.toLowerCase()
