@@ -55,11 +55,12 @@ html, body {
   width: 50%;
   position: relative;
   z-index: 1;
-  height: 100%;         /* <— añadido: ocupar toda la altura de #container */
+  height: calc(100vh - 60px);  /* ← fuerza la altura visible exacta */
   overflow-y: auto;
   padding: 30px 40px;
   background: #ffffff;
 }
+
 
 /* Imagen de cabecera (title.png) ocupa ancho completo */
 #story > img {
