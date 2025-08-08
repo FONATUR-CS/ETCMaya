@@ -53,12 +53,12 @@ html, body {
 /* PANEL IZQUIERDO */
 #story {
   width: 50%;
-  position: relative;
-  z-index: 1;
-  height: calc(100vh - 60px);  /* ← fuerza la altura visible exacta */
-  overflow-y: auto;
   padding: 30px 40px;
-  background: #ffffff;
+  background: #fff;
+  /* SIN overflow-y, altura natural */
+}
+#map {
+  /* igual que antes */
 }
 
 
