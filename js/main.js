@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     'Puebla':                          'puebla',
     'Tlaxcala':                        'tlaxcala',
     'Veracruz de Ignacio de la Llave': 'veracruz'
-    // …otros estados…
   };
 
   // 4. URL de polígonos
@@ -41,8 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(geojson => {
       // 5a. Capa de polígonos con color original
       const layerGroup = L.geoJSON(geojson, {
-        style: feature => ({
-          color: '#2E8B57',               // COLOR ORIGINAL
+        style: f => ({
+          color: '#2E8B57',
           weight: pageKey === 'index' ? 2 : 3,
           fillOpacity: pageKey === 'index' ? 0.3 : 0.2
         }),
@@ -67,18 +66,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }).addTo(map);
 
-      // 5b. Ajustar vista inicial
+      // 5b. Vista inicial
       const initialBounds = layerGroup.getBounds();
       if (initialBounds.isValid()) {
         map.fitBounds(initialBounds, { padding: [20,20] });
       }
 
-      // ─────────── Scrollama para INDEX ───────────
+      // Referencia al contenedor de scroll
+      const storyEl = document.getElementById('story');
+
+      // ─── Scrollama para INDEX ───
       if (pageKey === 'index') {
         const featureLayers = layerGroup.getLayers();
         const sc = scrollama();
         sc.setup({
           step: '#story section',
+          container: storyEl,   // escuchamos el scroll de #story
           offset: 0.7,
           progress: true
         })
@@ -94,19 +97,21 @@ document.addEventListener('DOMContentLoaded', () => {
             map.fitBounds(layer.getBounds(), { padding: [20,20], maxZoom: 8 });
           }
         });
-        window.addEventListener('resize', () => sc.resize());
+        // Forzar recálculo tras inicializar
+        sc.resize();
+        // Recalcular en scroll y resize
+        storyEl.addEventListener('scroll', () => sc.resize());
+        window.addEventListener('resize',  () => sc.resize());
       }
 
-      // ─────────── Scrollama para BCS ───────────
+      // ─── Scrollama para BCS ───
       if (pageKey === 'baja_california_sur') {
-        // Icono eco.svg
         const ecoIcon = L.icon({
           iconUrl: `${basePath}img/eco.svg`,
           iconSize: [32,32],
           iconAnchor: [16,32]
         });
 
-        // Carga de puntos
         fetch(`${basePath}data/5_Puntos_BCS.geojson`)
           .then(r => {
             if (!r.ok) throw new Error(r.statusText);
@@ -123,6 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const sc = scrollama();
             sc.setup({
               step: '#story section',
+              container: storyEl,   // escuchamos el scroll de #story
               offset: 0.7,
               progress: true
             })
@@ -144,7 +150,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
               }
             });
-            window.addEventListener('resize', () => sc.resize());
+            sc.resize();
+            storyEl.addEventListener('scroll', () => sc.resize());
+            window.addEventListener('resize',  () => sc.resize());
           })
           .catch(() => console.error('No se pudo cargar 5_Puntos_BCS.geojson'));
       }
@@ -158,8 +166,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // helper slugify
 function slugify(name) {
-  if (typeof name !== 'string') return '';
-  return name.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, '_');
+  return (typeof name === 'string'
+    ? name.toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/\s+/g, '_')
+    : ''
+  );
 }
