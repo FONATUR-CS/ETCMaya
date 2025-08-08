@@ -114,11 +114,15 @@ document.addEventListener('DOMContentLoaded', () => {
           })
           .then(pointsGeojson => {
             const points = pointsGeojson.features;
-            // guardamos la capa de puntos
+
+            // guardamos la capa de puntos, con popup y handler de clic
             const pointsLayer = L.geoJSON(pointsGeojson, {
               pointToLayer: (f, latlng) => L.marker(latlng, { icon: ecoIcon }),
               onEachFeature: (f, lyr) => {
-                lyr.bindPopup(f.properties.nombre);
+                // bindPopup con la propiedad "Name" o fallback
+                const raw = f.properties;
+                const label = raw.Name || raw.name || raw.nombre || 'Sin título';
+                lyr.bindPopup(label);
 
                 // al hacer clic en el icono
                 lyr.on('click', () => {
@@ -131,7 +135,10 @@ document.addEventListener('DOMContentLoaded', () => {
                   const tz   = optZ > 4 ? optZ - 4 : optZ;
                   map.flyToBounds(b, { padding: [20,20], maxZoom: tz });
 
-                  // activar sección correspondiente
+                  // abrir popup tras terminar el vuelo
+                  map.once('moveend', () => lyr.openPopup());
+
+                  // activar y desplazar al <section> correspondiente
                   const sec = document.querySelector(
                     `#story section[data-index="${f.properties.id}"]`
                   );
