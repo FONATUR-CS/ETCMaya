@@ -141,7 +141,7 @@ if (pageKey === 'baja_california_sur') {
           if (feat) {
             const bounds = L.geoJSON(feat).getBounds();
             const optimalZoom = map.getBoundsZoom(bounds);
-            const targetZoom = optimalZoom > 2 ? optimalZoom - 2 : optimalZoom;
+            const targetZoom = optimalZoom > 8 ? optimalZoom - 8 : optimalZoom;
             map.flyToBounds(bounds, { padding: [20,20], maxZoom: targetZoom });
           }
         }
