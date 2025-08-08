@@ -1,4 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Observar cuando #map aparezca en viewport
+  const mapEl = document.getElementById('map');
+  const obs   = new IntersectionObserver((entries, observer) => {
+    if (entries[0].isIntersecting) {
+      observer.disconnect();
+      initMap();
+    }
+  }, { rootMargin: '200px' });
+  obs.observe(mapEl);
+});
+
+function initMap() {
   // 1. Inicializar el mapa
   const isStatePage = window.location.pathname.includes('/estados/');
   const basePath    = isStatePage ? '../' : '';
@@ -119,26 +131,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const pointsLayer = L.geoJSON(pointsGeojson, {
               pointToLayer: (f, latlng) => L.marker(latlng, { icon: ecoIcon }),
               onEachFeature: (f, lyr) => {
-                // bindPopup con la propiedad "Name" o fallback
-                const raw = f.properties;
+                const raw   = f.properties;
                 const label = raw.Name || raw.name || raw.nombre || 'Sin título';
                 lyr.bindPopup(label);
 
-                // al hacer clic en el icono
                 lyr.on('click', () => {
-                  // ocultar polígonos
                   if (map.hasLayer(layerGroup)) map.removeLayer(layerGroup);
-
-                  // zoom al punto
-                  const b = L.geoJSON(f).getBounds();
+                  const b    = L.geoJSON(f).getBounds();
                   const optZ = map.getBoundsZoom(b);
                   const tz   = optZ > 4 ? optZ - 4 : optZ;
                   map.flyToBounds(b, { padding: [20,20], maxZoom: tz });
-
-                  // abrir popup tras terminar el vuelo
                   map.once('moveend', () => lyr.openPopup());
 
-                  // activar y desplazar al <section> correspondiente
                   const sec = document.querySelector(
                     `#story section[data-index="${f.properties.id}"]`
                   );
@@ -166,13 +170,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
               const idx = resp.element.dataset.index;
               if (idx === '0') {
-                // vuelta a polígonos
                 if (!map.hasLayer(layerGroup)) map.addLayer(layerGroup);
                 map.fitBounds(initialBounds, { padding: [20,20] });
               } else {
-                // ocultar polígonos
                 if (map.hasLayer(layerGroup)) map.removeLayer(layerGroup);
-                // zoom al punto
                 const feat = points.find(f => f.properties.id === idx);
                 if (feat) {
                   const bounds = L.geoJSON(feat).getBounds();
@@ -192,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Error cargando GeoJSON:', err);
       if (pageKey === 'index') alert('No se pudo cargar el mapa de estados.');
     });
-});
+}
 
 // helper slugify
 function slugify(name) {
