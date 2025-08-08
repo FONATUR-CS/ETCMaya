@@ -72,16 +72,12 @@ document.addEventListener('DOMContentLoaded', () => {
         map.fitBounds(initialBounds, { padding: [20,20] });
       }
 
-      // Referencia al contenedor de scroll
-      const storyEl = document.getElementById('story');
-
       // ─── Scrollama para INDEX ───
       if (pageKey === 'index') {
         const featureLayers = layerGroup.getLayers();
         const sc = scrollama();
         sc.setup({
           step: '#story section',
-          container: storyEl,   // escuchamos el scroll de #story
           offset: 0.7,
           progress: true
         })
@@ -97,11 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
             map.fitBounds(layer.getBounds(), { padding: [20,20], maxZoom: 8 });
           }
         });
-        // Forzar recálculo tras inicializar
-        sc.resize();
-        // Recalcular en scroll y resize
-        storyEl.addEventListener('scroll', () => sc.resize());
-        window.addEventListener('resize',  () => sc.resize());
+        // Reajustar al cambiar tamaño de ventana
+        window.addEventListener('resize', () => sc.resize());
       }
 
       // ─── Scrollama para BCS ───
@@ -128,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const sc = scrollama();
             sc.setup({
               step: '#story section',
-              container: storyEl,   // escuchamos el scroll de #story
               offset: 0.7,
               progress: true
             })
@@ -150,9 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
               }
             });
-            sc.resize();
-            storyEl.addEventListener('scroll', () => sc.resize());
-            window.addEventListener('resize',  () => sc.resize());
+            window.addEventListener('resize', () => sc.resize());
           })
           .catch(() => console.error('No se pudo cargar 5_Puntos_BCS.geojson'));
       }
