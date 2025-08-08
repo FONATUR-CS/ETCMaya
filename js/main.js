@@ -1,15 +1,111 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // … (todo igual hasta BCS) …
+  // 1. Inicializar el mapa
+  const isStatePage = window.location.pathname.includes('/estados/');
+  const basePath    = isStatePage ? '../' : '';
+  const map = L.map('map', { zoomControl: false })
+    .setView([23.6345, -102.5528], 5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  // 2. Determinar pageKey
+  const pageKey = isStatePage
+    ? window.location.pathname.split('/').pop().replace('.html','')
+    : 'index';
+
+  // 3. Slug map…
+  const slugMap = {
+    'Baja California Sur':             'baja_california_sur',
+    'Hidalgo':                         'hidalgo',
+    'Michoacán de Ocampo':             'michoacan',
+    'Morelos':                         'morelos',
+    'Nayarit':                         'nayarit',
+    'Oaxaca':                          'oaxaca',
+    'Puebla':                          'puebla',
+    'Tlaxcala':                        'tlaxcala',
+    'Veracruz de Ignacio de la Llave': 'veracruz'
+  };
+
+  // 4. URL de polígonos
+  const geoUrl = pageKey === 'index'
+    ? ${basePath}data/Estados_1.geojson
+    : ${basePath}data/${pageKey}.geojson;
+
+  // 5. Cargar polígonos
+  fetch(geoUrl)
+    .then(r => {
+      if (!r.ok) throw new Error(r.statusText);
+      return r.json();
+    })
+    .then(geojson => {
+      // 5a. Capa de polígonos con color original
+      const layerGroup = L.geoJSON(geojson, {
+        style: f => ({
+          color: '#2E8B57',
+          weight: pageKey === 'index' ? 2 : 3,
+          fillOpacity: pageKey === 'index' ? 0.3 : 0.2
+        }),
+        onEachFeature: (feature, lyr) => {
+          lyr.options.interactive = true;
+          const name = feature.properties.Estado;
+          if (pageKey === 'index') {
+            lyr.on('mouseover', () => lyr.getElement().style.cursor = 'pointer');
+            lyr.on('click', () => {
+              const slug = slugMap[name] || slugify(name);
+              window.location.href = estados/${slug}.html;
+            });
+          } else {
+            const props = feature.properties || {};
+            let html = '<table>';
+            for (let k in props) {
+              html += <tr><th>${k}</th><td>${props[k]}</td></tr>;
+            }
+            html += '</table>';
+            lyr.bindPopup(html);
+          }
+        }
+      }).addTo(map);
+
+      // 5b. Vista inicial
+      const initialBounds = layerGroup.getBounds();
+      if (initialBounds.isValid()) {
+        map.fitBounds(initialBounds, { padding: [20,20] });
+      }
+
+      // ─── Scrollama para INDEX ───
+      if (pageKey === 'index') {
+        const featureLayers = layerGroup.getLayers();
+        const sc = scrollama();
+        sc.setup({
+          step: '#story section',
+          offset: 0.7,
+          progress: true
+        })
+        .onStepEnter(resp => {
+          document.querySelectorAll('#story section')
+            .forEach(s => s.classList.remove('is-active'));
+          resp.element.classList.add('is-active');
+
+          const layer = resp.index === 0
+            ? layerGroup
+            : featureLayers[resp.index - 1];
+          if (layer) {
+            map.fitBounds(layer.getBounds(), { padding: [20,20], maxZoom: 8 });
+          }
+        });
+        // Reajustar al cambiar tamaño de ventana
+        window.addEventListener('resize', () => sc.resize());
+      }
 
       // ─── Scrollama para BCS ───
       if (pageKey === 'baja_california_sur') {
         const ecoIcon = L.icon({
-          iconUrl: `${basePath}img/eco.svg`,
+          iconUrl: ${basePath}img/eco.svg,
           iconSize: [32,32],
           iconAnchor: [16,32]
         });
 
-        fetch(`${basePath}data/5_Puntos_BCS.geojson`)
+        fetch(${basePath}data/5_Puntos_BCS.geojson)
           .then(r => {
             if (!r.ok) throw new Error(r.statusText);
             return r.json();
@@ -17,13 +113,11 @@ document.addEventListener('DOMContentLoaded', () => {
           .then(pointsGeojson => {
             const points = pointsGeojson.features;
 
-            // 1) Añadimos la capa de puntos y la guardamos
-            const pointsLayer = L.geoJSON(pointsGeojson, {
+            L.geoJSON(pointsGeojson, {
               pointToLayer: (f, latlng) => L.marker(latlng, { icon: ecoIcon }),
               onEachFeature: (f, lyr) => lyr.bindPopup(f.properties.nombre)
             }).addTo(map);
 
-            // 2) Scrollama
             const sc = scrollama();
             sc.setup({
               step: '#story section',
@@ -37,14 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
               const idx = resp.element.dataset.index;
               if (idx === '0') {
-                // Mostrar polígonos y vista general
-                if (!map.hasLayer(layerGroup)) map.addLayer(layerGroup);
                 map.fitBounds(initialBounds, { padding: [20,20] });
               } else {
-                // Ocultar polígonos
-                if (map.hasLayer(layerGroup)) map.removeLayer(layerGroup);
-
-                // Zoom al punto
                 const feat = points.find(f => f.properties.id === idx);
                 if (feat) {
                   const b = L.geoJSON(feat).getBounds();
@@ -54,11 +142,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
               }
             });
-
             window.addEventListener('resize', () => sc.resize());
           })
           .catch(() => console.error('No se pudo cargar 5_Puntos_BCS.geojson'));
       }
 
-  // … resto del código sin cambios …
+    })
+    .catch(err => {
+      console.error('Error cargando GeoJSON:', err);
+      if (pageKey === 'index') alert('No se pudo cargar el mapa de estados.');
+    });
 });
+
+// helper slugify
+function slugify(name) {
+  return (typeof name === 'string'
+    ? name.toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/\s+/g, '_')
+    : ''
+  );
+}
