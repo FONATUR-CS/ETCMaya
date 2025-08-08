@@ -21,7 +21,11 @@
 
   <!-- Navegación fija -->
   <nav id="main-nav">
-    <ul>
+    <button id="nav-toggle" aria-label="Abrir menú">
+    ☰
+    </button>
+  <ul id="nav-menu">
+    <li><a href="index.html" class="active">Inicio</a></li>
       <li><a href="index.html" class="active">Inicio</a></li>
       <li><a href="estados/baja_california_sur.html">B. California Sur</a></li>
       <li><a href="estados/hidalgo.html">Hidalgo</a></li>
@@ -104,5 +108,12 @@
   <script src="js/leaflet.js"></script>
   <script src="js/scrollama.min.js"></script>
   <script src="js/main.js"></script>
+  <script>
+  document
+    .getElementById('nav-toggle')
+    .addEventListener('click', () => {
+      document.getElementById('nav-menu').classList.toggle('open');
+    });
+   </script>
 </body>
 </html>
