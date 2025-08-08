@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 4. URL de polígonos
   const geoUrl = pageKey === 'index'
-    ? ${basePath}data/Estados_1.geojson
-    : ${basePath}data/${pageKey}.geojson;
+    ? `${basePath}data/Estados_1.geojson`
+    : `${basePath}data/${pageKey}.geojson`;
 
   // 5. Cargar polígonos
   fetch(geoUrl)
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return r.json();
     })
     .then(geojson => {
-      // 5a. Capa de polígonos con color original
+      // 5a. Crear y mostrar la capa de polígonos
       const layerGroup = L.geoJSON(geojson, {
         style: f => ({
           color: '#2E8B57',
@@ -52,13 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
             lyr.on('mouseover', () => lyr.getElement().style.cursor = 'pointer');
             lyr.on('click', () => {
               const slug = slugMap[name] || slugify(name);
-              window.location.href = estados/${slug}.html;
+              window.location.href = `estados/${slug}.html`;
             });
           } else {
+            // Popup en páginas de estado
             const props = feature.properties || {};
             let html = '<table>';
             for (let k in props) {
-              html += <tr><th>${k}</th><td>${props[k]}</td></tr>;
+              html += `<tr><th>${k}</th><td>${props[k]}</td></tr>`;
             }
             html += '</table>';
             lyr.bindPopup(html);
@@ -66,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }).addTo(map);
 
-      // 5b. Vista inicial
+      // 5b. Ajustar vista inicial a todo el layerGroup
       const initialBounds = layerGroup.getBounds();
       if (initialBounds.isValid()) {
         map.fitBounds(initialBounds, { padding: [20,20] });
@@ -93,31 +94,33 @@ document.addEventListener('DOMContentLoaded', () => {
             map.fitBounds(layer.getBounds(), { padding: [20,20], maxZoom: 8 });
           }
         });
-        // Reajustar al cambiar tamaño de ventana
         window.addEventListener('resize', () => sc.resize());
       }
 
-      // ─── Scrollama para BCS ───
+      // ─── Scrollama y puntos para BCS ───
       if (pageKey === 'baja_california_sur') {
+        // 1) Icono eco.svg
         const ecoIcon = L.icon({
-          iconUrl: ${basePath}img/eco.svg,
+          iconUrl: `${basePath}img/eco.svg`,
           iconSize: [32,32],
           iconAnchor: [16,32]
         });
 
-        fetch(${basePath}data/5_Puntos_BCS.geojson)
+        // 2) Cargar y mostrar puntos
+        fetch(`${basePath}data/5_Puntos_BCS.geojson`)
           .then(r => {
             if (!r.ok) throw new Error(r.statusText);
             return r.json();
           })
           .then(pointsGeojson => {
             const points = pointsGeojson.features;
-
-            L.geoJSON(pointsGeojson, {
+            // guardamos la capa de puntos
+            const pointsLayer = L.geoJSON(pointsGeojson, {
               pointToLayer: (f, latlng) => L.marker(latlng, { icon: ecoIcon }),
               onEachFeature: (f, lyr) => lyr.bindPopup(f.properties.nombre)
             }).addTo(map);
 
+            // 3) Scrollama en BCS
             const sc = scrollama();
             sc.setup({
               step: '#story section',
@@ -131,14 +134,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
               const idx = resp.element.dataset.index;
               if (idx === '0') {
+                // vuelta a polígonos
+                if (!map.hasLayer(layerGroup)) map.addLayer(layerGroup);
                 map.fitBounds(initialBounds, { padding: [20,20] });
               } else {
+                // ocultar polígonos
+                if (map.hasLayer(layerGroup)) map.removeLayer(layerGroup);
+                // zoom al punto
                 const feat = points.find(f => f.properties.id === idx);
                 if (feat) {
-                  const b = L.geoJSON(feat).getBounds();
-                  const optZ = map.getBoundsZoom(b);
-                  const tz = optZ > 4 ? optZ - 4 : optZ;
-                  map.flyToBounds(b, { padding: [20,20], maxZoom: tz });
+                  const bounds = L.geoJSON(feat).getBounds();
+                  const optZ   = map.getBoundsZoom(bounds);
+                  const tz     = optZ > 4 ? optZ - 4 : optZ;
+                  map.flyToBounds(bounds, { padding: [20,20], maxZoom: tz });
                 }
               }
             });
@@ -156,10 +164,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // helper slugify
 function slugify(name) {
-  return (typeof name === 'string'
+  return typeof name === 'string'
     ? name.toLowerCase()
           .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
           .replace(/\s+/g, '_')
-    : ''
-  );
+    : '';
 }
