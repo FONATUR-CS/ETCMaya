@@ -1,14 +1,106 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Baja California Sur – Turismo Comunitario</title>
-  <link rel="stylesheet" href="../js/leaflet.css" />
-  <link rel="stylesheet" href="../css/styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Baja California Sur – Turismo Comunitario (Story Map)</title>
+
+  <!-- Mapbox GL -->
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet"/>
+
+  <!-- Estilos: combinación del look “story” del index_1 con tu navbar -->
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: 'Noto Sans', system-ui, Arial, sans-serif; color:#fff; background:#000; }
+
+    /* NAV FIJA (tomada de tu BCS) */
+    #main-nav {
+      position: fixed; top: 0; left: 0; width: 100%;
+      background: #ffffffee; color: #333; z-index: 10000;
+      padding: 10px 24px; box-shadow: 0 2px 6px rgba(0,0,0,.2);
+    }
+    #main-nav ul { list-style: none; display:flex; gap:1rem; }
+    #main-nav a { text-decoration:none; color:#555; font-weight:700; padding:6px 8px; border-radius:4px; }
+    #main-nav a.active, #main-nav a:hover { background:#2E8B57; color:#fff; }
+
+    /* MAPA a pantalla completa (debajo de la navbar) */
+    #map {
+      position: fixed; top: 56px; left:0; right:0; height: calc(100vh - 56px); z-index:1;
+    }
+
+    /* Contenedor de historia (se apila sobre el mapa) */
+    #story { position: relative; z-index: 2; }
+
+    .story-section {
+      min-height: calc(100vh - 56px);
+      display:flex; align-items:center; justify-content:flex-end;
+      padding: 0 5%;
+    }
+    .story-section.intro {
+      justify-content:center;
+      background: linear-gradient(135deg, rgba(0,0,0,.6), rgba(0,30,60,.7));
+    }
+
+    .story-content {
+      width: 420px; max-width: 92vw;
+      background: rgba(0,0,0,0.92);
+      padding: 28px; border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      margin-right: 40px;
+      transform: translateY(30px); opacity: 0;
+      transition: all .8s cubic-bezier(.25,.46,.45,.94);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 24px 48px rgba(0,0,0,.45);
+    }
+    .story-content.active { transform: translateY(0); opacity:1; }
+
+    .story-content h1 { font-size: 2.2rem; margin-bottom:.5rem; }
+    .story-content h2 { font-size: 1.5rem; margin-bottom:.35rem; color:#2ED573; }
+    .story-content p { font-size:.98rem; line-height:1.55; color: #eaeaea; }
+
+    .story-content img { width:100%; height:auto; border-radius:10px; margin-top:12px; }
+
+    /* Cabecera/título grande */
+    .intro-title {
+      background: linear-gradient(135deg, #00d4ff, #ffffff, #00a8cc);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 2.6rem; font-weight: 800; margin-bottom: 12px;
+      text-align:center;
+    }
+    .intro-sub { text-align:center; color:#00d4ff; margin-bottom: 10px; }
+
+    /* Navegación por puntos opcional (capítulos) */
+    .chapter-nav {
+      position: fixed; left: 14px; top: 50%; transform: translateY(-50%);
+      z-index: 10; display:flex; flex-direction:column; gap:10px;
+    }
+    .nav-dot {
+      width: 10px; height:10px; border-radius:50%; background: rgba(255,255,255,.45);
+      cursor:pointer; transition:.25s; border:2px solid transparent;
+    }
+    .nav-dot.active { background:#00d4ff; box-shadow: 0 0 12px rgba(0,212,255,.55); transform: scale(1.2); }
+
+    /* Popups Mapbox */
+    .mapboxgl-popup-content {
+      background: rgba(0,0,0,0.95) !important;
+      border-radius: 12px !important;
+      border: 1px solid rgba(0,212,255,0.3) !important;
+      color: white !important;
+      padding: 12px !important;
+    }
+    .port-name { font-weight:700; color:#00d4ff; margin-bottom:4px; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .story-content { width: calc(100% - 32px); margin: 0 16px; }
+    }
+  </style>
 </head>
 <body>
 
+  <!-- NAV (de tu página de BCS) -->
   <nav id="main-nav">
     <ul>
       <li><a href="../index.html">Inicio</a></li>
@@ -24,94 +116,290 @@
     </ul>
   </nav>
 
-  <div id="container">
-    <!-- Panel izquierdo: scroll-story -->
-    <div id="story">
-      <img src="../img/tittle.png" alt="Turismo Comunitario" loading="lazy">
-      
-      <section data-index="0">
-        <h2>Baja California Sur – Turismo Comunitario</h2>
-        <p>Bienvenido a las experiencias de Turismo Comunitario en Baja California Sur.</p>
+  <!-- Mapa a pantalla completa -->
+  <div id="map"></div>
+
+  <!-- Puntos de capítulo (opcionales) -->
+  <nav class="chapter-nav" id="nav">
+    <div class="nav-dot active" data-chapter="intro" title="Vista general"></div>
+    <div class="nav-dot" data-chapter="BCS_1" title="BCS_1"></div>
+    <div class="nav-dot" data-chapter="BCS_2" title="BCS_2"></div>
+    <div class="nav-dot" data-chapter="BCS_3" title="BCS_3"></div>
+    <div class="nav-dot" data-chapter="BCS_4" title="BCS_4"></div>
+    <div class="nav-dot" data-chapter="BCS_5" title="BCS_5"></div>
+  </nav>
+
+  <!-- HISTORIA (contenido de tu BCS) -->
+  <div id="story">
+    <!-- Intro / capítulo 0 -->
+    <section class="story-section intro" data-chapter="intro">
+      <div class="story-content active">
+        <div class="intro-title">Baja California Sur – Turismo Comunitario</div>
+        <p class="intro-sub">Explora los puntos destacados con un mapa interactivo.</p>
+        <p>Desplázate para acercarte a cada sitio. Al tocar un ícono del mapa saltarás a su capítulo correspondiente.</p>
         <img src="../img/BCS_1.png" alt="Panorámica de Baja California Sur" loading="lazy">
-      </section>
+      </div>
+    </section>
 
-      <!-- ——— NUEVAS SECCIONES PARA 5_Puntos_BCS.geojson ——— -->
-      <section data-index="BCS_1">
-        <h2>Isla Espiritu Santo</h2>
-        <p style="text-align: justify;">
-          Considerada Patrimonio Natural de la Humanidad desde 2007, en un recorrido en lancha podrás apreciar 
-          la diversificación de flora y fauna; además de nadar con lobos marinos y bucear en zonas someras.
-        </p>
-        <li>
-          <a
-            href="https://simec.conanp.gob.mx/ficha.php?anp=141&reg=1"
-            target="_blank"
-            rel="noopener noreferrer"
-          >Ir a su página oficial</a>
-        </li>
-         <img src="../img/01_Espiritu_1.jpg" alt="Panorámica de Baja California Sur" loading="lazy">
-      </section>
+    <!-- BCS_1 -->
+    <section class="story-section" data-chapter="BCS_1">
+      <div class="story-content">
+        <h2>Isla Espíritu Santo</h2>
+        <p>Considerada Patrimonio Natural de la Humanidad desde 2007. Posibilidad de nadar con lobos marinos y buceo en zonas someras.</p>
+        <p><a href="https://simec.conanp.gob.mx/ficha.php?anp=141&reg=1" target="_blank" rel="noopener noreferrer">Ir a su página oficial</a></p>
+        <img src="../img/01_Espiritu_1.jpg" alt="Isla Espíritu Santo" loading="lazy">
+      </div>
+    </section>
 
-      <section data-index="BCS_2">
+    <!-- BCS_2 -->
+    <section class="story-section" data-chapter="BCS_2">
+      <div class="story-content">
         <h2>Bahía de Magdalena</h2>
-        <p style="text-align: justify;">
-          Es una bahía de 50 kilómetros de largo protegida por las islas arenosas de Magdalena y Santa Margarita, 
-          lo que la convierte en la más grande del estado. Es en esta bahía a la que llega la ballena gris a 
-          aparearse durante el invierno. Además es un excelente lugar para pescar.<br> 
-          <br>En la Isla Magdalena se puede acampar y se puede explorar sus grandes dunas.
-          En la parte norte hay una gran colonia de lobos marinos.<br> 
-        <br>El área costera esta compuesta de esteros y canales que albergan la reserva biológica más 
-          importante de bosques de mangle en la península de Baja California. Estos grandes mangles se han convertido 
-          en un santuario para miles de aves como águila pescadora, fragatas, gaviotas, ibis blanco, garza azul, garzón, 
-          patobuzo y otras migratorias como el pelícano borregón, el halcón peregrino y el roquero, por mencionar algunas.<br>
-        <br>Cuenta con un pequeño puerto pesquero llamado San Carlos, desde donde se puede contratar embarcaciones 
-          para el avistamiento más cercano con las ballenas.
-        </p>
-        <img src="../img/02_Bahia_Magdalena.jpg" alt="El Farallón" loading="lazy">
-      </section>
+        <p>Bahía protegida con llegada de ballena gris en invierno y bosques de mangle de gran importancia biológica.</p>
+        <img src="../img/02_Bahia_Magdalena.jpg" alt="Bahía de Magdalena" loading="lazy">
+      </div>
+    </section>
 
-      <section data-index="BCS_3">
+    <!-- BCS_3 -->
+    <section class="story-section" data-chapter="BCS_3">
+      <div class="story-content">
         <h2>Cerro El Pilón</h2>
-        <p style="text-align: justify;">
-          Es un imponenete cerro de una forma muy peculiar que se alza a una altura de 400 m y que enmarca 
-          las poblaciones de La Purísima y San Isidro. En el siglo XVIII los misionero jesuitos vieron en su 
-          forma la imagen de la Vírgen Máría, lo que tomaron como mensaje divino para establecerse en esa zona.<br> 
-        </p>
-        <img src="../img/03_Pilon.jpg" alt="El Farallón" loading="lazy">
-      </section>
+        <p>Imponente cerro de ~400 m que enmarca La Purísima y San Isidro; con historia misional jesuita.</p>
+        <img src="../img/03_Pilon.jpg" alt="Cerro El Pilón" loading="lazy">
+      </div>
+    </section>
 
-      <section data-index="BCS_4">
+    <!-- BCS_4 -->
+    <section class="story-section" data-chapter="BCS_4">
+      <div class="story-content">
         <h2>Cañón del Mezquite</h2>
-        <p style="text-align: justify;">
-          El lugar más asombroso de toda la Sierra de la Giganta. Este cañón es como un corte limpio, profundo 
-          y escarpado en el corazón de la montaña.<br> 
-       <br>Caminar a lo largo de su curso es un viaje de descubrimiento y paisajes en constante cambio: 
-          paredes asombrosas, estanques de agua dulce, oasis exuberantes y mucha vida te asombrarán en cada paso.<br> 
-         <br>Una joya escondida, una caminata verdaderamente hermosa.</p>
-        <img src="../img/04_Mezquite.jpg" alt="El Farallón" loading="lazy">
-      </section>
-      
-      <section data-index="BCS_5">
+        <p>El rincón más asombroso de la Sierra de la Giganta: paredes escarpadas, pozas de agua dulce y oasis.</p>
+        <img src="../img/04_Mezquite.jpg" alt="Cañón del Mezquite" loading="lazy">
+      </div>
+    </section>
+
+    <!-- BCS_5 -->
+    <section class="story-section" data-chapter="BCS_5">
+      <div class="story-content">
         <h2>Cañón de Costa Azul</h2>
-        <p style="text-align: justify;">
-          Es una espectacular formación que se ubica al final de la Sierra de San Lázaro, 
-          al inicio de la Bahía de San José. Es un paisaje mayormente seco pero de entre las rocas 
-          salen árboles que salpican de verde las paredes rocosas.<br> 
-          <br> Se puede llegar caminando ya que solo esta a menos de siete kilómetros de San José del Cabo 
-          en dirección a Cabo San Lucas. Para explorarlo se recomienda llevar agua y checar las temperaturas 
-          o hacerlo muy temprano antes de que suba demasiado el calor. También te puedes acercar en auto.<br> 
-           <br> Más adelante hay un canopy que es un reto para todos los amantes de la adrenalina.</p>
-        <img src="../img/05_CostaAzul.jpg" alt="El Farallón" loading="lazy">
-      </section>
-
-    </div>
-
-    <!-- Panel derecho: mapa centrado al estado -->
-    <div id="map"></div>
+        <p>Formación espectacular cercana a San José del Cabo; paisaje seco con vegetación emergiendo entre rocas.</p>
+        <img src="../img/05_CostaAzul.jpg" alt="Cañón de Costa Azul" loading="lazy">
+      </div>
+    </section>
   </div>
 
-  <script src="../js/leaflet.js"></script>
-  <script src="../js/scrollama.min.js"></script>
-  <script src="../js/main.js"></script>
+  <script>
+    // === CONFIG ===
+    const ACCESS_TOKEN = 'pk.eyJ1IjoieW1pbGFuZXMiLCJhIjoiY21ka2hma2UzMHVteDJscXkwZTh0anF4MSJ9.q4g1xy38WkjzzsskgLkfgw'; // del demo
+    const BASE = '../';
+    const STATE_GEO = BASE + 'data/baja_california_sur.geojson';
+    const POINTS_GEO = BASE + 'data/5_Puntos_BCS.geojson';
+    const ICON_URL = BASE + 'img/eco.svg'; // color #691b32 dentro del SVG
+
+    // Capítulos (de intro y BCS_1..BCS_5)
+    const chapters = ['intro','BCS_1','BCS_2','BCS_3','BCS_4','BCS_5'];
+    let currentChapter = 'intro';
+
+    let map;
+    let pointsData = null;
+    let stateBounds = null;
+
+    mapboxgl.accessToken = ACCESS_TOKEN;
+    map = new mapboxgl.Map({
+      container:'map',
+      style:'mapbox://styles/mapbox/satellite-v9',
+      center:[-111.7, 26.5], // centro aproximado BCS
+      zoom:5,
+      pitch:0,
+      bearing:0,
+      projection:'globe'
+    });
+
+    map.addControl(new mapboxgl.NavigationControl({ visualizePitch:true }), 'top-right');
+
+    map.on('load', async () => {
+      // — 1) Cargar polígono del estado para bounds iniciales
+      const state = await fetch(STATE_GEO).then(r=>r.json());
+      stateBounds = getGeoJSONBounds(state);
+      map.addSource('bcs-poly',{ type:'geojson', data: state });
+
+      map.addLayer({
+        id:'bcs-fill',
+        type:'fill',
+        source:'bcs-poly',
+        paint:{ 'fill-color':'#2E8B57', 'fill-opacity':0.18 }
+      });
+      map.addLayer({
+        id:'bcs-line',
+        type:'line',
+        source:'bcs-poly',
+        paint:{ 'line-color':'#2E8B57', 'line-width':2 }
+      });
+
+      // — 2) Cargar puntos
+      pointsData = await fetch(POINTS_GEO).then(r=>r.json());
+      map.addSource('bcs-points',{ type:'geojson', data: pointsData });
+
+      // Cargar icono personalizado
+      const img = new Image(32,32);
+      img.src = ICON_URL;
+      img.onload = () => {
+        if (!map.hasImage('eco')) map.addImage('eco', img, { pixelRatio: 2 });
+        addPointLayer();
+      };
+
+      // Ajuste a bounds del estado
+      if (stateBounds) {
+        map.fitBounds(stateBounds, { padding: 40, duration: 800 });
+      }
+
+      setupStory();
+      setupNavDots();
+      setupPointClicks();
+    });
+
+    function addPointLayer(){
+      // Capa de símbolos
+      if (!map.getLayer('bcs-symbols')) {
+        map.addLayer({
+          id:'bcs-symbols',
+          type:'symbol',
+          source:'bcs-points',
+          layout:{
+            'icon-image': 'eco',
+            'icon-size': 1,
+            'icon-allow-overlap': true,
+            'text-field': ['get','Name'],
+            'text-size': 11,
+            'text-offset': [0, 1.6],
+            'text-anchor': 'top',
+            'text-optional': true
+          },
+          paint:{
+            'text-color':'#ffffff',
+            'text-halo-color':'#000000',
+            'text-halo-width': 1.5
+          }
+        });
+      }
+    }
+
+    function setupPointClicks() {
+      // Popup “bonito”
+      const popup = new mapboxgl.Popup({ offset: 16, closeButton: true });
+
+      map.on('click','bcs-symbols', (e) => {
+        const f = e.features && e.features[0];
+        if (!f) return;
+
+        // popup
+        const props = f.properties;
+        const title = props.Name || props.nombre || 'Sitio';
+        const desc  = props.descripcion || '';
+        popup
+          .setLngLat(e.lngLat)
+          .setHTML(`<div class="port-name">${title}</div><div>${desc}</div>`)
+          .addTo(map);
+
+        // vuelo + activar capítulo
+        const id = props.id;
+        flyToFeatureId(id);
+        scrollToChapter(id);
+      });
+
+      map.on('mouseenter','bcs-symbols', () => map.getCanvas().style.cursor = 'pointer');
+      map.on('mouseleave','bcs-symbols', () => map.getCanvas().style.cursor = '');
+    }
+
+    function setupStory(){
+      const options = { threshold: 0.6 };
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const chap = entry.target.dataset.chapter;
+          if (chap === currentChapter) return;
+
+          currentChapter = chap;
+          updateDots();
+
+          // animar tarjeta
+          const box = entry.target.querySelector('.story-content');
+          if (box) box.classList.add('active');
+
+          if (chap === 'intro') {
+            // mostrar polígono y volver a vista general
+            setPolygonVisibility(true);
+            if (stateBounds) map.flyToBounds(stateBounds, { padding: 40, duration: 1200 });
+          } else {
+            // ocultar polígono y enfocar punto
+            setPolygonVisibility(false);
+            flyToFeatureId(chap);
+          }
+        });
+      }, options);
+
+      document.querySelectorAll('[data-chapter]').forEach(sec => obs.observe(sec));
+    }
+
+    function setupNavDots(){
+      document.querySelectorAll('.nav-dot').forEach(dot => {
+        dot.addEventListener('click', () => {
+          const chap = dot.dataset.chapter;
+          const target = document.querySelector(`[data-chapter="${chap}"]`);
+          if (target) target.scrollIntoView({ behavior:'smooth', block:'center' });
+        });
+      });
+    }
+
+    function updateDots(){
+      document.querySelectorAll('.nav-dot').forEach(dot => {
+        dot.classList.toggle('active', dot.dataset.chapter === currentChapter);
+      });
+    }
+
+    function setPolygonVisibility(visible){
+      const v = visible ? 'visible' : 'none';
+      if (map.getLayer('bcs-fill')) map.setLayoutProperty('bcs-fill','visibility', v);
+      if (map.getLayer('bcs-line')) map.setLayoutProperty('bcs-line','visibility', v);
+    }
+
+    function flyToFeatureId(id){
+      if (!pointsData) return;
+      const f = pointsData.features.find(fe => (fe.properties && String(fe.properties.id) === String(id)));
+      if (!f) return;
+      const coords = f.geometry.coordinates; // [lng,lat]
+      // zoom cálido: aproxima un poco menos que el auto-fitting
+      map.flyTo({ center: coords, zoom: 9.5, pitch: 35, bearing: 0, duration: 1400, essential: true });
+    }
+
+    function scrollToChapter(id){
+      const sec = document.querySelector(`[data-chapter="${id}"]`);
+      if (!sec) return;
+      document.querySelectorAll('.story-content').forEach(s => s.classList.remove('active'));
+      const box = sec.querySelector('.story-content');
+      if (box) box.classList.add('active');
+      sec.scrollIntoView({ behavior:'smooth', block:'center' });
+    }
+
+    // Utilidad: bounds de un GeoJSON (Polygon/MultiPolygon)
+    function getGeoJSONBounds(gj){
+      const b = new mapboxgl.LngLatBounds();
+      const eachCoord = (coords) => {
+        if (typeof coords[0] === 'number') {
+          b.extend(coords);
+        } else {
+          coords.forEach(eachCoord);
+        }
+      };
+      if (gj.type === 'FeatureCollection') {
+        gj.features.forEach(ft => eachCoord(ft.geometry.coordinates));
+      } else if (gj.type === 'Feature') {
+        eachCoord(gj.geometry.coordinates);
+      } else if (gj.type === 'Polygon' || gj.type === 'MultiPolygon') {
+        eachCoord(gj.coordinates);
+      }
+      return b;
+    }
+  </script>
 </body>
 </html>
