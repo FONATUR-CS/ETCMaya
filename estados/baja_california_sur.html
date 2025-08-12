@@ -303,7 +303,7 @@
         const desc  = props.descripcion || '';
         popup
           .setLngLat(e.lngLat)
-          .setHTML(<div class="port-name">${title}</div><div>${desc}</div>)
+          .setHTML(`<div class="port-name">${title}</div><div>${desc}</div>`)
           .addTo(map);
 
         // vuelo + activar capítulo
@@ -350,7 +350,7 @@
       document.querySelectorAll('.nav-dot').forEach(dot => {
         dot.addEventListener('click', () => {
           const chap = dot.dataset.chapter;
-          const target = document.querySelector([data-chapter="${chap}"]);
+          const target = document.querySelector(`[data-chapter="${chap}"]`);
           if (target) target.scrollIntoView({ behavior:'smooth', block:'center' });
         });
       });
@@ -378,7 +378,7 @@
     }
 
     function scrollToChapter(id){
-      const sec = document.querySelector([data-chapter="${id}"]);
+      const sec = document.querySelector(`[data-chapter="${id}"]`);
       if (!sec) return;
       document.querySelectorAll('.story-content').forEach(s => s.classList.remove('active'));
       const box = sec.querySelector('.story-content');
