@@ -61,6 +61,7 @@ html, body {
   /* igual que antes */
 }
 
+
 /* Imagen de cabecera (title.png) ocupa ancho completo */
 #story > img {
   display: block;
@@ -221,44 +222,5 @@ html, body {
     position: relative;
     top: auto; right: auto;
     border-top: 1px solid #ccc;
-  }
-}
-
-/* ===================================================== */
-/*                 TEMA OSCURO PARA LA PORTADA           */
-/*     (solo cuando el <body> tenga class="home")        */
-/* ===================================================== */
-body.home { background:#000; color:#fff; }
-
-/* Texto en el panel izquierdo en blanco, títulos en verde */
-body.home #story { background:#000; }
-body.home #story h2 { color: var(--primary); }
-body.home #story p,
-body.home #story li { color:#fff; }
-body.home #story a { color: var(--primary); }
-
-/* Mapa en negro de fondo y sin sombra dura */
-body.home #map {
-  background:#000;
-  border-left: 2px solid rgba(255,255,255,0.12);
-  box-shadow: none;
-}
-
-/* Scrollbar en oscuro (solo portada) */
-body.home #story::-webkit-scrollbar-track { background:#111; }
-body.home #story::-webkit-scrollbar-thumb { background:#333; }
-body.home #story::-webkit-scrollbar-thumb:hover { background:#444; }
-
-/* Menú móvil en oscuro solo en portada */
-@media (max-width: 768px) {
-  body.home #nav-menu {
-    background:#111;
-    box-shadow: -2px 0 10px rgba(0,0,0,0.4);
-  }
-  body.home #nav-menu a { color:#fff; }
-  body.home #nav-menu a.active,
-  body.home #nav-menu a:hover {
-    background: var(--primary);
-    color:#fff;
   }
 }
