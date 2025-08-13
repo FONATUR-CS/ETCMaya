@@ -24,10 +24,7 @@ function initMap() {
       attribution:
         'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
     }
-  const esriTransport = L.tileLayer(
-  'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}',
-  { pane: 'labels' }
-).addTo(map);
+  ).addTo(map);
   
   // 2) Pane para etiquetas arriba de todo (no bloquea clics)
   map.createPane('labels');
