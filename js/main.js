@@ -24,7 +24,10 @@ function initMap() {
       attribution:
         'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
     }
-  ).addTo(map);
+  const esriTransport = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}',
+  { pane: 'labels' }
+).addTo(map);
   
   // 2) Pane para etiquetas arriba de todo (no bloquea clics)
   map.createPane('labels');
@@ -74,7 +77,7 @@ function initMap() {
       // 5a. Crear y mostrar la capa de polígonos
       const layerGroup = L.geoJSON(geojson, {
         style: f => ({
-          color: '#2E8B57',
+          color: '#611232',
           weight: pageKey === 'index' ? 2 : 3,
           fillOpacity: pageKey === 'index' ? 0.3 : 0.2
         }),
