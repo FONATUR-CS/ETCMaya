@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Observar cuando #map aparezca en viewport
+  // Observar cuando #map aparezca en viewport (lazy init)
   const mapEl = document.getElementById('map');
   const obs   = new IntersectionObserver((entries, observer) => {
     if (entries[0].isIntersecting) {
@@ -11,21 +11,39 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initMap() {
-  // 1. Inicializar el mapa
+  // 1) Inicializar Leaflet
   const isStatePage = window.location.pathname.includes('/estados/');
   const basePath    = isStatePage ? '../' : '';
   const map = L.map('map', { zoomControl: false })
     .setView([23.6345, -102.5528], 5);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-  }).addTo(map);
 
-  // 2. Determinar pageKey
+  // 1a) BASE MAP: Mapbox con etiquetas (si hay token) o fallback OSM
+  const hasMapbox = typeof window !== 'undefined' && !!window.MAPBOX_TOKEN;
+  if (hasMapbox) {
+    const styleId = window.MAPBOX_STYLE || 'mapbox/satellite-streets-v12';
+    L.tileLayer(
+      `https://api.mapbox.com/styles/v1/${styleId}/tiles/512/{z}/{x}/{y}?access_token=${window.MAPBOX_TOKEN}`,
+      {
+        tileSize: 512,
+        zoomOffset: -1,
+        detectRetina: true,
+        attribution:
+          '© <a href="https://www.mapbox.com/">Mapbox</a> © <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+      }
+    ).addTo(map);
+  } else {
+    // Fallback a OSM si no hay token
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+  }
+
+  // 2) Determinar pageKey
   const pageKey = isStatePage
     ? window.location.pathname.split('/').pop().replace('.html','')
     : 'index';
 
-  // 3. Slug map…
+  // 3) Slug map…
   const slugMap = {
     'Baja California Sur':             'baja_california_sur',
     'Hidalgo':                         'hidalgo',
@@ -38,19 +56,19 @@ function initMap() {
     'Veracruz de Ignacio de la Llave': 'veracruz'
   };
 
-  // 4. URL de polígonos
+  // 4) URL de polígonos
   const geoUrl = pageKey === 'index'
     ? `${basePath}data/Estados_1.geojson`
     : `${basePath}data/${pageKey}.geojson`;
 
-  // 5. Cargar polígonos
+  // 5) Cargar polígonos
   fetch(geoUrl)
     .then(r => {
       if (!r.ok) throw new Error(r.statusText);
       return r.json();
     })
     .then(geojson => {
-      // 5a. Crear y mostrar la capa de polígonos
+      // 5a) Capa de polígonos
       const layerGroup = L.geoJSON(geojson, {
         style: f => ({
           color: '#2E8B57',
@@ -61,7 +79,10 @@ function initMap() {
           lyr.options.interactive = true;
           const name = feature.properties.Estado;
           if (pageKey === 'index') {
-            lyr.on('mouseover', () => lyr.getElement().style.cursor = 'pointer');
+            lyr.on('mouseover', () => {
+              const el = lyr.getElement && lyr.getElement();
+              if (el) el.style.cursor = 'pointer';
+            });
             lyr.on('click', () => {
               const slug = slugMap[name] || slugify(name);
               window.location.href = `estados/${slug}.html`;
@@ -79,7 +100,7 @@ function initMap() {
         }
       }).addTo(map);
 
-      // 5b. Ajustar vista inicial a todo el layerGroup
+      // 5b) Vista inicial
       const initialBounds = layerGroup.getBounds();
       if (initialBounds.isValid()) {
         map.fitBounds(initialBounds, { padding: [20,20] });
@@ -106,19 +127,22 @@ function initMap() {
             map.fitBounds(layer.getBounds(), { padding: [20,20], maxZoom: 8 });
           }
         });
-        window.addEventListener('resize', () => sc.resize());
+        window.addEventListener('resize', () => {
+          sc.resize();
+          map.invalidateSize();
+        });
       }
 
-      // ─── Scrollama y puntos para BCS ───
+      // ─── Scrollama + puntos para BCS ───
       if (pageKey === 'baja_california_sur') {
-        // 1) Icono eco.svg
+        // Icono eco.svg
         const ecoIcon = L.icon({
           iconUrl: `${basePath}img/eco.svg`,
           iconSize: [32,32],
           iconAnchor: [16,32]
         });
 
-        // 2) Cargar y mostrar puntos
+        // Cargar y mostrar puntos
         fetch(`${basePath}data/5_Puntos_BCS.geojson`)
           .then(r => {
             if (!r.ok) throw new Error(r.statusText);
@@ -127,7 +151,6 @@ function initMap() {
           .then(pointsGeojson => {
             const points = pointsGeojson.features;
 
-            // guardamos la capa de puntos, con popup y handler de clic
             const pointsLayer = L.geoJSON(pointsGeojson, {
               pointToLayer: (f, latlng) => L.marker(latlng, { icon: ecoIcon }),
               onEachFeature: (f, lyr) => {
@@ -135,6 +158,7 @@ function initMap() {
                 const label = raw.Name || raw.name || raw.nombre || 'Sin título';
                 lyr.bindPopup(label);
 
+                // clic en icono -> zoom y activa sección
                 lyr.on('click', () => {
                   if (map.hasLayer(layerGroup)) map.removeLayer(layerGroup);
                   const b    = L.geoJSON(f).getBounds();
@@ -156,7 +180,6 @@ function initMap() {
               }
             }).addTo(map);
 
-            // 3) Scrollama en BCS
             const sc = scrollama();
             sc.setup({
               step: '#story section',
@@ -183,7 +206,10 @@ function initMap() {
                 }
               }
             });
-            window.addEventListener('resize', () => sc.resize());
+            window.addEventListener('resize', () => {
+              sc.resize();
+              map.invalidateSize();
+            });
           })
           .catch(() => console.error('No se pudo cargar 5_Puntos_BCS.geojson'));
       }
