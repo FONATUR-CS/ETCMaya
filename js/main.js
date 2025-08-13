@@ -16,9 +16,30 @@ function initMap() {
   const basePath    = isStatePage ? '../' : '';
   const map = L.map('map', { zoomControl: false })
     .setView([23.6345, -102.5528], 5);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-  }).addTo(map);
+  
+  // 1) Satélite (Esri World Imagery)
+  const esriImagery = L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    {
+      attribution:
+        'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
+    }
+  ).addTo(map);
+  
+  // 2) Pane para etiquetas arriba de todo (no bloquea clics)
+  map.createPane('labels');
+  map.getPane('labels').style.zIndex = 650;
+  map.getPane('labels').style.pointerEvents = 'none';
+  
+  // 3) Etiquetas (nombres de lugares)
+  const esriLabels = L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+    {
+      attribution: 'Labels © Esri',
+      pane: 'labels'
+    }
+  ).addTo(map);
+
 
   // 2. Determinar pageKey
   const pageKey = isStatePage
