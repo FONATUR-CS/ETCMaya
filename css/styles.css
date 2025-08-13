@@ -10,7 +10,7 @@
 html, body {
   height: 100%;
   font-family: 'Noto Sans', sans-serif;
-  color: #fff;            /* texto claro */
+  color: #161a1d;            /* texto claro */
   background: #e6d194;       /* fondo de la página */
 }
 
@@ -31,7 +31,7 @@ html, body {
 }
 #main-nav a {
   text-decoration: none;
-  color: #fff;
+  color: #161a1d;
   font-weight: 700;
   padding: 6px 8px;
   border-radius: 4px;
@@ -40,7 +40,7 @@ html, body {
 #main-nav a:hover,
 #main-nav a.active {
   background: #2E8B57;
-  color: #fff;
+  color: #161a1d;
 }
 
 /* CONTENEDOR PRINCIPAL */
@@ -54,7 +54,7 @@ html, body {
 #story {
   width: 50%;
   padding: 30px 40px;
-  background: #fff;
+  background: #161a1d;
   /* SIN overflow-y, altura natural */
 }
 #map {
