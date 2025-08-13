@@ -21,34 +21,58 @@ html, body {
 }
 
 
-/* NAV FIJA */
+/* NAV FIJA con imagen de fondo como el body */
 #main-nav {
   position: fixed;
   top: 0; left: 0; width: 100%;
-  background: #98989A;
-  backdrop-filter: blur(6px);
   padding: 10px 30px;
   z-index: 1000;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  /* Igual que el body */
+  background-image: url('../img/patron1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* mismo efecto */
+
+  /* quita el color de fondo sólido anterior */
+  /* background: #98989A;  <- quítalo */
+  /* backdrop-filter: blur(6px); <- opcional: puedes quitarlo si ya no quieres blur */
 }
-#main-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 1.2em;
+
+/* Le ponemos un velo para legibilidad del texto del menú */
+#main-nav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35); /* ajusta la opacidad a tu gusto */
+  pointer-events: none;
 }
+
+/* Asegurar que el contenido del nav quede por encima del velo */
+#main-nav > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Colores del texto del nav sobre imagen */
 #main-nav a {
-  text-decoration: none;
-  color: #161a1d;
-  font-weight: 700;
-  padding: 6px 8px;
-  border-radius: 4px;
-  transition: background 0.3s, color 0.3s;
+  color: #fff;                  /* blanco sobre imagen */
 }
 #main-nav a:hover,
 #main-nav a.active {
-  background: #2E8B57;
-  color: #161a1d;
+  background: #2E8B57;          /* respeta tu verde */
+  color: #fff;
 }
+
+/* Fallback en móviles (evita saltos de 'background-attachment: fixed' en iOS) */
+@media (max-width: 768px) {
+  #main-nav {
+    background-attachment: scroll;
+  }
+}
+
 
 /* CONTENEDOR PRINCIPAL */
 #container {
