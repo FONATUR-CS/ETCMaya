@@ -10,10 +10,17 @@
 /* pagina principal izquierda segunda */
 //Con patron
 html, body {
+  height: 100%;
+  font-family: 'Noto Sans', sans-serif;
+  color: #fff;
+  /* Fondo con imagen */
   background-image: url('../img/patron1.jpg');
-  background-repeat: repeat;       /* se repite en mosaico */
-  background-size: auto;           /* sin escalado */
+  background-size: cover;          /* ocupa toda la pantalla */
+  background-position: center;     /* centra la imagen */
+  background-repeat: no-repeat;    /* no repetir */
+  background-attachment: fixed;    /* efecto sutil al hacer scroll (desactiva en móvil abajo) */
 }
+
 
 /* NAV FIJA */
 #main-nav {
