@@ -13,7 +13,7 @@ html, body {
   height: 100%;
   font-family: 'Noto Sans', sans-serif;
   color: #161a1d;            /* texto claro */
-  background-image: url('../img/patron1.png');
+  background-image: url('../img/patron1.jpg');
   background-repeat: repeat;       /* se repite en mosaico */
   background-size: auto;           /* sin escalado */
 }
