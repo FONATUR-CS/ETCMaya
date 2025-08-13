@@ -1,260 +1,231 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Turismo Comunitario – México</title>
-
-  <!-- (Opcional) Leaflet CSS: lo puedes dejar por compatibilidad con otras páginas -->
-  <link rel="stylesheet" href="js/leaflet.css" />
-
-  <!-- Google Fonts: Noto Sans -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap"
-    rel="stylesheet"
-  />
-
-  <!-- Mapbox GL -->
-  <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
-  <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet"/>
-
-  <!-- Proyecto CSS -->
-  <link rel="stylesheet" href="css/styles.css" />
-
-  <!-- Tema oscuro para la portada -->
-  <style>
-    body.home { background:#000; color:#fff; font-family:'Noto Sans', system-ui, Arial, sans-serif; }
-    /* Story en oscuro, manteniendo el verde como acento */
-    body.home #story { background:#000; }
-    body.home #story h2 { color:#2E8B57; }
-    body.home #story a { color:#2E8B57; }
-    /* Asegura contraste de listas y textos */
-    body.home #story p, body.home #story li { color:#fff; }
-    /* El mapa ocupa la mitad derecha como siempre (usa tu CSS base) */
-  </style>
-</head>
-<body class="home">
-
-  <!-- Navegación fija -->
-  <nav id="main-nav">
-    <button id="nav-toggle" aria-label="Abrir menú">☰</button>
-    <ul id="nav-menu">
-      <li><a href="index.html" class="active">Inicio</a></li>
-      <li><a href="estados/baja_california_sur.html">Baja California Sur</a></li>
-      <li><a href="estados/hidalgo.html">Hidalgo</a></li>
-      <li><a href="estados/michoacan.html">Michoacán</a></li>
-      <li><a href="estados/morelos.html">Morelos</a></li>
-      <li><a href="estados/nayarit.html">Nayarit</a></li>
-      <li><a href="estados/oaxaca.html">Oaxaca</a></li>
-      <li><a href="estados/puebla.html">Puebla</a></li>
-      <li><a href="estados/tlaxcala.html">Tlaxcala</a></li>
-      <li><a href="estados/veracruz.html">Veracruz</a></li>
-    </ul>
-  </nav>
-
-  <!-- Contenedor principal -->
-  <div id="container">
-    <!-- Panel izquierdo: encabezado + listado -->
-    <div id="story">
-      <img src="img/tittle.png" alt="Turismo Comunitario" loading="lazy">
-      <section data-step="0">
-        <h2>Estrategia de Turismo Comunitario en México</h2>
-        <p class="justificado">El turismo comunitario en México es un modelo de desarrollo turístico que busca empoderar a las comunidades locales al involucrarlas directamente a la planificación,
-        operación y beneficio de actividades turísticas en sus territorios.</p>
-        <p class="justificado">Este enfoque permite a los visitantes experimental de manera auténtica la cultura, trdicones, historia y entorno natura de las comunidades anfitrionas, promoviendo el respeto
-        por los recursus naturales y el patrimonio cultura.</p>
-        <img src="img/Turismo_9.jpg" alt="Turismo" loading="lazy">
-      </section>
-
-      <section data-step="2">
-        <h2>Lo esencial del Turismo Comunitario <br> Qué es</br> </h2>
-        <p class="justificado">Un turismo donde las actividades, productos y servicios que se ofrecen, son gestionados por las propias comunidades rurales e indígenas.</p>
-        <img src="img/Turismo_3.jpg" alt="Turismo" loading="lazy">
-      </section>
-
-      <section data-step="3">
-        <h2>¿Por qué elegirlo?</h2>
-        <p class="justificado">¡Es un turismo con impacto positivo!</p>
-        <ul>
-          <li>Ofrece experiencias auténticas</li>
-          <li>Apoya la economía local</li>
-          <li>Preserva el medio ambiente</li>
-        </ul>
-        <p class="justificado">La ONU Turismo lo promueve como una herramienta para el desarrollo sostenible, la preservación de la cultura y el entorno natural.</p>
-        <img src="img/Turismo_4.jpg" alt="Turismo" loading="lazy">
-      </section>
-
-      <section data-step="4">
-        <h2>Una forma de contribuir al desarrollo local <br> Qué es</br> </h2>
-        <p class="justificado">Es elegir el Turismo Comunitario. Esta es solo una introducción de lo que debes saber sobre él. 🌱.</p>
-        <img src="img/Turismo_5.jpg" alt="Turismo" loading="lazy">
-      </section>
-
-      <section data-step="5">
-        <h2>Actividades que puedes realizar de Turismo Comunitario </h2>
-        <p class="justificado">Todas las actividades son ofrecidas por las propias comunidades locales quienes comparten sus conocimientos, tradiciones y formas de vida fortaleciendo su identidad y cultura.</p>
-        <ul>
-          <li>Talleres artesanales: Alfarería, bordado, tejido, etc.</li>
-          <li>Talleres Gastronómicos: Aprender a preparar platillos locales con ingredientes de la región</li>
-          <li>Rutas de naturaleza y aventura guiadas por las comunidades locales como: Senderismo, montañismo y cañonismo.</li>
-          <img src="img/Turismo_10.jpg" alt="Turismo" loading="lazy">
-        </ul>
-      </section>
-
-      <section data-step="10">
-        <h2>Explora los estados</h2>
-        <p class="justificado">Haz clic en un estado en el mapa o en el listado para conocerlo más a fondo:</p>
-        <ul>
-          <li><a href="estados/baja_california_sur.html">Baja California Sur</a></li>
-          <li><a href="estados/hidalgo.html">Hidalgo</a></li>
-          <li><a href="estados/michoacan.html">Michoacán</a></li>
-          <li><a href="estados/morelos.html">Morelos</a></li>
-          <li><a href="estados/nayarit.html">Nayarit</a></li>
-          <li><a href="estados/oaxaca.html">Oaxaca</a></li>
-          <li><a href="estados/puebla.html">Puebla</a></li>
-          <li><a href="estados/tlaxcala.html">Tlaxcala</a></li>
-          <li><a href="estados/veracruz.html">Veracruz</a></li>
-        </ul>
-      </section>
-      <!-- Añade tantas secciones como necesites -->
-    </div>
-
-    <!-- Panel derecho: mapa -->
-    <div id="map"></div>
-  </div>
-
-  <!-- Scripts -->
-  <!-- Quitamos Leaflet JS aquí para evitar conflicto: la portada ahora usa Mapbox GL -->
-  <script src="js/scrollama.min.js"></script>
-
-  <!-- Inicialización Mapbox para la portada -->
-  <script>
-    // Token (puedes usar el tuyo)
-    mapboxgl.accessToken = 'pk.eyJ1IjoieW1pbGFuZXMiLCJhIjoiY21ka2hma2UzMHVteDJscXkwZTh0anF4MSJ9.q4g1xy38WkjzzsskgLkfgw';
-
-    // Mapa con estilo satélite + etiquetas
-    const map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/satellite-streets-v12',
-      center: [-102.55, 23.63],
-      zoom: 4.2,
-      projection: 'globe'
-    });
-    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-
-    // Helper para bounds de un GeoJSON
-    function geojsonBounds(gj){
-      const b = new mapboxgl.LngLatBounds();
-      const walk = (coords) => {
-        if (typeof coords[0] === 'number') b.extend(coords);
-        else coords.forEach(walk);
-      };
-      if (gj.type === 'FeatureCollection') gj.features.forEach(f => walk(f.geometry.coordinates));
-      else if (gj.type === 'Feature') walk(gj.geometry.coordinates);
-      else walk(gj.coordinates);
-      return b;
+document.addEventListener('DOMContentLoaded', () => {
+  // Observar cuando #map aparezca en viewport (lazy init)
+  const mapEl = document.getElementById('map');
+  const obs   = new IntersectionObserver((entries, observer) => {
+    if (entries[0].isIntersecting) {
+      observer.disconnect();
+      initMap();
     }
+  }, { rootMargin: '200px' });
+  obs.observe(mapEl);
+});
 
-    // Mapea nombre → slug
-    const slugMap = {
-      'Aguascalientes':'aguascalientes',
-      'Baja California':'baja_california',
-      'Baja California Sur':'baja_california_sur',
-      'Campeche':'campeche',
-      'Chiapas':'chiapas',
-      'Chihuahua':'chihuahua',
-      'Ciudad de México':'ciudad_de_mexico',
-      'Coahuila de Zaragoza':'coahuila',
-      'Colima':'colima',
-      'Durango':'durango',
-      'Guanajuato':'guanajuato',
-      'Guerrero':'guerrero',
-      'Hidalgo':'hidalgo',
-      'Jalisco':'jalisco',
-      'México':'estado_de_mexico',
-      'Michoacán de Ocampo':'michoacan',
-      'Morelos':'morelos',
-      'Nayarit':'nayarit',
-      'Nuevo León':'nuevo_leon',
-      'Oaxaca':'oaxaca',
-      'Puebla':'puebla',
-      'Querétaro':'queretaro',
-      'Quintana Roo':'quintana_roo',
-      'San Luis Potosí':'san_luis_potosi',
-      'Sinaloa':'sinaloa',
-      'Sonora':'sonora',
-      'Tabasco':'tabasco',
-      'Tamaulipas':'tamaulipas',
-      'Tlaxcala':'tlaxcala',
-      'Veracruz de Ignacio de la Llave':'veracruz',
-      'Yucatán':'yucatan',
-      'Zacatecas':'zacatecas'
-    };
+function initMap() {
+  // 1) Inicializar Leaflet
+  const isStatePage = window.location.pathname.includes('/estados/');
+  const basePath    = isStatePage ? '../' : '';
+  const map = L.map('map', { zoomControl: false })
+    .setView([23.6345, -102.5528], 5);
 
-    function slugify(s){
-      return s.toLowerCase()
-              .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-              .replace(/\s+/g,'_');
-    }
+  // 1a) BASE MAP: Mapbox con etiquetas (si hay token) o fallback OSM
+  const hasMapbox = typeof window !== 'undefined' && !!window.MAPBOX_TOKEN;
+  if (hasMapbox) {
+    const styleId = window.MAPBOX_STYLE || 'mapbox/satellite-streets-v12';
+    L.tileLayer(
+      `https://api.mapbox.com/styles/v1/${styleId}/tiles/512/{z}/{x}/{y}?access_token=${window.MAPBOX_TOKEN}`,
+      {
+        tileSize: 512,
+        zoomOffset: -1,
+        detectRetina: true,
+        attribution:
+          '© <a href="https://www.mapbox.com/">Mapbox</a> © <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+      }
+    ).addTo(map);
+  } else {
+    // Fallback a OSM si no hay token
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+  }
 
-    // Carga Estados_1.geojson, pinta y activa clic
-    const estadosURL = 'data/Estados_1.geojson';
-    fetch(estadosURL)
-      .then(r => r.json())
-      .then(geo => {
-        // Fuente
-        map.addSource('mx-estados', { type:'geojson', data: geo });
+  // 2) Determinar pageKey
+  const pageKey = isStatePage
+    ? window.location.pathname.split('/').pop().replace('.html','')
+    : 'index';
 
-        // Relleno y borde (verde)
-        map.addLayer({
-          id:'mx-fill',
-          type:'fill',
-          source:'mx-estados',
-          paint:{
-            'fill-color':'#2E8B57',
-            'fill-opacity':0.18
+  // 3) Slug map…
+  const slugMap = {
+    'Baja California Sur':             'baja_california_sur',
+    'Hidalgo':                         'hidalgo',
+    'Michoacán de Ocampo':             'michoacan',
+    'Morelos':                         'morelos',
+    'Nayarit':                         'nayarit',
+    'Oaxaca':                          'oaxaca',
+    'Puebla':                          'puebla',
+    'Tlaxcala':                        'tlaxcala',
+    'Veracruz de Ignacio de la Llave': 'veracruz'
+  };
+
+  // 4) URL de polígonos
+  const geoUrl = pageKey === 'index'
+    ? `${basePath}data/Estados_1.geojson`
+    : `${basePath}data/${pageKey}.geojson`;
+
+  // 5) Cargar polígonos
+  fetch(geoUrl)
+    .then(r => {
+      if (!r.ok) throw new Error(r.statusText);
+      return r.json();
+    })
+    .then(geojson => {
+      // 5a) Capa de polígonos
+      const layerGroup = L.geoJSON(geojson, {
+        style: f => ({
+          color: '#2E8B57',
+          weight: pageKey === 'index' ? 2 : 3,
+          fillOpacity: pageKey === 'index' ? 0.3 : 0.2
+        }),
+        onEachFeature: (feature, lyr) => {
+          lyr.options.interactive = true;
+          const name = feature.properties.Estado;
+          if (pageKey === 'index') {
+            lyr.on('mouseover', () => {
+              const el = lyr.getElement && lyr.getElement();
+              if (el) el.style.cursor = 'pointer';
+            });
+            lyr.on('click', () => {
+              const slug = slugMap[name] || slugify(name);
+              window.location.href = `estados/${slug}.html`;
+            });
+          } else {
+            // Popup en páginas de estado
+            const props = feature.properties || {};
+            let html = '<table>';
+            for (let k in props) {
+              html += `<tr><th>${k}</th><td>${props[k]}</td></tr>`;
+            }
+            html += '</table>';
+            lyr.bindPopup(html);
           }
-        });
-        map.addLayer({
-          id:'mx-line',
-          type:'line',
-          source:'mx-estados',
-          paint:{
-            'line-color':'#2E8B57',
-            'line-width': 1.5
-          }
-        });
-
-        // Fit a toda la república
-        const b = geojsonBounds(geo);
-        if (b && b.isEmpty && !b.isEmpty()) {
-          // (Mapbox v3 LngLatBounds no tiene isEmpty fiable; hacemos try-catch)
-          map.fitBounds(b, { padding: 40, duration: 800 });
-        } else {
-          map.fitBounds(b, { padding: 40, duration: 800 });
         }
+      }).addTo(map);
 
-        // Cursor y clic
-        map.on('mouseenter','mx-fill', () => map.getCanvas().style.cursor = 'pointer');
-        map.on('mouseleave','mx-fill', () => map.getCanvas().style.cursor = '');
+      // 5b) Vista inicial
+      const initialBounds = layerGroup.getBounds();
+      if (initialBounds.isValid()) {
+        map.fitBounds(initialBounds, { padding: [20,20] });
+      }
 
-        map.on('click','mx-fill', (e) => {
-          const f = e.features && e.features[0];
-          if (!f) return;
-          const props = f.properties || {};
-          const name = props.Estado || props.ESTADO || '';
-          const slug = slugMap[name] || slugify(name);
-          if (slug) {
-            window.location.href = `estados/${slug}.html`;
+      // ─── Scrollama para INDEX ───
+      if (pageKey === 'index') {
+        const featureLayers = layerGroup.getLayers();
+        const sc = scrollama();
+        sc.setup({
+          step: '#story section',
+          offset: 0.7,
+          progress: true
+        })
+        .onStepEnter(resp => {
+          document.querySelectorAll('#story section')
+            .forEach(s => s.classList.remove('is-active'));
+          resp.element.classList.add('is-active');
+
+          const layer = resp.index === 0
+            ? layerGroup
+            : featureLayers[resp.index - 1];
+          if (layer) {
+            map.fitBounds(layer.getBounds(), { padding: [20,20], maxZoom: 8 });
           }
         });
-      });
+        window.addEventListener('resize', () => {
+          sc.resize();
+          map.invalidateSize();
+        });
+      }
 
-    // Toggle del menú móvil
-    document.getElementById('nav-toggle')
-      .addEventListener('click', () => {
-        document.getElementById('nav-menu').classList.toggle('open');
-      });
-  </script>
-</body>
-</html>
+      // ─── Scrollama + puntos para BCS ───
+      if (pageKey === 'baja_california_sur') {
+        // Icono eco.svg
+        const ecoIcon = L.icon({
+          iconUrl: `${basePath}img/eco.svg`,
+          iconSize: [32,32],
+          iconAnchor: [16,32]
+        });
+
+        // Cargar y mostrar puntos
+        fetch(`${basePath}data/5_Puntos_BCS.geojson`)
+          .then(r => {
+            if (!r.ok) throw new Error(r.statusText);
+            return r.json();
+          })
+          .then(pointsGeojson => {
+            const points = pointsGeojson.features;
+
+            const pointsLayer = L.geoJSON(pointsGeojson, {
+              pointToLayer: (f, latlng) => L.marker(latlng, { icon: ecoIcon }),
+              onEachFeature: (f, lyr) => {
+                const raw   = f.properties;
+                const label = raw.Name || raw.name || raw.nombre || 'Sin título';
+                lyr.bindPopup(label);
+
+                // clic en icono -> zoom y activa sección
+                lyr.on('click', () => {
+                  if (map.hasLayer(layerGroup)) map.removeLayer(layerGroup);
+                  const b    = L.geoJSON(f).getBounds();
+                  const optZ = map.getBoundsZoom(b);
+                  const tz   = optZ > 4 ? optZ - 4 : optZ;
+                  map.flyToBounds(b, { padding: [20,20], maxZoom: tz });
+                  map.once('moveend', () => lyr.openPopup());
+
+                  const sec = document.querySelector(
+                    `#story section[data-index="${f.properties.id}"]`
+                  );
+                  if (sec) {
+                    document.querySelectorAll('#story section')
+                      .forEach(s => s.classList.remove('is-active'));
+                    sec.classList.add('is-active');
+                    sec.scrollIntoView({ behavior: 'smooth' });
+                  }
+                });
+              }
+            }).addTo(map);
+
+            const sc = scrollama();
+            sc.setup({
+              step: '#story section',
+              offset: 0.7,
+              progress: true
+            })
+            .onStepEnter(resp => {
+              document.querySelectorAll('#story section')
+                .forEach(s => s.classList.remove('is-active'));
+              resp.element.classList.add('is-active');
+
+              const idx = resp.element.dataset.index;
+              if (idx === '0') {
+                if (!map.hasLayer(layerGroup)) map.addLayer(layerGroup);
+                map.fitBounds(initialBounds, { padding: [20,20] });
+              } else {
+                if (map.hasLayer(layerGroup)) map.removeLayer(layerGroup);
+                const feat = points.find(f => f.properties.id === idx);
+                if (feat) {
+                  const bounds = L.geoJSON(feat).getBounds();
+                  const optZ   = map.getBoundsZoom(bounds);
+                  const tz     = optZ > 4 ? optZ - 4 : optZ;
+                  map.flyToBounds(bounds, { padding: [20,20], maxZoom: tz });
+                }
+              }
+            });
+            window.addEventListener('resize', () => {
+              sc.resize();
+              map.invalidateSize();
+            });
+          })
+          .catch(() => console.error('No se pudo cargar 5_Puntos_BCS.geojson'));
+      }
+
+    })
+    .catch(err => {
+      console.error('Error cargando GeoJSON:', err);
+      if (pageKey === 'index') alert('No se pudo cargar el mapa de estados.');
+    });
+}
+
+// helper slugify
+function slugify(name) {
+  return typeof name === 'string'
+    ? name.toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/\s+/g, '_')
+    : '';
+}
