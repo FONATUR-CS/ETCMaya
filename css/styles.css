@@ -18,7 +18,7 @@ html, body {
 #main-nav {
   position: fixed;
   top: 0; left: 0; width: 100%;
-  background: #e6d194;
+  background: #98989A;
   backdrop-filter: blur(6px);
   padding: 10px 30px;
   z-index: 1000;
