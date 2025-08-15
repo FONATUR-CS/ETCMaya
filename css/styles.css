@@ -110,7 +110,7 @@ html, body {
   width: 50%;
   padding: 30px 40px;
    /* Fondo con imagen */
-  background-image: url('../img/patron1.jpg');
+  background-image: url('../img/patron2.jpg');
   background-size: cover;          /* ocupa toda la pantalla */
   background-position: center;     /* centra la imagen */
   background-repeat: no-repeat;    /* no repetir */
@@ -123,12 +123,27 @@ html, body {
 }
 
 
-/* Imagen de cabecera (title.png) ocupa ancho completo */
-#story > img {
+/* Asegura un contexto de scroll para sticky del  footer*/
+#story {
+  position: relative;
+}
+
+/* La imagen del footer de cabecera se “pega” al borde inferior del panel izquierdo */
+#story > img.title-sticky {
+  position: sticky;
+  bottom: 0;               /* se mantiene pegada abajo */
   display: block;
   width: 100%;
   height: auto;
-  margin-bottom: 20px;
+  z-index: 2;
+  /* opcional: un pequeño padding de fondo para que no se pegue al borde */
+  margin-bottom: 0;
+}
+
+/* Sugerencia: para que el texto no quede “debajo” de la imagen cuando se pega,
+   reserva algo de espacio al final del panel (ajusta el valor a la altura aprox. de tu imagen). */
+#story {
+  padding-bottom: 140px;   /* ajusta según la altura de tittle.png */
 }
 
 /* Imágenes dentro de secciones ocupan ancho completo */
