@@ -14,7 +14,17 @@
     rel="stylesheet"
   />
 
-  <!-- Proyecto CSS -->
+  <!-- Orden de capas: primero gobmx (CDN), luego tu app -->
+  <style>@layer gobmx, app;</style>
+  
+  <!-- CSS del CDN en la capa "gobmx" -->
+  <link
+    href="https://framework-gb.cdn.gob.mx/gm/v3/assets/styles/main.css"
+    rel="stylesheet"
+    layer="gobmx"
+  />
+  
+  <!-- Tu CSS (se queda como ya lo tienes después del CDN) -->
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
