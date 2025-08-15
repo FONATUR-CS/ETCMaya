@@ -1,5 +1,29 @@
-/* Importa Noto Sans */
+/* (Si usas Google Fonts vía @import, déjalo primero) */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap');
+
+/* Abre la capa de tu app */
+@layer app {
+
+/* ⬇️ Tu CSS actual tal cual (no borres nada) ⬇️ */
+/* RESET */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+/* ... todo lo que ya tienes ... */
+
+/* Al final (o donde prefieras dentro de la capa app) 
+   haz que TODOS los h2 “hereden” lo del CDN (capa gobmx) */
+h2 {
+  font: revert-layer;
+  font-size: revert-layer;
+  font-weight: revert-layer;
+  line-height: revert-layer;
+  letter-spacing: revert-layer;
+  text-transform: revert-layer;
+  color: revert-layer;
+  margin: revert-layer;
+}
+
+/* Cierra la capa de tu app */
+}
 
 /* RESET */
 * {
