@@ -82,11 +82,11 @@ html, body {
 
 /* Colores del texto del nav sobre imagen */
 #main-nav a {
-  color: #fff;                  /* blanco sobre imagen */
+  color: #3a0732;                  /* color de texto */
 }
 #main-nav a:hover,
 #main-nav a.active {
-  background: #2E8B57;          /* respeta tu verde */
+  background: #ea5189;          /* color de selección de la barra superior */
   color: #fff;
 }
 
@@ -105,12 +105,12 @@ html, body {
   margin-top: 60px;
 }
 
-/* PANEL IZQUIERDO SUPERIOR */
+/* PANEL IZQUIERDO SUPERIOR PRINCIPAL */
 #story {
   width: 50%;
   padding: 30px 40px;
    /* Fondo con imagen */
-  background-image: url('../img/patron2.jpg');
+  background-image: url('../img/patron1.jpg');
   background-size: cover;          /* ocupa toda la pantalla */
   background-position: center;     /* centra la imagen */
   background-repeat: no-repeat;    /* no repetir */
