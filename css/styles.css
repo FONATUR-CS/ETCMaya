@@ -54,7 +54,7 @@ html, body {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 
   /* Igual que el body */
-  background-image: url('../img/patron1.jpg');
+  background-image: url('../img/patron2.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -86,7 +86,7 @@ html, body {
 }
 #main-nav a:hover,
 #main-nav a.active {
-  background: #ea5189;          /* color de selección de la barra superior */
+  background: #c2a9d1;          /* color de selección de la barra superior */
   color: #fff;
 }
 
