@@ -70,7 +70,7 @@ html, body {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.35); /* ajusta la opacidad a tu gusto */
+  background: rgba(0,0,0,0); /* ajusta la opacidad a tu gusto */
   pointer-events: none;
 }
 
