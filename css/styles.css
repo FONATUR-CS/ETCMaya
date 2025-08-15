@@ -31,6 +31,25 @@ h2 {
   margin: 0;
   padding: 0;
 }
+
+/* ============================ */
+/*  VARIABLES GLOBALES          */
+/* ============================ */
+:root {
+  font-size: 16px;
+  --primary: #2E8B57;
+  --light-bg: #fafafa;
+
+  /* 🆕 alturas para cálculos del sticky inferior */
+  --nav-h: 60px;                               /* altura de tu navbar fija */
+  --title-h: clamp(72px, 14vw, 140px);         /* altura visible del banner */
+}
+
+/* Ajuste de fuente en móviles */
+@media (max-width: 768px) {
+  :root { font-size: 14px; }
+}
+
 /* pagina principal izquierda segunda */
 html, body {
   height: 100%;
@@ -38,12 +57,11 @@ html, body {
   color: #fff;
   /* Fondo con imagen */
   background-image: url('../img/patron1.jpg');
-  background-size: cover;          /* ocupa toda la pantalla */
-  background-position: center;     /* centra la imagen */
-  background-repeat: no-repeat;    /* no repetir */
-  background-attachment: fixed;    /* efecto sutil al hacer scroll (desactiva en móvil abajo) */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
-
 
 /* NAV FIJA con imagen de fondo como el body */
 #main-nav {
@@ -53,79 +71,55 @@ html, body {
   z-index: 1000;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 
-  /* Igual que el body */
   background-image: url('../img/patron2.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed; /* mismo efecto */
-
-  /* quita el color de fondo sólido anterior */
-  /* background: #98989A;  <- quítalo */
-  /* backdrop-filter: blur(6px); <- opcional: puedes quitarlo si ya no quieres blur */
+  background-attachment: fixed;
 }
 
-/* Le ponemos un velo para legibilidad del texto del menú */
 #main-nav::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0); /* ajusta la opacidad a tu gusto */
+  background: rgba(0,0,0,0);
   pointer-events: none;
 }
+#main-nav > * { position: relative; z-index: 1; }
 
-/* Asegurar que el contenido del nav quede por encima del velo */
-#main-nav > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* Colores del texto del nav sobre imagen */
-#main-nav a {
-  color: #3a0732;                  /* color de texto */
-}
+#main-nav a { color: #3a0732; }
 #main-nav a:hover,
 #main-nav a.active {
-  background: #c2a9d1;          /* color de selección de la barra superior */
+  background: #c2a9d1;
   color: #fff;
 }
 
-/* Fallback en móviles (evita saltos de 'background-attachment: fixed' en iOS) */
+/* Fallback en móviles */
 @media (max-width: 768px) {
-  #main-nav {
-    background-attachment: scroll;
-  }
+  #main-nav { background-attachment: scroll; }
 }
-
 
 /* CONTENEDOR PRINCIPAL */
 #container {
   display: flex;
-  height: calc(100vh - 60px);
-  margin-top: 60px;
+  height: calc(100vh - var(--nav-h));
+  margin-top: var(--nav-h);
 }
 
 /* PANEL IZQUIERDO SUPERIOR PRINCIPAL */
 #story {
   width: 50%;
   padding: 30px 40px;
-   /* Fondo con imagen */
   background-image: url('../img/patron1.jpg');
-  background-size: cover;          /* ocupa toda la pantalla */
-  background-position: center;     /* centra la imagen */
-  background-repeat: no-repeat;    /* no repetir */
-  background-attachment: fixed;    /* efecto sutil al hacer scroll (desactiva en móvil abajo) */
-}
-  /* SIN overflow-y, altura natural */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 
-#map {
-  /* igual que antes */
-}
-
-
-/* Asegura un contexto de scroll para sticky del  footer*/
-#story {
-  position: relative;
+  /* 🆕 contexto para sticky y espacio para que el banner no tape el contenido final */
+  position: relative;                                /* necesario para sticky */
+  padding-top: 0;                                    /* sin doble espacio arriba */
+  padding-bottom: calc(var(--title-h) + 16px);       /* 🆕 reserva espacio al final */
 }
 
 /* --- Reset de reglas antiguas que pudieran estar flotando la imagen --- */
@@ -137,25 +131,25 @@ html, body {
   margin: 0 !important;
 }
 
-/* --- Banner del título consistente en todas las páginas --- */
+/* ============================ */
+/*  BANNER “TITTLE” STICKY ABAJO */
+/* ============================ */
+/* 🆕: el truco para “pegarlo abajo” del panel es usar sticky con un top calculado
+       igual a la altura de la ventana menos navbar menos la altura del banner */
 .story-title {
-  position: sticky;          /* siempre visible al hacer scroll en el panel */
-  top: 70px;                 /* justo debajo de tu navbar (ajusta si tu nav mide distinto) */
+  position: sticky;
+  top: calc(100vh - var(--nav-h) - var(--title-h));  /* 🆕 “pegado abajo” del panel */
+  height: var(--title-h);                             /* 🆕 altura controlada */
   z-index: 2;
-  padding: 8px 0 14px;       /* algo de respiro */
-  background: linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0)); /* halo sutil */
+  padding: 6px 0 10px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0)); /* halo sutil */
 }
-
 .story-title img {
   display: block;
+  height: 100%;
   width: 100%;
-  height: auto;
+  object-fit: contain;   /* respeta proporción dentro del alto fijo */
 }
-
-/* Asegura el layout bajo la barra fija */
-#container { margin-top: 60px; }   /* ya lo tenías, mantenlo acorde a la altura del nav */
-#story { padding-top: 0; }         /* evita doble espacio arriba */
-
 
 /* Imágenes dentro de secciones ocupan ancho completo */
 #story section img {
@@ -172,9 +166,7 @@ html, body {
   opacity: 0.8;
   transition: opacity 0.4s;
 }
-#story section.is-active {
-  opacity: 1;
-}
+#story section.is-active { opacity: 1; }
 #story h2 {
   font-size: 1.8em;
   margin-bottom: 0.5em;
@@ -185,30 +177,18 @@ html, body {
   line-height: 1.6;
   text-align: justify;
 }
-#story ul {
-  margin-left: 1.2em;
-  list-style-type: disc;
-}
-#story li {
-  margin-bottom: 0.6em;
-  transition: color 0.3s;
-}
-#story li a {
-  text-decoration: none;
-  color: #2E8B57;
-}
-#story li a:hover {
-  text-decoration: underline;
-  color: #196742;
-}
+#story ul { margin-left: 1.2em; list-style-type: disc; }
+#story li { margin-bottom: 0.6em; transition: color 0.3s; }
+#story li a { text-decoration: none; color: #2E8B57; }
+#story li a:hover { text-decoration: underline; color: #196742; }
 
 /* PANEL DERECHO (MAPA) */
 #map {
   position: fixed;
-  top: 60px;
+  top: var(--nav-h);
   right: 0;
   width: 50%;
-  height: calc(100% - 60px);
+  height: calc(100% - var(--nav-h));
   z-index: 500;
   border-left: 2px solid #e0e0e0;
   box-shadow: -2px 0 4px rgba(0,0,0,0.05);
@@ -217,33 +197,10 @@ html, body {
 }
 
 /* Scrollbar personalizado para #story */
-#story::-webkit-scrollbar {
-  width: 8px;
-}
-#story::-webkit-scrollbar-track {
-  background: #f0f0f0;
-  border-radius: 4px;
-}
-#story::-webkit-scrollbar-thumb {
-  background: #cccccc;
-  border-radius: 4px;
-}
-#story::-webkit-scrollbar-thumb:hover {
-  background: #aaaaaa;
-}
-
-/* ============================ */
-/*  FUENTE BASE Y VARIABLES     */
-:root {
-  font-size: 16px;
-  --primary: #2E8B57;
-  --light-bg: #fafafa;
-}
-
-/* Ajuste de fuente en móviles */
-@media (max-width: 768px) {
-  :root { font-size: 14px; }
-}
+#story::-webkit-scrollbar { width: 8px; }
+#story::-webkit-scrollbar-track { background: #f0f0f0; border-radius: 4px; }
+#story::-webkit-scrollbar-thumb { background: #cccccc; border-radius: 4px; }
+#story::-webkit-scrollbar-thumb:hover { background: #aaaaaa; }
 
 /* ============================ */
 /*  MENÚ HAMBURGUESA            */
@@ -259,7 +216,6 @@ html, body {
   display: flex;
   gap: 1em;
 }
-/* Para móviles */
 @media (max-width: 768px) {
   #nav-toggle {
     display: block;
@@ -280,9 +236,7 @@ html, body {
     transition: transform 0.3s ease;
     box-shadow: -2px 0 8px rgba(0,0,0,0.1);
   }
-  #nav-menu.open {
-    transform: translateX(0);
-  }
+  #nav-menu.open { transform: translateX(0); }
   #nav-menu li + li { margin-top: 1em; }
 }
 
@@ -295,17 +249,17 @@ html, body {
 @media (max-width: 768px) {
   #container {
     display: block;
-    margin-top: 60px;
+    margin-top: var(--nav-h);
   }
   #story {
     width: 100%;
-    max-height: 50vh;
-    position: relative;
+    max-height: none;                 /* 🆕 no recortar en móvil */
     border-bottom: 1px solid #ccc;
+    background-attachment: scroll;    /* suaviza en iOS */
   }
   #map {
     width: 100%;
-    height: calc(50vh - 1px);
+    height: 50vh;
     position: relative;
     top: auto; right: auto;
     border-top: 1px solid #ccc;
