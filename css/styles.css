@@ -128,23 +128,34 @@ html, body {
   position: relative;
 }
 
-/* La imagen del footer de cabecera se “pega” al borde inferior del panel izquierdo */
-#story > img.title-sticky {
-  position: sticky;
-  bottom: 0;               /* se mantiene pegada abajo */
+/* --- Reset de reglas antiguas que pudieran estar flotando la imagen --- */
+#story > img { 
+  position: static !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  margin: 0 !important;
+}
+
+/* --- Banner del título consistente en todas las páginas --- */
+.story-title {
+  position: sticky;          /* siempre visible al hacer scroll en el panel */
+  top: 70px;                 /* justo debajo de tu navbar (ajusta si tu nav mide distinto) */
+  z-index: 2;
+  padding: 8px 0 14px;       /* algo de respiro */
+  background: linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0)); /* halo sutil */
+}
+
+.story-title img {
   display: block;
   width: 100%;
   height: auto;
-  z-index: 2;
-  /* opcional: un pequeño padding de fondo para que no se pegue al borde */
-  margin-bottom: 0;
 }
 
-/* Sugerencia: para que el texto no quede “debajo” de la imagen cuando se pega,
-   reserva algo de espacio al final del panel (ajusta el valor a la altura aprox. de tu imagen). */
-#story {
-  padding-bottom: 140px;   /* ajusta según la altura de tittle.png */
-}
+/* Asegura el layout bajo la barra fija */
+#container { margin-top: 60px; }   /* ya lo tenías, mantenlo acorde a la altura del nav */
+#story { padding-top: 0; }         /* evita doble espacio arriba */
+
 
 /* Imágenes dentro de secciones ocupan ancho completo */
 #story section img {
