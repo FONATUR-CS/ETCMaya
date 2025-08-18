@@ -40,9 +40,9 @@ h2 {
   --primary: #2E8B57;
   --light-bg: #fafafa;
 
-  /* 🆕 alturas para cálculos del sticky inferior */
+  /* alturas para cálculos */
   --nav-h: 60px;                               /* altura de tu navbar fija */
-  --title-h: clamp(72px, 14vw, 140px);         /* altura visible del banner */
+  --footer-h: clamp(56px, 8vw, 90px);          /* 🆕 altura del banner inferior independiente */
 }
 
 /* Ajuste de fuente en móviles */
@@ -116,10 +116,10 @@ html, body {
   background-repeat: no-repeat;
   background-attachment: fixed;
 
-  /* 🆕 contexto para sticky y espacio para que el banner no tape el contenido final */
-  position: relative;                                /* necesario para sticky */
-  padding-top: 0;                                    /* sin doble espacio arriba */
-  padding-bottom: calc(var(--title-h) + 16px);       /* 🆕 reserva espacio al final */
+  /* contexto + reserva de espacio para que el banner no tape el contenido final */
+  position: relative;
+  padding-top: 0;
+  padding-bottom: calc(var(--footer-h) + 16px);   /* 🆕 espacio para el #footer-banner */
 }
 
 /* --- Reset de reglas antiguas que pudieran estar flotando la imagen --- */
@@ -132,23 +132,24 @@ html, body {
 }
 
 /* ============================ */
-/*  BANNER “TITTLE” STICKY ABAJO */
+/*  BANNER INFERIOR INDEPENDIENTE */
 /* ============================ */
-/* 🆕: el truco para “pegarlo abajo” del panel es usar sticky con un top calculado
-       igual a la altura de la ventana menos navbar menos la altura del banner */
-.story-title {
-  position: sticky;
-  top: calc(100vh - var(--nav-h) - var(--title-h));  /* 🆕 “pegado abajo” del panel */
-  height: var(--title-h);                             /* 🆕 altura controlada */
-  z-index: 2;
-  padding: 6px 0 10px;
-  background: linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0)); /* halo sutil */
+#footer-banner {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 1200;                 /* por encima del mapa y del story */
+  display: flex;
+  justify-content: center;
+  pointer-events: none;          /* no bloquea clicks del mapa/story; pon 'auto' si necesitas clics */
+  /* Opcional: velo para legibilidad
+  background: linear-gradient(180deg, transparent, rgba(0,0,0,.25));
+  */
 }
-.story-title img {
+#footer-banner img {
+  max-height: var(--footer-h);
+  width: auto;
+  margin: 8px 0;
   display: block;
-  height: 100%;
-  width: 100%;
-  object-fit: contain;   /* respeta proporción dentro del alto fijo */
 }
 
 /* Imágenes dentro de secciones ocupan ancho completo */
@@ -253,9 +254,10 @@ html, body {
   }
   #story {
     width: 100%;
-    max-height: none;                 /* 🆕 no recortar en móvil */
+    max-height: none;                 /* no recortar en móvil */
     border-bottom: 1px solid #ccc;
     background-attachment: scroll;    /* suaviza en iOS */
+    padding-bottom: calc(var(--footer-h) + 12px); /* reserva menor en móvil */
   }
   #map {
     width: 100%;
@@ -264,4 +266,5 @@ html, body {
     top: auto; right: auto;
     border-top: 1px solid #ccc;
   }
+  #footer-banner img { max-height: calc(var(--footer-h) * 0.8); }
 }
