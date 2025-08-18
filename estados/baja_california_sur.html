@@ -9,6 +9,9 @@
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet"/>
 
+  <!-- (NUEVO) Hoja de estilos del CDN para fuente "Patria" -->
+  <link href="https://framework-gb.cdn.gob.mx/gm/v3/assets/styles/main.css" rel="stylesheet">
+
   <!-- anime.js (para el pulso) -->
   <script src="https://unpkg.com/animejs@3.2.1/lib/anime.min.js"></script>
 
@@ -60,16 +63,26 @@
     }
     .story-content.active { transform: translateY(0); opacity:1; }
     .story-content h1 { font-size: 2.2rem; margin-bottom:.5rem; }
-    .story-content h2 { font-size: 1.5rem; margin-bottom:.35rem; color:#FFF2D2; justify-content:center;}
+
+    /* ⇩⇩ (ACTUALIZADO) H2 usa Patria desde el CDN ⇩⇩ */
+    .story-content h2 {
+      font-family: 'Patria', 'Noto Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin-bottom:.35rem;
+      color:#FFF2D2;
+      justify-content:center;
+    }
+
     .story-content p  { font-size:.98rem; line-height:1.55; color: #eaeaea; justify-content:center;}
     .story-content img { width:100%; height:auto; border-radius:10px; margin-top:12px; }
 
     .intro-title {
-        background: none;                 /* quita el degradado */
-        -webkit-background-clip: initial; /* anula el clip */
+        background: none;
+        -webkit-background-clip: initial;
         background-clip: initial;
-        color: #FFF2D2;                   /* color sólido */
-        -webkit-text-fill-color: #FFF2D2; /* evita que quede transparente en Safari */
+        color: #FFF2D2;
+        -webkit-text-fill-color: #FFF2D2;
         font-size: 2.6rem; font-weight: 800; margin-bottom: 12px;
         text-align:center;
     }
