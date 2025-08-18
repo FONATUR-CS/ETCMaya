@@ -9,15 +9,13 @@
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet"/>
 
-  <!-- anime.js (para el efecto "pulse") -->
+  <!-- anime.js (para el pulso) -->
   <script src="https://unpkg.com/animejs@3.2.1/lib/anime.min.js"></script>
 
-  <!-- Estilos -->
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family: 'Noto Sans', system-ui, Arial, sans-serif; color:#fff; background:#000; }
 
-    /* NAV FIJA */
     #main-nav {
       position: fixed; top: 0; left: 0; width: 100%;
       background: #ffffffee; color: #333; z-index: 10000;
@@ -27,10 +25,7 @@
     #main-nav a { text-decoration:none; color:#555; font-weight:700; padding:6px 8px; border-radius:4px; }
     #main-nav a.active, #main-nav a:hover { background:#2E8B57; color:#fff; }
 
-    /* MAPA a pantalla completa (debajo de la navbar) */
     #map { position: fixed; top: 56px; left:0; right:0; height: calc(100vh - 56px); z-index:1; }
-
-    /* Contenedor de historia (se apila sobre el mapa) */
     #story { position: relative; z-index: 2; }
 
     .story-section {
@@ -58,10 +53,9 @@
 
     .story-content h1 { font-size: 2.2rem; margin-bottom:.5rem; }
     .story-content h2 { font-size: 1.5rem; margin-bottom:.35rem; color:#2ED573; }
-    .story-content p { font-size:.98rem; line-height:1.55; color: #eaeaea; }
+    .story-content p  { font-size:.98rem; line-height:1.55; color: #eaeaea; }
     .story-content img { width:100%; height:auto; border-radius:10px; margin-top:12px; }
 
-    /* Cabecera/título grande */
     .intro-title {
       background: linear-gradient(135deg, #00d4ff, #ffffff, #00a8cc);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -69,20 +63,15 @@
       font-size: 2.6rem; font-weight: 800; margin-bottom: 12px;
       text-align:center;
     }
-    .intro-sub { text-align:center; color:#00d4ff; margin-bottom: 10px; }
 
-    /* Navegación por puntos (capítulos) */
     .chapter-nav {
       position: fixed; left: 14px; top: 50%; transform: translateY(-50%);
       z-index: 10; display:flex; flex-direction:column; gap:10px;
     }
-    .nav-dot {
-      width: 10px; height:10px; border-radius:50%; background: rgba(255,255,255,.45);
-      cursor:pointer; transition:.25s; border:2px solid transparent;
-    }
+    .nav-dot { width: 10px; height:10px; border-radius:50%; background: rgba(255,255,255,.45);
+      cursor:pointer; transition:.25s; border:2px solid transparent; }
     .nav-dot.active { background:#00d4ff; box-shadow: 0 0 12px rgba(0,212,255,.55); transform: scale(1.2); }
 
-    /* Popups Mapbox */
     .mapboxgl-popup-content {
       background: rgba(0,0,0,0.95) !important;
       border-radius: 12px !important;
@@ -90,7 +79,6 @@
       color: white !important;
       padding: 12px !important;
     }
-    .port-name { font-weight:700; color:#00d4ff; margin-bottom:4px; }
 
     @media (max-width: 768px) {
       .story-content { width: calc(100% - 32px); margin: 0 16px; }
@@ -184,79 +172,53 @@
   <script>
     // === CONFIG ===
     const ACCESS_TOKEN = 'pk.eyJ1IjoiY2hheXZvbHRhIiwiYSI6ImNsdGRlNml1NDAyaXgyanJ3eXYzdGQ0MmEifQ.VH5UyDCjvPQ1X_KrkkHcZQ';
-    const BASE       = '../';
+    const BASE = '../';
     const STATE_GEO  = BASE + 'data/baja_california_sur.geojson';
     const POINTS_GEO = BASE + 'data/5_Puntos_BCS.geojson';
-    const ICON_URL   = BASE + 'img/eco.svg'; // color #691b32 dentro del SVG
+    const ICON_URL   = BASE + 'img/eco.svg';
 
-    // Capítulos (de intro y BCS_1..BCS_5)
-    const chapters = ['intro','BCS_1','BCS_2','BCS_3','BCS_4','BCS_5'];
-    let currentChapter = 'intro';
-
-    let map;
-    let pointsData = null;
-    let stateBounds = null;
-
-    // Pulsado (anime.js)
-    let pulseAnim = null;   // handler de anime
-    let activeId  = null;   // id del punto activo
+    let map, pointsData = null, stateBounds = null;
+    let pulseAnim = null, activeId = null; // <<< para el pulso
 
     mapboxgl.accessToken = ACCESS_TOKEN;
     map = new mapboxgl.Map({
       container:'map',
-      style:'mapbox://styles/mapbox/satellite-streets-v12', // sat + etiquetas
+      style:'mapbox://styles/mapbox/satellite-streets-v12',
       center:[-111.7, 26.5],
-      zoom:5,
-      pitch:0,
-      bearing:0,
-      projection:'globe'
+      zoom:5, pitch:0, bearing:0, projection:'globe'
     });
-
     map.addControl(new mapboxgl.NavigationControl({ visualizePitch:true }), 'top-right');
 
     map.on('load', async () => {
-      // — 1) Polígono del estado
+      // Estado
       const state = await fetch(STATE_GEO).then(r=>r.json());
       stateBounds = getGeoJSONBounds(state);
       map.addSource('bcs-poly',{ type:'geojson', data: state });
+      map.addLayer({ id:'bcs-fill', type:'fill', source:'bcs-poly',
+        paint:{ 'fill-color':'#2E8B57', 'fill-opacity':0.18 }});
+      map.addLayer({ id:'bcs-line', type:'line', source:'bcs-poly',
+        paint:{ 'line-color':'#2E8B57', 'line-width':2 }});
 
-      map.addLayer({
-        id:'bcs-fill',
-        type:'fill',
-        source:'bcs-poly',
-        paint:{ 'fill-color':'#2E8B57', 'fill-opacity':0.18 }
-      });
-      map.addLayer({
-        id:'bcs-line',
-        type:'line',
-        source:'bcs-poly',
-        paint:{ 'line-color':'#2E8B57', 'line-width':2 }
-      });
-
-      // — 2) Puntos
+      // Puntos
       pointsData = await fetch(POINTS_GEO).then(r=>r.json());
       map.addSource('bcs-points',{ type:'geojson', data: pointsData });
 
-      // Icono personalizado
+      // Icono
       const img = new Image(32,32);
       img.src = ICON_URL;
       img.onload = () => {
         if (!map.hasImage('eco')) map.addImage('eco', img, { pixelRatio: 2 });
-        addPointLayer();
+        addPointLayers();
       };
 
-      // Ajuste a bounds del estado
-      if (stateBounds) {
-        map.fitBounds(stateBounds, { padding: 40, duration: 800 });
-      }
+      if (stateBounds) { map.fitBounds(stateBounds, { padding: 40, duration: 800 }); }
 
       setupStory();
       setupNavDots();
-      setupPointClicks();
     });
 
-    function addPointLayer(){
-      // Capa base (ícono + etiqueta)
+    // Capa base + capa activa para pulso
+    function addPointLayers(){
       if (!map.getLayer('bcs-symbols')) {
         map.addLayer({
           id:'bcs-symbols',
@@ -264,7 +226,7 @@
           source:'bcs-points',
           layout:{
             'icon-image': 'eco',
-            'icon-size': 3,         // tamaño grande (mantengo tu cambio)
+            'icon-size': 3,
             'icon-allow-overlap': true,
             'text-field': ['get','Name'],
             'text-size': 14,
@@ -279,25 +241,23 @@
           }
         });
       }
-
-      // Capa activa (solo ícono) para efecto pulse
       if (!map.getLayer('bcs-symbols-active')) {
         map.addLayer({
           id: 'bcs-symbols-active',
           type: 'symbol',
           source: 'bcs-points',
-          filter: ['==', ['get','id'], '__none__'], // nada seleccionado al inicio
+          filter: ['==', ['get','id'], '__none__'],
           layout: {
             'icon-image': 'eco',
-            'icon-size': 3.2,        // base del pulso (ligeramente más grande que la base)
+            'icon-size': 3.2,           // base del pulso
             'icon-allow-overlap': true,
-            'text-field': ''         // sin texto para no duplicar etiqueta
+            'text-field': ''            // sin etiqueta en la capa activa
           }
         });
       }
     }
 
-    // === Pulse helpers (anime.js) ===
+    // Arrancar / parar pulso
     function stopPulse() {
       if (pulseAnim) { pulseAnim.pause(); pulseAnim = null; }
       activeId = null;
@@ -305,7 +265,6 @@
         map.setFilter('bcs-symbols-active', ['==', ['get','id'], '__none__']);
       }
     }
-
     function startPulseFor(id) {
       if (!map.getLayer('bcs-symbols-active')) return;
       const targetId = String(id);
@@ -314,70 +273,45 @@
       activeId = targetId;
       map.setFilter('bcs-symbols-active', ['==', ['get','id'], activeId]);
 
-      // Reiniciar animación
       if (pulseAnim) pulseAnim.pause();
-      const state = { s: 3.2 }; // arranca con 3.2 (coincide con layout)
+      const state = { s: 3.2 };
       pulseAnim = anime({
         targets: state,
-        s: [3.2, 4.2],                 // “respira” de 3.2 a 4.2
+        s: [3.2, 4.2],
         duration: 900,
         direction: 'alternate',
         easing: 'easeInOutSine',
         loop: true,
-        update: () => {
-          map.setLayoutProperty('bcs-symbols-active', 'icon-size', state.s);
-        }
+        update: () => map.setLayoutProperty('bcs-symbols-active', 'icon-size', state.s)
       });
     }
 
-    function setupPointClicks() {
-      const popup = new mapboxgl.Popup({ offset: 16, closeButton: true });
-
-      map.on('click','bcs-symbols', (e) => {
-        const f = e.features && e.features[0];
-        if (!f) return;
-
-        const props = f.properties;
-        const title = props.Name || props.nombre || 'Sitio';
-        const desc  = props.descripcion || '';
-        popup
-          .setLngLat(e.lngLat)
-          .setHTML(`<div class="port-name">${title}</div><div>${desc}</div>`)
-          .addTo(map);
-
-        const id = props.id;
-        flyToFeatureId(id);
-        scrollToChapter(id);
-        startPulseFor(id); // ← activa pulse al hacer clic
-      });
-
-      map.on('mouseenter','bcs-symbols', () => map.getCanvas().style.cursor = 'pointer');
-      map.on('mouseleave','bcs-symbols', () => map.getCanvas().style.cursor = '');
-    }
-
+    // Story / “scrollama”
     function setupStory(){
       const options = { threshold: 0.6 };
       const obs = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (!entry.isIntersecting) return;
           const chap = entry.target.dataset.chapter;
-          if (chap === currentChapter) return;
 
-          currentChapter = chap;
-          updateDots();
-
+          // activar tarjeta
+          document.querySelectorAll('.story-content').forEach(s => s.classList.remove('active'));
           const box = entry.target.querySelector('.story-content');
           if (box) box.classList.add('active');
 
           if (chap === 'intro') {
+            // Intro: mostrar polígono y detener pulso
             setPolygonVisibility(true);
-            stopPulse(); // ← detener pulso en intro
-            if (stateBounds) map.fitBounds(stateBounds, { padding: 40, duration: 1200 });
+            stopPulse();
+            if (stateBounds) map.flyToBounds(stateBounds, { padding: 40, duration: 1200 });
           } else {
+            // Capítulo: ocultar polígono, volar al punto y arrancar pulso
             setPolygonVisibility(false);
             flyToFeatureId(chap);
-            startPulseFor(chap); // ← activar pulso para capítulo activo
+            startPulseFor(chap);
           }
+
+          updateDots(chap);
         });
       }, options);
 
@@ -394,9 +328,9 @@
       });
     }
 
-    function updateDots(){
+    function updateDots(current){
       document.querySelectorAll('.nav-dot').forEach(dot => {
-        dot.classList.toggle('active', dot.dataset.chapter === currentChapter);
+        dot.classList.toggle('active', dot.dataset.chapter === current);
       });
     }
 
@@ -414,32 +348,15 @@
       map.flyTo({ center: coords, zoom: 9.5, pitch: 35, bearing: 0, duration: 1400, essential: true });
     }
 
-    function scrollToChapter(id){
-      const sec = document.querySelector(`[data-chapter="${id}"]`);
-      if (!sec) return;
-      document.querySelectorAll('.story-content').forEach(s => s.classList.remove('active'));
-      const box = sec.querySelector('.story-content');
-      if (box) box.classList.add('active');
-      sec.scrollIntoView({ behavior:'smooth', block:'center' });
-    }
-
-    // Utilidad: bounds de un GeoJSON (Polygon/MultiPolygon)
     function getGeoJSONBounds(gj){
       const b = new mapboxgl.LngLatBounds();
       const eachCoord = (coords) => {
-        if (typeof coords[0] === 'number') {
-          b.extend(coords);
-        } else {
-          coords.forEach(eachCoord);
-        }
+        if (typeof coords[0] === 'number') b.extend(coords);
+        else coords.forEach(eachCoord);
       };
-      if (gj.type === 'FeatureCollection') {
-        gj.features.forEach(ft => eachCoord(ft.geometry.coordinates));
-      } else if (gj.type === 'Feature') {
-        eachCoord(gj.geometry.coordinates);
-      } else if (gj.type === 'Polygon' || gj.type === 'MultiPolygon') {
-        eachCoord(gj.coordinates);
-      }
+      if (gj.type === 'FeatureCollection') gj.features.forEach(ft => eachCoord(ft.geometry.coordinates));
+      else if (gj.type === 'Feature') eachCoord(gj.geometry.coordinates);
+      else if (gj.type === 'Polygon' || gj.type === 'MultiPolygon') eachCoord(gj.coordinates);
       return b;
     }
   </script>
