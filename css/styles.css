@@ -233,5 +233,62 @@ html, body {
 }
 @media (max-width: 768px) {
   #nav-toggle {
-    display
-::contentReference[oaicite:0]{index=0}
+    display: block;
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    z-index: 1200;
+  }
+  #nav-menu {
+    position: fixed;
+    top: 0; right: 0;
+    background: white;
+    height: 100%;
+    width: 75%;
+    transform: translateX(100%);
+    flex-direction: column;
+    padding: 80px 20px;
+    transition: transform 0.3s ease;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+  }
+  #nav-menu.open { transform: translateX(0); }
+  #nav-menu li + li { margin-top: 1em; }
+}
+
+/* ============================ */
+/*  LAYOUT RESPONSIVE           */
+@media (max-width: 1024px) {
+  #story { width: 60%; }
+  #map   { width: 40%; }
+}
+@media (max-width: 768px) {
+  #container {
+    display: block;
+    margin-top: var(--nav-h);
+  }
+  #story {
+    width: 100%;
+    max-height: none;
+    border-bottom: 1px solid #ccc;
+    background-attachment: scroll;
+    padding-bottom: calc(var(--footer-h) + 12px);
+  }
+  #map {
+    width: 100%;
+    /* restamos también el banner en móvil */
+    height: calc(50vh - var(--footer-h));
+    position: relative;
+    top: auto; right: auto;
+    border-top: 1px solid #ccc;
+  }
+  #footer-banner img { padding: 6px 10px; }
+}
+
+/* === Tipografía del panel superior (navbar) ===
+   PÉGALO AL FINAL DEL CSS, FUERA DE @media Y @layer */
+#main-nav,
+#main-nav a,
+#nav-menu a {
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: 400; /* regular */
+}
