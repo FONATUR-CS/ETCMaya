@@ -40,9 +40,9 @@ h2 {
   --primary: #2E8B57;
   --light-bg: #fafafa;
 
-  /* alturas para cálculos */
-  --nav-h: 60px;                               /* altura de tu navbar fija */
-  --footer-h: clamp(56px, 8vw, 90px);          /* 🆕 altura del banner inferior independiente */
+  /* alturas de elementos fijos */
+  --nav-h: 60px;                         /* navbar superior fija */
+  --footer-h: clamp(56px, 8vw, 90px);    /* banner inferior fijo */
 }
 
 /* Ajuste de fuente en móviles */
@@ -106,7 +106,7 @@ html, body {
   margin-top: var(--nav-h);
 }
 
-/* PANEL IZQUIERDO SUPERIOR PRINCIPAL */
+/* PANEL IZQUIERDO */
 #story {
   width: 50%;
   padding: 30px 40px;
@@ -116,13 +116,13 @@ html, body {
   background-repeat: no-repeat;
   background-attachment: fixed;
 
-  /* contexto + reserva de espacio para que el banner no tape el contenido final */
   position: relative;
   padding-top: 0;
-  padding-bottom: calc(var(--footer-h) + 16px);   /* 🆕 espacio para el #footer-banner */
+  /* Reserva espacio para que el banner inferior fijo no tape el final del texto */
+  padding-bottom: calc(var(--footer-h) + 16px);
 }
 
-/* --- Reset de reglas antiguas que pudieran estar flotando la imagen --- */
+/* Por si antes tenías la imagen “flotando” */
 #story > img { 
   position: static !important;
   bottom: auto !important;
@@ -132,23 +132,37 @@ html, body {
 }
 
 /* ============================ */
-/*  BANNER INFERIOR INDEPENDIENTE */
+/*  BANNER INFERIOR INDEPENDIENTE (tipo navbar) */
 /* ============================ */
 #footer-banner {
   position: fixed;
   left: 0; right: 0; bottom: 0;
-  z-index: 1200;                 /* por encima del mapa y del story */
+  height: var(--footer-h);
+  z-index: 1100; /* por encima de mapa/story, debajo del menú si quisieras 1200 */
+
+  /* Igual que el nav: fondo propio e independiente */
+  background-image: url('../img/patron2.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+  /* Layout: barra a todo lo ancho y contenido centrado */
   display: flex;
+  align-items: center;
   justify-content: center;
-  pointer-events: none;          /* no bloquea clicks del mapa/story; pon 'auto' si necesitas clics */
-  /* Opcional: velo para legibilidad
-  background: linear-gradient(180deg, transparent, rgba(0,0,0,.25));
+
+  /* Si no quieres bloquear clics al mapa/links encima, quita este comentario:
+  pointer-events: none;
   */
 }
+
 #footer-banner img {
-  max-height: var(--footer-h);
-  width: auto;
-  margin: 8px 0;
+  /* Imagen centrada y “rellenando” el ancho de la barra sin deformarse */
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* respeta proporción, sin recortes */
+  padding: 4px 12px;   /* respirito lateral */
   display: block;
 }
 
@@ -183,13 +197,14 @@ html, body {
 #story li a { text-decoration: none; color: #2E8B57; }
 #story li a:hover { text-decoration: underline; color: #196742; }
 
-/* PANEL DERECHO (MAPA) */
+/* PANEL DERECHO (MAPA)
+   🔧 Restamos también el alto del banner para que no quede oculto detrás */
 #map {
   position: fixed;
   top: var(--nav-h);
   right: 0;
   width: 50%;
-  height: calc(100% - var(--nav-h));
+  height: calc(100% - var(--nav-h) - var(--footer-h));
   z-index: 500;
   border-left: 2px solid #e0e0e0;
   box-shadow: -2px 0 4px rgba(0,0,0,0.05);
@@ -223,7 +238,7 @@ html, body {
     position: fixed;
     top: 10px;
     right: 20px;
-    z-index: 1100;
+    z-index: 1200;
   }
   #nav-menu {
     position: fixed;
@@ -254,17 +269,18 @@ html, body {
   }
   #story {
     width: 100%;
-    max-height: none;                 /* no recortar en móvil */
+    max-height: none;
     border-bottom: 1px solid #ccc;
-    background-attachment: scroll;    /* suaviza en iOS */
-    padding-bottom: calc(var(--footer-h) + 12px); /* reserva menor en móvil */
+    background-attachment: scroll;
+    padding-bottom: calc(var(--footer-h) + 12px);
   }
   #map {
     width: 100%;
-    height: 50vh;
+    /* restamos también el banner en móvil */
+    height: calc(50vh - var(--footer-h));
     position: relative;
     top: auto; right: auto;
     border-top: 1px solid #ccc;
   }
-  #footer-banner img { max-height: calc(var(--footer-h) * 0.8); }
+  #footer-banner img { padding: 6px 10px; }
 }
