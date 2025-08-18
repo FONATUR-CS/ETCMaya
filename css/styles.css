@@ -285,10 +285,13 @@ html, body {
 }
 
 /* === Tipografía del panel superior (navbar) ===
-   PÉGALO AL FINAL DEL CSS, FUERA DE @media Y @layer */
+/* === NAV: forzar Noto Sans Regular === */
 #main-nav,
-#main-nav a,
+#main-nav *,
+#nav-menu,
+#nav-menu li,
 #nav-menu a {
-  font-family: 'Noto Sans', sans-serif;
-  font-weight: 400; /* regular */
+  font-family: 'Noto Sans', system-ui, sans-serif !important;
+  font-weight: 400 !important;
+  font-style: normal;
 }
