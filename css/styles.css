@@ -284,14 +284,46 @@ html, body {
   #footer-banner img { padding: 6px 10px; }
 }
 
-/* === Tipografía del panel superior (navbar) ===
-/* === NAV: forzar Noto Sans Regular === */
-#main-nav,
-#main-nav *,
-#nav-menu,
-#nav-menu li,
-#nav-menu a {
-  font-family: 'Noto Sans', system-ui, sans-serif !important;
-  font-weight: 400 !important;
-  font-style: normal;
+/* === NAV igual a Baja California Sur === */
+#main-nav {
+  position: fixed;
+  top: 0; left: 0; width: 100%;
+  padding: 10px 24px;
+  z-index: 10000;
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+
+  /* mismo fondo que BCS */
+  background-image: url('../img/patron2.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+  color: #fff;
 }
+
+#main-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+}
+
+#main-nav a {
+  text-decoration: none;
+  color: #555;              /* igual que BCS */
+  font-weight: 700;
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+
+#main-nav a.active,
+#main-nav a:hover {
+  background: #EA5188;      /* igual que BCS */
+  color: #fff;
+}
+
+/* Fallback móvil como en BCS */
+@media (max-width: 768px) {
+  #main-nav { background-attachment: scroll; }
+}
+
