@@ -9,12 +9,15 @@
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet"/>
 
-  <!-- Estilos: combinación del look “story” del index_1 con tu navbar -->
+  <!-- anime.js (para el efecto "pulse") -->
+  <script src="https://unpkg.com/animejs@3.2.1/lib/anime.min.js"></script>
+
+  <!-- Estilos -->
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family: 'Noto Sans', system-ui, Arial, sans-serif; color:#fff; background:#000; }
 
-    /* NAV FIJA (tomada de tu BCS) */
+    /* NAV FIJA */
     #main-nav {
       position: fixed; top: 0; left: 0; width: 100%;
       background: #ffffffee; color: #333; z-index: 10000;
@@ -25,9 +28,7 @@
     #main-nav a.active, #main-nav a:hover { background:#2E8B57; color:#fff; }
 
     /* MAPA a pantalla completa (debajo de la navbar) */
-    #map {
-      position: fixed; top: 56px; left:0; right:0; height: calc(100vh - 56px); z-index:1;
-    }
+    #map { position: fixed; top: 56px; left:0; right:0; height: calc(100vh - 56px); z-index:1; }
 
     /* Contenedor de historia (se apila sobre el mapa) */
     #story { position: relative; z-index: 2; }
@@ -58,21 +59,19 @@
     .story-content h1 { font-size: 2.2rem; margin-bottom:.5rem; }
     .story-content h2 { font-size: 1.5rem; margin-bottom:.35rem; color:#2ED573; }
     .story-content p { font-size:.98rem; line-height:1.55; color: #eaeaea; }
-
     .story-content img { width:100%; height:auto; border-radius:10px; margin-top:12px; }
 
     /* Cabecera/título grande */
-  .intro-title {
+    .intro-title {
       background: linear-gradient(135deg, #00d4ff, #ffffff, #00a8cc);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
       font-size: 2.6rem; font-weight: 800; margin-bottom: 12px;
       text-align:center;
     }
-
     .intro-sub { text-align:center; color:#00d4ff; margin-bottom: 10px; }
 
-    /* Navegación por puntos opcional (capítulos) */
+    /* Navegación por puntos (capítulos) */
     .chapter-nav {
       position: fixed; left: 14px; top: 50%; transform: translateY(-50%);
       z-index: 10; display:flex; flex-direction:column; gap:10px;
@@ -93,7 +92,6 @@
     }
     .port-name { font-weight:700; color:#00d4ff; margin-bottom:4px; }
 
-    /* Responsive */
     @media (max-width: 768px) {
       .story-content { width: calc(100% - 32px); margin: 0 16px; }
     }
@@ -101,7 +99,6 @@
 </head>
 <body>
 
-  <!-- NAV (de tu página de BCS) -->
   <nav id="main-nav">
     <ul>
       <li><a href="../index.html">Inicio</a></li>
@@ -117,10 +114,8 @@
     </ul>
   </nav>
 
-  <!-- Mapa a pantalla completa -->
   <div id="map"></div>
 
-  <!-- Puntos de capítulo -->
   <nav class="chapter-nav" id="nav">
     <div class="nav-dot active" data-chapter="intro" title="Vista general"></div>
     <div class="nav-dot" data-chapter="BCS_1" title="BCS_1"></div>
@@ -130,9 +125,7 @@
     <div class="nav-dot" data-chapter="BCS_5" title="BCS_5"></div>
   </nav>
 
-  <!-- HISTORIA (contenido de tu BCS) -->
   <div id="story">
-    <!-- Intro / capítulo 0 -->
     <section class="story-section intro" data-chapter="intro">
       <div class="story-content active">
         <div class="intro-title">Turismo Comunitario en Baja California Sur</div>
@@ -142,7 +135,6 @@
       </div>
     </section>
 
-    <!-- BCS_1 -->
     <section class="story-section" data-chapter="BCS_1">
       <div class="story-content">
         <h2>Isla Espíritu Santo</h2>
@@ -152,7 +144,6 @@
       </div>
     </section>
 
-    <!-- BCS_2 -->
     <section class="story-section" data-chapter="BCS_2">
       <div class="story-content">
         <h2>Bahía de Magdalena</h2>
@@ -162,7 +153,6 @@
       </div>
     </section>
 
-    <!-- BCS_3 -->
     <section class="story-section" data-chapter="BCS_3">
       <div class="story-content">
         <h2>Cerro El Pilón</h2>
@@ -172,22 +162,20 @@
       </div>
     </section>
 
-    <!-- BCS_4 -->
     <section class="story-section" data-chapter="BCS_4">
       <div class="story-content">
         <h2>Cañón del Mezquite</h2>
         <p>El rincón más asombroso de la Sierra de la Giganta: paredes escarpadas, pozas de agua dulce y oasis.</p>
-         <p><a href="https://maps.app.goo.gl/DUzwaVJGF6ifoGWK9" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <p><a href="https://maps.app.goo.gl/DUzwaVJGF6ifoGWK9" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
         <img src="../img/04_Mezquite.jpg" alt="Cañón del Mezquite" loading="lazy">
       </div>
     </section>
 
-    <!-- BCS_5 -->
     <section class="story-section" data-chapter="BCS_5">
       <div class="story-content">
         <h2>Cañón de Costa Azul</h2>
         <p>Formación espectacular cercana a San José del Cabo; paisaje seco con vegetación emergiendo entre rocas.</p>
-         <p><a href="https://maps.app.goo.gl/uEZ78x8GvNsr4GJy5" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <p><a href="https://maps.app.goo.gl/uEZ78x8GvNsr4GJy5" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
         <img src="../img/05_CostaAzul.jpg" alt="Cañón de Costa Azul" loading="lazy">
       </div>
     </section>
@@ -195,11 +183,11 @@
 
   <script>
     // === CONFIG ===
-    const ACCESS_TOKEN = 'pk.eyJ1IjoiY2hheXZvbHRhIiwiYSI6ImNsdGRlNml1NDAyaXgyanJ3eXYzdGQ0MmEifQ.VH5UyDCjvPQ1X_KrkkHcZQ'; // del demo
-    const BASE = '../';
-    const STATE_GEO = BASE + 'data/baja_california_sur.geojson';
+    const ACCESS_TOKEN = 'pk.eyJ1IjoiY2hheXZvbHRhIiwiYSI6ImNsdGRlNml1NDAyaXgyanJ3eXYzdGQ0MmEifQ.VH5UyDCjvPQ1X_KrkkHcZQ';
+    const BASE       = '../';
+    const STATE_GEO  = BASE + 'data/baja_california_sur.geojson';
     const POINTS_GEO = BASE + 'data/5_Puntos_BCS.geojson';
-    const ICON_URL = BASE + 'img/eco.svg'; // color #691b32 dentro del SVG
+    const ICON_URL   = BASE + 'img/eco.svg'; // color #691b32 dentro del SVG
 
     // Capítulos (de intro y BCS_1..BCS_5)
     const chapters = ['intro','BCS_1','BCS_2','BCS_3','BCS_4','BCS_5'];
@@ -209,11 +197,15 @@
     let pointsData = null;
     let stateBounds = null;
 
+    // Pulsado (anime.js)
+    let pulseAnim = null;   // handler de anime
+    let activeId  = null;   // id del punto activo
+
     mapboxgl.accessToken = ACCESS_TOKEN;
     map = new mapboxgl.Map({
       container:'map',
-      style:'mapbox://styles/mapbox/satellite-streets-v12', // satélite + etiquetas
-      center:[-111.7, 26.5], // centro aproximado BCS
+      style:'mapbox://styles/mapbox/satellite-streets-v12', // sat + etiquetas
+      center:[-111.7, 26.5],
       zoom:5,
       pitch:0,
       bearing:0,
@@ -223,7 +215,7 @@
     map.addControl(new mapboxgl.NavigationControl({ visualizePitch:true }), 'top-right');
 
     map.on('load', async () => {
-      // — 1) Cargar polígono del estado para bounds iniciales
+      // — 1) Polígono del estado
       const state = await fetch(STATE_GEO).then(r=>r.json());
       stateBounds = getGeoJSONBounds(state);
       map.addSource('bcs-poly',{ type:'geojson', data: state });
@@ -241,11 +233,11 @@
         paint:{ 'line-color':'#2E8B57', 'line-width':2 }
       });
 
-      // — 2) Cargar puntos
+      // — 2) Puntos
       pointsData = await fetch(POINTS_GEO).then(r=>r.json());
       map.addSource('bcs-points',{ type:'geojson', data: pointsData });
 
-      // Cargar icono personalizado
+      // Icono personalizado
       const img = new Image(32,32);
       img.src = ICON_URL;
       img.onload = () => {
@@ -264,7 +256,7 @@
     });
 
     function addPointLayer(){
-      // Capa de símbolos
+      // Capa base (ícono + etiqueta)
       if (!map.getLayer('bcs-symbols')) {
         map.addLayer({
           id:'bcs-symbols',
@@ -272,7 +264,7 @@
           source:'bcs-points',
           layout:{
             'icon-image': 'eco',
-            'icon-size': 3,
+            'icon-size': 3,         // tamaño grande (mantengo tu cambio)
             'icon-allow-overlap': true,
             'text-field': ['get','Name'],
             'text-size': 14,
@@ -287,17 +279,64 @@
           }
         });
       }
+
+      // Capa activa (solo ícono) para efecto pulse
+      if (!map.getLayer('bcs-symbols-active')) {
+        map.addLayer({
+          id: 'bcs-symbols-active',
+          type: 'symbol',
+          source: 'bcs-points',
+          filter: ['==', ['get','id'], '__none__'], // nada seleccionado al inicio
+          layout: {
+            'icon-image': 'eco',
+            'icon-size': 3.2,        // base del pulso (ligeramente más grande que la base)
+            'icon-allow-overlap': true,
+            'text-field': ''         // sin texto para no duplicar etiqueta
+          }
+        });
+      }
+    }
+
+    // === Pulse helpers (anime.js) ===
+    function stopPulse() {
+      if (pulseAnim) { pulseAnim.pause(); pulseAnim = null; }
+      activeId = null;
+      if (map.getLayer('bcs-symbols-active')) {
+        map.setFilter('bcs-symbols-active', ['==', ['get','id'], '__none__']);
+      }
+    }
+
+    function startPulseFor(id) {
+      if (!map.getLayer('bcs-symbols-active')) return;
+      const targetId = String(id);
+      if (activeId === targetId) return;
+
+      activeId = targetId;
+      map.setFilter('bcs-symbols-active', ['==', ['get','id'], activeId]);
+
+      // Reiniciar animación
+      if (pulseAnim) pulseAnim.pause();
+      const state = { s: 3.2 }; // arranca con 3.2 (coincide con layout)
+      pulseAnim = anime({
+        targets: state,
+        s: [3.2, 4.2],                 // “respira” de 3.2 a 4.2
+        duration: 900,
+        direction: 'alternate',
+        easing: 'easeInOutSine',
+        loop: true,
+        update: () => {
+          map.setLayoutProperty('bcs-symbols-active', 'icon-size', state.s);
+        }
+      });
     }
 
     function setupPointClicks() {
-      // Popup “bonito”
       const popup = new mapboxgl.Popup({ offset: 16, closeButton: true });
 
       map.on('click','bcs-symbols', (e) => {
         const f = e.features && e.features[0];
         if (!f) return;
 
-        // popup
         const props = f.properties;
         const title = props.Name || props.nombre || 'Sitio';
         const desc  = props.descripcion || '';
@@ -306,10 +345,10 @@
           .setHTML(`<div class="port-name">${title}</div><div>${desc}</div>`)
           .addTo(map);
 
-        // vuelo + activar capítulo
         const id = props.id;
         flyToFeatureId(id);
         scrollToChapter(id);
+        startPulseFor(id); // ← activa pulse al hacer clic
       });
 
       map.on('mouseenter','bcs-symbols', () => map.getCanvas().style.cursor = 'pointer');
@@ -327,18 +366,17 @@
           currentChapter = chap;
           updateDots();
 
-          // animar tarjeta
           const box = entry.target.querySelector('.story-content');
           if (box) box.classList.add('active');
 
           if (chap === 'intro') {
-            // mostrar polígono y volver a vista general
             setPolygonVisibility(true);
-            if (stateBounds) map.flyToBounds(stateBounds, { padding: 40, duration: 1200 });
+            stopPulse(); // ← detener pulso en intro
+            if (stateBounds) map.fitBounds(stateBounds, { padding: 40, duration: 1200 });
           } else {
-            // ocultar polígono y enfocar punto
             setPolygonVisibility(false);
             flyToFeatureId(chap);
+            startPulseFor(chap); // ← activar pulso para capítulo activo
           }
         });
       }, options);
@@ -373,7 +411,6 @@
       const f = pointsData.features.find(fe => (fe.properties && String(fe.properties.id) === String(id)));
       if (!f) return;
       const coords = f.geometry.coordinates; // [lng,lat]
-      // zoom cálido: aproxima un poco menos que el auto-fitting
       map.flyTo({ center: coords, zoom: 9.5, pitch: 35, bearing: 0, duration: 1400, essential: true });
     }
 
