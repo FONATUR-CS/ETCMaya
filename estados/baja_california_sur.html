@@ -28,7 +28,7 @@
     }
     #main-nav ul { list-style: none; display:flex; gap:1rem; }
     #main-nav a { text-decoration:none; color:#555; font-weight:700; padding:6px 8px; border-radius:4px; }
-    #main-nav a.active, #main-nav a:hover { background:#c2a9d1; color:#fff; }
+    #main-nav a.active, #main-nav a:hover { background:#2E8B57; color:#fff; }
 
     #map { position: fixed; top: 56px; left:0; right:0; height: calc(100vh - 56px); z-index:1; }
     #story { position: relative; z-index: 2; }
@@ -57,7 +57,7 @@
     .story-content.active { transform: translateY(0); opacity:1; }
 
     .story-content h1 { font-size: 2.2rem; margin-bottom:.5rem; }
-    .story-content h2 { font-size: 1.5rem; margin-bottom:.35rem; color:#c2a9d1; }
+    .story-content h2 { font-size: 1.5rem; margin-bottom:.35rem; color:#2ED573; }
     .story-content p  { font-size:.98rem; line-height:1.55; color: #eaeaea; }
     .story-content img { width:100%; height:auto; border-radius:10px; margin-top:12px; }
 
@@ -213,7 +213,7 @@
       img.src = ICON_URL;
       img.onload = () => {
         if (!map.hasImage('eco')) map.addImage('eco', img, { pixelRatio: 2 });
-        addPointLayers();
+        addPointLayers(); // <-- SIN CAMBIOS AQUÍ
       };
 
       if (stateBounds) { map.fitBounds(stateBounds, { padding: 40, duration: 800 }); }
@@ -222,8 +222,9 @@
       setupNavDots();
     });
 
-    // Capa base + capa activa para pulso
+    // (CAMBIADO) Capa base de iconos + capa activa (pulso) + NUEVA capa de etiquetas
     function addPointLayers(){
+      // 1) Iconos base (sin texto)
       if (!map.getLayer('bcs-symbols')) {
         map.addLayer({
           id:'bcs-symbols',
@@ -232,20 +233,13 @@
           layout:{
             'icon-image': 'eco',
             'icon-size': 3,
-            'icon-allow-overlap': true,
-            'text-field': ['get','Name'],
-            'text-size': 14,
-            'text-offset': [0, 2],
-            'text-anchor': 'top',
-            'text-optional': true
-          },
-          paint:{
-            'text-color':'#ffffff',
-            'text-halo-color':'#000000',
-            'text-halo-width': 1.5
+            'icon-allow-overlap': true
+            // <-- SIN text-field aquí
           }
         });
       }
+
+      // 2) Icono activo (para pulso) – sin texto
       if (!map.getLayer('bcs-symbols-active')) {
         map.addLayer({
           id: 'bcs-symbols-active',
@@ -254,9 +248,31 @@
           filter: ['==', ['get','id'], '__none__'],
           layout: {
             'icon-image': 'eco',
-            'icon-size': 3.2,           // base del pulso
-            'icon-allow-overlap': true,
-            'text-field': ''            // sin etiqueta en la capa activa
+            'icon-size': 3.2,
+            'icon-allow-overlap': true
+            // <-- SIN texto
+          }
+        });
+      }
+
+      // 3) (NUEVO) Capa de etiquetas SIEMPRE visible y arriba
+      if (!map.getLayer('bcs-labels')) {
+        map.addLayer({
+          id:'bcs-labels',
+          type:'symbol',
+          source:'bcs-points',
+          layout:{
+            'text-field': ['get','Name'],
+            'text-size': 14,
+            'text-offset': [0, 2.2],  // debajo del icono
+            'text-anchor': 'top',
+            'text-allow-overlap': true,
+            'text-ignore-placement': true
+          },
+          paint:{
+            'text-color':'#ffffff',
+            'text-halo-color':'#000000',
+            'text-halo-width': 1.5
           }
         });
       }
@@ -305,12 +321,10 @@
           if (box) box.classList.add('active');
 
           if (chap === 'intro') {
-            // Intro: mostrar polígono y detener pulso
             setPolygonVisibility(true);
             stopPulse();
             if (stateBounds) map.flyToBounds(stateBounds, { padding: 40, duration: 1200 });
           } else {
-            // Capítulo: ocultar polígono, volar al punto y arrancar pulso
             setPolygonVisibility(false);
             flyToFeatureId(chap);
             startPulseFor(chap);
