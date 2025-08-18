@@ -106,6 +106,21 @@
     @media (max-width: 768px) {
       .story-content { width: calc(100% - 32px); margin: 0 16px; }
     }
+
+    /* === Overrides de tamaños (AL FINAL para ganar la cascada) === */
+    :root { font-size: 18px; }                  /* Tamaño base global */
+    .story-content h1 { font-size: 2.6rem; }    /* Subimos títulos */
+    .story-content h2 { font-size: 1.9rem; }    /* H2 (Patria) más grande */
+    .story-content p  { font-size: 1.15rem; }   /* Texto de párrafo */
+
+    #main-nav a { font-size: 1rem; }            /* Menú un poco mayor */
+    .mapboxgl-popup-content { font-size: 1rem !important; } /* Popups */
+
+    @media (max-width: 768px) {
+      :root { font-size: 16px; }                /* Ajuste en móvil */
+      .story-content h2 { font-size: 1.6rem; }
+      .story-content p  { font-size: 1.05rem; }
+    }
   </style>
 </head>
 <body>
@@ -252,7 +267,6 @@
             'icon-image': 'eco',
             'icon-size': 3,
             'icon-allow-overlap': true
-            // <-- SIN text-field aquí
           }
         });
       }
@@ -268,7 +282,6 @@
             'icon-image': 'eco',
             'icon-size': 3.2,
             'icon-allow-overlap': true
-            // <-- SIN texto
           }
         });
       }
@@ -282,7 +295,7 @@
           layout:{
             'text-field': ['get','Name'],
             'text-size': 14,
-            'text-offset': [0, 2.2],  // debajo del icono
+            'text-offset': [0, 2.2],
             'text-anchor': 'top',
             'text-allow-overlap': true,
             'text-ignore-placement': true
