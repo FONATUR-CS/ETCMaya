@@ -103,7 +103,8 @@ html, body {
 #container {
   display: flex;
   height: calc(100vh - var(--nav-h));
-  margin-top: var(--nav-h);
+  /* ↓↓↓ QUITAMOS EL HUECO bajo la barra fija */
+  margin-top: 0;
 }
 
 /* PANEL IZQUIERDO */
@@ -117,7 +118,8 @@ html, body {
   background-attachment: fixed;
 
   position: relative;
-  padding-top: 0;
+  /* ↓↓↓ pequeño respiro para que el título no quede pegado al nav */
+  padding-top: 8px;
   /* Reserva espacio para que el banner inferior fijo no tape el final del texto */
   padding-bottom: calc(var(--footer-h) + 16px);
 }
@@ -138,16 +140,14 @@ html, body {
   position: fixed;
   left: 0; right: 0; bottom: 0;
   height: var(--footer-h);
-  z-index: 1100; /* por encima de mapa/story, debajo del menú si quisieras 1200 */
+  z-index: 1100; /* por encima de mapa/story */
 
-  /* Igual que el nav: fondo propio e independiente */
   background-image: url('../img/patron2.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
 
-  /* Layout: barra a todo lo ancho y contenido centrado */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -158,11 +158,10 @@ html, body {
 }
 
 #footer-banner img {
-  /* Imagen centrada y “rellenando” el ancho de la barra sin deformarse */
   width: 100%;
   height: 100%;
-  object-fit: contain; /* respeta proporción, sin recortes */
-  padding: 4px 12px;   /* respirito lateral */
+  object-fit: contain;
+  padding: 4px 12px;
   display: block;
 }
 
@@ -198,7 +197,7 @@ html, body {
 #story li a:hover { text-decoration: underline; color: #196742; }
 
 /* PANEL DERECHO (MAPA)
-   🔧 Restamos también el alto del banner para que no quede oculto detrás */
+   Restamos también el alto del banner para que no quede oculto detrás */
 #map {
   position: fixed;
   top: var(--nav-h);
@@ -265,7 +264,7 @@ html, body {
 @media (max-width: 768px) {
   #container {
     display: block;
-    margin-top: var(--nav-h);
+    margin-top: var(--nav-h); /* en móvil mantenemos el flujo habitual */
   }
   #story {
     width: 100%;
@@ -276,7 +275,6 @@ html, body {
   }
   #map {
     width: 100%;
-    /* restamos también el banner en móvil */
     height: calc(50vh - var(--footer-h));
     position: relative;
     top: auto; right: auto;
