@@ -45,7 +45,11 @@
 
     .story-content {
       width: 420px; max-width: 92vw;
-      background: rgba(0,0,0,0.92);
+      background-image: url('../img/patron2.jpg'); 
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;;
       padding: 28px; border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.12);
       margin-right: 40px;
@@ -54,6 +58,9 @@
       backdrop-filter: blur(10px);
       box-shadow: 0 24px 48px rgba(0,0,0,.45);
     }
+    .story-content h2 { color: #FFF2D2; }         /* título */
+    .story-content p  { color: #fff; }         /* texto */
+
     .story-content.active { transform: translateY(0); opacity:1; }
 
     .story-content h1 { font-size: 2.2rem; margin-bottom:.5rem; }
