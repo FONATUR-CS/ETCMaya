@@ -42,8 +42,10 @@
       padding: 0 5%;
     }
     .story-section.intro {
-      justify-content:center;
-      background: linear-gradient(135deg, rgba(0,0,0,.6), rgba(0,30,60,.7));
+      min-height: 100vh;
+      align-items: flex-start;
+      padding-top: 56px; /* igual al alto del nav */
+      box-shadow: 0 -24px 48px rgba(0,0,0,.45) inset;
     }
 
     .story-content {
@@ -340,7 +342,7 @@
 
     // Story / “scrollama”
     function setupStory(){
-      const options = { threshold: 0.9 };
+      const options = { threshold: 2.0 };
       const obs = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (!entry.isIntersecting) return;
