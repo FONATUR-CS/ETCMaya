@@ -100,7 +100,7 @@ function initMap() {
       }
 
       // Mostrar nombres de los estados sobre cada polígono
-      if (pageKey === 'index') {
+    /*  if (pageKey === 'index') {
         layerGroup.eachLayer(function(lyr) {
           const feature = lyr.feature;
           const name = feature.properties.Estado;
@@ -118,7 +118,7 @@ function initMap() {
           }
         });
       }
-
+*/
       // ─── Scrollama para INDEX ───
       /*
       if (pageKey === 'index') {
