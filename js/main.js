@@ -40,7 +40,6 @@ function initMap() {
     }
   ).addTo(map);
 
-
   // 2. Determinar pageKey
   const pageKey = isStatePage
     ? window.location.pathname.split('/').pop().replace('.html','')
@@ -87,6 +86,9 @@ function initMap() {
               const slug = slugMap[name] || slugify(name);
               window.location.href = `estados/${slug}.html`;
             });
+            // Agrega la clase de animación al polígono
+            const el = lyr.getElement();
+            if (el) el.classList.add('estado-respirar');
           } else {
             // Popup en páginas de estado
             const props = feature.properties || {};
@@ -130,9 +132,8 @@ function initMap() {
         });
         window.addEventListener('resize', () => sc.resize());
       }
-*/
+      */
       // ─── Scrollama y puntos para BCS ───
-      
       if (pageKey === 'baja_california_sur') {
         // 1) Icono eco.svg
         const ecoIcon = L.icon({
@@ -180,7 +181,8 @@ function initMap() {
             }).addTo(map);
 
             // 3) Scrollama en BCS
-          /*  const sc = scrollama();
+            /*
+            const sc = scrollama();
             sc.setup({
               step: '#story section',
               offset: 0.7,
@@ -225,5 +227,3 @@ function slugify(name) {
     ? name.toLowerCase()
           .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
           .replace(/\s+/g, '_')
-    : '';
-}
