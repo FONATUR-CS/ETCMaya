@@ -34,7 +34,7 @@ h2 {
 }
 
 /* Etiquetas de nombres de estados sobre el mapa */
-.estado-label {
+/*.estado-label {
   font-family: 'Noto Sans', sans-serif;
   font-size: 1em;
   font-weight: bold;
@@ -43,7 +43,7 @@ h2 {
   pointer-events: none;
   text-align: center;
   white-space: nowrap;
-}
+}*/
 
 /* Cierra la capa de tu app */
 }
