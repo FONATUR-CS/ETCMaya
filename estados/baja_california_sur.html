@@ -340,7 +340,7 @@
 
     // Story / “scrollama”
     function setupStory(){
-      const options = { threshold: 2.0 };
+      const options = { threshold: 0.9 };
       const obs = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (!entry.isIntersecting) return;
