@@ -18,28 +18,17 @@ function initMap() {
     .setView([23.6345, -102.5528], 5);
   
   // 1) Satélite
-// Solo imagen satelital
-const esriImagery = L.tileLayer(
-  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-  {
-    attribution: 'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
-  }
-).addTo(map);
-  
-  // 2) Pane para etiquetas arriba de todo (no bloquea clics)
-/*  map.createPane('labels');
-  map.getPane('labels').style.zIndex = 650;
-  map.getPane('labels').style.pointerEvents = 'none';
-  
-  // 3) Etiquetas (nombres de lugares)
-  const esriLabels = L.tileLayer(
-    'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+  // Solo imagen satelital
+  const esriImagery = L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     {
-      attribution: 'Labels © Esri',
-      pane: 'labels'
+      attribution: 'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
     }
   ).addTo(map);
-*/
+
+  // Elimina la capa de labels y el pane de etiquetas
+  // (No agregar ninguna capa ni pane para etiquetas)
+
   // 2. Determinar pageKey
   const pageKey = isStatePage
     ? window.location.pathname.split('/').pop().replace('.html','')
@@ -86,9 +75,11 @@ const esriImagery = L.tileLayer(
               const slug = slugMap[name] || slugify(name);
               window.location.href = `estados/${slug}.html`;
             });
-            // Agrega la clase de animación al polígono
-            const el = lyr.getElement();
-            if (el) el.classList.add('estado-respirar');
+            // Agrega la clase de animación al polígono (asegura que el SVG esté listo)
+            setTimeout(() => {
+              const el = lyr.getElement();
+              if (el) el.classList.add('estado-respirar');
+            }, 0);
           } else {
             // Popup en páginas de estado
             const props = feature.properties || {};
@@ -215,17 +206,3 @@ const esriImagery = L.tileLayer(
       }
 
     })
-    .catch(err => {
-      console.error('Error cargando GeoJSON:', err);
-      if (pageKey === 'index') alert('No se pudo cargar el mapa de estados.');
-    });
-}
-
-// helper slugify
-function slugify(name) {
-  return typeof name === 'string'
-    ? name.toLowerCase()
-          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-          .replace(/\s+/g, '_')
-    : '';
-}
