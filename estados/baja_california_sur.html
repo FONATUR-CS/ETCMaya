@@ -29,7 +29,13 @@
        color: #fff; z-index: 10000;
       padding: 10px 24px; box-shadow: 0 2px 6px rgba(0,0,0,.2);
     }
-    #main-nav ul { list-style: none; display:flex; gap:1rem; }
+    #main-nav ul {
+                    display: flex;
+                    gap: 1rem;
+                    justify-content: center; /* Centra horizontalmente */
+                    align-items: center;      /* Centra verticalmente */
+                    height: 100%;
+                  }
     #main-nav a { text-decoration:none; color:#555; font-weight:700; padding:6px 8px; border-radius:4px; }
     #main-nav a.active, #main-nav a:hover { background:#EA5188; color:#fff; }
 
@@ -347,7 +353,7 @@
 
     // Story / “scrollama”
     function setupStory(){
-      const options = { threshold: 2 };
+      const options = { threshold: 0.9 };
       const obs = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (!entry.isIntersecting) return;
