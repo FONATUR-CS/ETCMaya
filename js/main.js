@@ -18,13 +18,20 @@ function initMap() {
     .setView([23.6345, -102.5528], 5);
   
   // 1) Satélite (Esri World Imagery)
-  const esriImagery = L.tileLayer(
-    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    {
-      attribution:
-        'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
-    }
-  ).addTo(map);
+const esriImagery = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  {
+    attribution: 'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
+  }
+).addTo(map);
+
+// Límites de países (sin nombres)
+const esriBorders = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+  {
+    attribution: 'Borders © Esri'
+  }
+).addTo(map);
   
   // 2) Pane para etiquetas arriba de todo (no bloquea clics)
   map.createPane('labels');
