@@ -32,6 +32,12 @@ h2 {
   padding: 0;
 }
 
+/* Elimina margen y padding global */
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 /* ============================ */
 /*  VARIABLES GLOBALES          */
 /* ============================ */
@@ -76,6 +82,7 @@ html, body {
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  margin-bottom: 0 !important; /* <-- añadido */
 }
 
 #main-nav::before {
@@ -119,8 +126,9 @@ html, body {
   position: relative;
 
   /* ⬇️ Eliminar espacio arriba y evitar colapso de márgenes */
-  padding-top: 0;             /* ⬅️ sin respiro extra */
-  display: flow-root;         /* ⬅️ evita que el primer hijo “empuje” */
+  margin-top: 0 !important;      /* <-- añadido */
+  padding-top: 0 !important;     /* <-- reforzado */
+  display: flow-root;            /* ⬅️ evita que el primer hijo “empuje” */
 
   /* Reserva espacio para que el banner inferior fijo no tape el final del texto */
   padding-bottom: calc(var(--footer-h) + 16px);
@@ -277,6 +285,8 @@ html, body {
     border-bottom: 1px solid #ccc;
     background-attachment: scroll;
     padding-bottom: calc(var(--footer-h) + 12px);
+    margin-top: 0 !important;      /* <-- añadido */
+    padding-top: 0 !important;     /* <-- añadido */
   }
   #map {
     width: 100%;
@@ -304,6 +314,7 @@ html, body {
   background-attachment: fixed;
 
   color: #fff;
+  margin-bottom: 0 !important; /* <-- añadido */
 }
 
 #main-nav ul {
