@@ -22,6 +22,17 @@ h2 {
   margin: revert-layer;
 }
 
+/* Animación de respirar para los estados en el mapa */
+@keyframes respirar {
+  0%   { filter: drop-shadow(0 0 0px #EA5188); }
+  50%  { filter: drop-shadow(0 0 12px #EA5188); }
+  100% { filter: drop-shadow(0 0 0px #EA5188); }
+}
+
+.estado-respirar {
+  animation: respirar 1.8s infinite;
+}
+
 /* Cierra la capa de tu app */
 }
 
