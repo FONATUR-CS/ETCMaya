@@ -327,3 +327,29 @@ html, body {
   #main-nav { background-attachment: scroll; }
 }
 
+/* ===== Quitar espacio extra bajo la barra superior en el panel izquierdo ===== */
+
+/* El contenedor arranca justo debajo del nav (sin “brincos”) */
+#container {
+  margin-top: var(--nav-h) !important;
+}
+
+/* El panel izquierdo SIN padding arriba (ese era el “hueco”) */
+#story {
+  padding: 0 40px calc(var(--footer-h) + 16px) !important;
+}
+
+/* Blindaje contra márgenes del primer elemento dentro de #story */
+#story > *:first-child {
+  margin-top: 0 !important;
+}
+
+/* Si el primer elemento es <section>, también */
+#story section:first-of-type {
+  margin-top: 0 !important;
+}
+
+/* Si el primer elemento es una imagen de título */
+#story > img:first-child {
+  margin-top: 0 !important;
+}
