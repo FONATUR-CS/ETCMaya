@@ -107,6 +107,7 @@ function initMap() {
       }
 
       // ─── Scrollama para INDEX ───
+      /*
       if (pageKey === 'index') {
         const featureLayers = layerGroup.getLayers();
         const sc = scrollama();
@@ -129,8 +130,9 @@ function initMap() {
         });
         window.addEventListener('resize', () => sc.resize());
       }
-
+*/
       // ─── Scrollama y puntos para BCS ───
+      
       if (pageKey === 'baja_california_sur') {
         // 1) Icono eco.svg
         const ecoIcon = L.icon({
@@ -178,7 +180,7 @@ function initMap() {
             }).addTo(map);
 
             // 3) Scrollama en BCS
-            const sc = scrollama();
+          /*  const sc = scrollama();
             sc.setup({
               step: '#story section',
               offset: 0.7,
@@ -205,6 +207,7 @@ function initMap() {
               }
             });
             window.addEventListener('resize', () => sc.resize());
+            */
           })
           .catch(() => console.error('No se pudo cargar 5_Puntos_BCS.geojson'));
       }
