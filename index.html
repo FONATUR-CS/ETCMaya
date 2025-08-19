@@ -33,7 +33,7 @@
     <button id="nav-toggle" aria-label="Abrir menú">
     ☰
     </button>
-  <ul id="nav-menu">
+    <ul id="nav-menu">
       <li><a href="index.html" class="active">Inicio</a></li>
       <li><a href="estados/baja_california_sur.html">Baja California Sur</a></li>
       <li><a href="estados/hidalgo.html">Hidalgo</a></li>
@@ -46,48 +46,51 @@
       <li><a href="estados/veracruz.html">Veracruz</a></li>
     </ul>
   </nav>
+
+  <!-- Contenedor principal para layout correcto -->
+  <div id="container">
     <!-- Panel izquierdo: encabezado + listado -->
     <div id="story">
-        <section data-step="0">
+      <section data-step="0">
         <h2>Estrategia de Turismo Comunitario en México</h2>
         <p class="justificado">El turismo comunitario en México es un modelo de desarrollo turístico que busca empoderar a las comunidades locales al involucrarlas directamente a la planificación,
         operación y beneficio de actividades turísticas en sus territorios.</p>
-        <p class="justificado">Este enfoque permite a los visitantes experimental de manera auténtica la cultura, tradiciones, historia y entorno natural de las comunidades anfitrionas, promoviendo el respeto
+        <p class="justificado">Este enfoque permite a los visitantes experimentar de manera auténtica la cultura, tradiciones, historia y entorno natural de las comunidades anfitrionas, promoviendo el respeto
         por los recursos naturales y el patrimonio cultural.</p>
         <img src="img/Turismo_9.jpg" alt="Turismo" loading="lazy">
-          </section>
-       <section data-step="2">
-        <h2>Lo esencial del Turismo Comunitario <br> Qué es</br> </h2>
+      </section>
+      <section data-step="2">
+        <h2>Lo esencial del Turismo Comunitario <br>Qué es</h2>
         <p class="justificado">Un turismo donde las actividades, productos y servicios que se ofrecen, son gestionados por las propias comunidades rurales e indígenas.</p>
-          <img src="img/Turismo_3.jpg" alt="Turismo" loading="lazy">
-          </section>
-          <section data-step="3">
+        <img src="img/Turismo_3.jpg" alt="Turismo" loading="lazy">
+      </section>
+      <section data-step="3">
         <h2>¿Por qué elegirlo?</h2>
         <p class="justificado">¡Es un turismo con impacto positivo!</p>
-            <ul>
+        <ul>
           <li>Ofrece experiencias auténticas</li>
           <li>Apoya la economía local</li>
           <li>Preserva el medio ambiente</li>
-            </ul>
-          <p class="justificado">La ONU Turismo lo promueve como una herramienta para el desarrollo sostenible, la preservación de la cultura y el entorno natural.</p>   
-           <img src="img/Turismo_4.jpg" alt="Turismo" loading="lazy">
-          </section>
-       <section data-step="4">
-        <h2>Una forma de contribuir al desarrollo local. ¿Qué es? </br> </h2>
+        </ul>
+        <p class="justificado">La ONU Turismo lo promueve como una herramienta para el desarrollo sostenible, la preservación de la cultura y el entorno natural.</p>   
+        <img src="img/Turismo_4.jpg" alt="Turismo" loading="lazy">
+      </section>
+      <section data-step="4">
+        <h2>Una forma de contribuir al desarrollo local. <br>¿Qué es?</h2>
         <p class="justificado">Es elegir el Turismo Comunitario. Esta es solo una introducción de lo que debes saber sobre él. 🌱.</p>
-          <img src="img/Turismo_5.jpg" alt="Turismo" loading="lazy">
-          </section>
-          <section data-step="5">
-        <h2>Actividades que puedes realizar de Turismo Comunitario </h2>
+        <img src="img/Turismo_5.jpg" alt="Turismo" loading="lazy">
+      </section>
+      <section data-step="5">
+        <h2>Actividades que puedes realizar de Turismo Comunitario</h2>
         <p class="justificado">Todas las actividades son ofrecidas por las propias comunidades locales quienes comparten sus conocimientos, tradiciones y formas de vida fortaleciendo su identidad y cultura.</p>
-            <ul>
+        <ul>
           <li>Talleres artesanales: Alfarería, bordado, tejido, etc.</li>
           <li>Talleres Gastronómicos: Aprender a preparar platillos locales con ingredientes de la región</li>
           <li>Rutas de naturaleza y aventura guiadas por las comunidades locales como: Senderismo, montañismo y cañonismo.</li>
-             <img src="img/Turismo_10.jpg" alt="Turismo" loading="lazy">
-            </ul>  
-            </section>
-       <section data-step="10">
+        </ul>
+        <img src="img/Turismo_10.jpg" alt="Turismo" loading="lazy">
+      </section>
+      <section data-step="10">
         <h2>Explora los estados</h2>
         <p class="justificado">Haz clic en un estado en el mapa o en el listado para conocerlo más a fondo:</p>
         <ul>
@@ -113,14 +116,12 @@
   <script src="js/scrollama.min.js"></script>
   <script src="js/main.js"></script>
   <script>
-  document
-    .getElementById('nav-toggle')
-    .addEventListener('click', () => {
-      document.getElementById('nav-menu').classList.toggle('open');
-    });
-   </script>
+    document
+      .getElementById('nav-toggle')
+      .addEventListener('click', () => {
+        document.getElementById('nav-menu').classList.toggle('open');
+      });
+  </script>
    
-<!-- Banner inferior independiente del Footer-->
-<div id="footer-banner"><img src="img/tittle.png" alt="Turismo Comunitario"></div>
-</body>
-</html>
+  <!-- Banner inferior independiente del Footer-->
+  <div id="footer-banner"><img src="img/tittle.png" alt="Turismo Comunitario"></div>
