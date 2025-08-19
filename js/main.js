@@ -99,6 +99,26 @@ function initMap() {
         map.fitBounds(initialBounds, { padding: [20,20] });
       }
 
+      // Mostrar nombres de los estados sobre cada polígono
+      if (pageKey === 'index') {
+        layerGroup.eachLayer(function(lyr) {
+          const feature = lyr.feature;
+          const name = feature.properties.Estado;
+          if (lyr.getBounds) {
+            const center = lyr.getBounds().getCenter();
+            L.marker(center, {
+              icon: L.divIcon({
+                className: 'estado-label',
+                html: name,
+                iconSize: [100, 24],
+                iconAnchor: [50, 12]
+              }),
+              interactive: false
+            }).addTo(map);
+          }
+        });
+      }
+
       // ─── Scrollama para INDEX ───
       /*
       if (pageKey === 'index') {
@@ -218,5 +238,3 @@ function slugify(name) {
     ? name.toLowerCase()
           .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
           .replace(/\s+/g, '_')
-    : '';
-}
