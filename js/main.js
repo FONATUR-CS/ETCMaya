@@ -18,13 +18,11 @@ function initMap() {
     .setView([23.6345, -102.5528], 5);
   
   // 1) Satélite
-// Mapbox Satellite (requiere tu access token)
-L.tileLayer(
-  'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY2hheXZvbHRhIiwiYSI6ImNsdGRlNml1NDAyaXgyanJ3eXYzdGQ0MmEifQ.VH5UyDCjvPQ1X_KrkkHcZQ',
+// Solo imagen satelital
+const esriImagery = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
   {
-    attribution: '© Mapbox © OpenStreetMap',
-    tileSize: 256,
-    maxZoom: 18
+    attribution: 'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
   }
 ).addTo(map);
   
