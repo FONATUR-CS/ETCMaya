@@ -27,7 +27,7 @@ const esriImagery = L.tileLayer(
 ).addTo(map);
   
   // 2) Pane para etiquetas arriba de todo (no bloquea clics)
-  map.createPane('labels');
+/*  map.createPane('labels');
   map.getPane('labels').style.zIndex = 650;
   map.getPane('labels').style.pointerEvents = 'none';
   
@@ -39,7 +39,7 @@ const esriImagery = L.tileLayer(
       pane: 'labels'
     }
   ).addTo(map);
-
+*/
   // 2. Determinar pageKey
   const pageKey = isStatePage
     ? window.location.pathname.split('/').pop().replace('.html','')
