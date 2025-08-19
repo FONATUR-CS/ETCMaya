@@ -206,3 +206,17 @@ function initMap() {
       }
 
     })
+    .catch(err => {
+      console.error('Error cargando GeoJSON:', err);
+      if (pageKey === 'index') alert('No se pudo cargar el mapa de estados.');
+    });
+}
+
+// helper slugify
+function slugify(name) {
+  return typeof name === 'string'
+    ? name.toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/\s+/g, '_')
+    : '';
+}
