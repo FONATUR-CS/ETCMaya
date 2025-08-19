@@ -24,7 +24,7 @@ h2 {
 
 /* Animación de respirar para los estados en el mapa */
 @keyframes respirar {
-  0%   { filter: drop-shadow(0 0 0px #EA5188); }
+  0%   { filter: drop-shadow(0 0 8px #EA5188); }
   50%  { filter: drop-shadow(0 0 12px #EA5188); }
   100% { filter: drop-shadow(0 0 14px #F7E07F); }
 }
