@@ -41,8 +41,8 @@ h2 {
   --light-bg: #fafafa;
 
   /* alturas de elementos fijos */
-  --nav-h: 60px;                         /* navbar superior fija */
-  --footer-h: clamp(56px, 8vw, 90px);    /* banner inferior fijo */
+  --nav-h: 56px;                        /* ⬅️ igual que BCS */
+  --footer-h: clamp(56px, 8vw, 90px);   /* banner inferior fijo */
 }
 
 /* Ajuste de fuente en móviles */
@@ -103,8 +103,7 @@ html, body {
 #container {
   display: flex;
   height: calc(100vh - var(--nav-h));
-  /* Quitamos el hueco bajo la barra fija */
-  margin-top: 0;
+  margin-top: var(--nav-h);  /* ⬅️ empieza justo debajo del nav */
 }
 
 /* PANEL IZQUIERDO */
@@ -118,11 +117,17 @@ html, body {
   background-attachment: fixed;
 
   position: relative;
-  /* pequeño respiro para que el título no quede pegado al nav */
-  padding-top: 8px;
+
+  /* ⬇️ Eliminar espacio arriba y evitar colapso de márgenes */
+  padding-top: 0;             /* ⬅️ sin respiro extra */
+  display: flow-root;         /* ⬅️ evita que el primer hijo “empuje” */
+
   /* Reserva espacio para que el banner inferior fijo no tape el final del texto */
   padding-bottom: calc(var(--footer-h) + 16px);
 }
+
+/* Quitar margen superior del primer hijo dentro de #story (por si acaso) */
+#story > *:first-child { margin-top: 0 !important; }
 
 /* Por si antes tenías la imagen “flotando” */
 #story > img { 
@@ -288,11 +293,10 @@ html, body {
 #main-nav {
   position: fixed;
   top: 0; left: 0; width: 100%;
-  padding: 10px 24px;
+  padding: 10px 24px;          /* BCS */
   z-index: 10000;
   box-shadow: 0 2px 6px rgba(0,0,0,.2);
 
-  /* mismo fondo que BCS */
   background-image: url('../img/patron2.jpg');
   background-size: cover;
   background-position: center;
@@ -325,31 +329,4 @@ html, body {
 /* Fallback móvil como en BCS */
 @media (max-width: 768px) {
   #main-nav { background-attachment: scroll; }
-}
-
-/* ===== Quitar espacio extra bajo la barra superior en el panel izquierdo ===== */
-
-/* El contenedor arranca justo debajo del nav (sin “brincos”) */
-#container {
-  margin-top: var(--nav-h) !important;
-}
-
-/* El panel izquierdo SIN padding arriba (ese era el “hueco”) */
-#story {
-  padding: 0 40px calc(var(--footer-h) + 16px) !important;
-}
-
-/* Blindaje contra márgenes del primer elemento dentro de #story */
-#story > *:first-child {
-  margin-top: 0 !important;
-}
-
-/* Si el primer elemento es <section>, también */
-#story section:first-of-type {
-  margin-top: 0 !important;
-}
-
-/* Si el primer elemento es una imagen de título */
-#story > img:first-child {
-  margin-top: 0 !important;
 }
