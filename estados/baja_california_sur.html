@@ -21,21 +21,21 @@
 
     #main-nav {
       position: fixed; top: 0; left: 0; width: 100%;
-       background-image: url('../img/patron2.jpg'); 
-       background-size: cover;
-       background-position: center;
-       background-repeat: no-repeat;
-       background-attachment: fixed;
-       color: #fff; z-index: 10000;
+      background-image: url('../img/patron2.jpg'); 
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: #fff; z-index: 10000;
       padding: 10px 24px; box-shadow: 0 2px 6px rgba(0,0,0,.2);
     }
     #main-nav ul {
-                    display: flex;
-                    gap: 1rem;
-                    justify-content: left; /* Centra horizontalmente */
-                    align-items: left;      /* Centra verticalmente */
-                    height: 100%;
-                  }
+      display: flex;
+      gap: 1rem;
+      justify-content: left;
+      align-items: left;
+      height: 100%;
+    }
     #main-nav a { text-decoration:none; color:#555; font-weight:700; padding:6px 8px; border-radius:4px; }
     #main-nav a.active, #main-nav a:hover { background:#EA5188; color:#fff; }
 
@@ -49,7 +49,9 @@
     }
     .story-section.intro {
       justify-content:center;
-      background: linear-gradient(135deg, rgba(0,0,0,.6), rgba(0,30,60,.7));
+      /* Elimina el fondo de color y sombra atrás */
+      background: none !important;
+      box-shadow: none !important;
     }
 
     .story-content {
@@ -70,7 +72,6 @@
     .story-content.active { transform: translateY(0); opacity:1; }
     .story-content h1 { font-size: 2.2rem; margin-bottom:.5rem; }
 
-    /* ⇩⇩ (ACTUALIZADO) H2 usa Patria desde el CDN ⇩⇩ */
     .story-content h2 {
       font-family: 'Patria', 'Noto Sans', sans-serif;
       font-weight: 700;
@@ -83,21 +84,21 @@
     .story-content p  { font-size:12rem; line-height:1.55; color: #eaeaea; justify-content:center;}
     .story-content img { width:100%; height:auto; border-radius:10px; margin-top:12px; }
     .story-content a {
-                    color: #EA5188; /* Elige el color que prefieras para los hipervinculos*/
-                    text-decoration: underline;
-                    transition: color 0.2s;
-                  }
-                  .story-content a:hover {
-                    color: #F7E07F; /* Color al pasar el mouse */
-                  }
+      color: #EA5188;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    .story-content a:hover {
+      color: #F7E07F;
+    }
     .intro-title {
-        background: none;
-        -webkit-background-clip: initial;
-        background-clip: initial;
-        color: #FFF2D2;
-        -webkit-text-fill-color: #FFF2D2;
-        font-size: 2.6rem; font-weight: 800; margin-bottom: 12px;
-        text-align:center;
+      background: none;
+      -webkit-background-clip: initial;
+      background-clip: initial;
+      color: #FFF2D2;
+      -webkit-text-fill-color: #FFF2D2;
+      font-size: 2.6rem; font-weight: 800; margin-bottom: 12px;
+      text-align:center;
     }
 
     .chapter-nav {
@@ -120,17 +121,16 @@
       .story-content { width: calc(100% - 32px); margin: 0 16px; }
     }
 
-    /* === Overrides de tamaños (AL FINAL para ganar la cascada) === */
-    :root { font-size: 18px; }                  /* Tamaño base global */
-    .story-content h1 { font-size: 2.6rem; }    /* Subimos títulos */
-    .story-content h2 { font-size: 1.9rem; }    /* H2 (Patria) más grande */
-    .story-content p  { font-size: 1.15rem; }   /* Texto de párrafo */
+    :root { font-size: 18px; }
+    .story-content h1 { font-size: 2.6rem; }
+    .story-content h2 { font-size: 1.9rem; }
+    .story-content p  { font-size: 1.15rem; }
 
-    #main-nav a { font-size: 1rem; }            /* Menú un poco mayor */
-    .mapboxgl-popup-content { font-size: 1rem !important; } /* Popups */
+    #main-nav a { font-size: 1rem; }
+    .mapboxgl-popup-content { font-size: 1rem !important; }
 
     @media (max-width: 768px) {
-      :root { font-size: 16px; }                /* Ajuste en móvil */
+      :root { font-size: 16px; }
       .story-content h2 { font-size: 1.6rem; }
       .story-content p  { font-size: 1.05rem; }
     }
@@ -229,7 +229,7 @@
     const ICON_URL   = BASE + 'img/eco.svg';
 
     let map, pointsData = null, stateBounds = null;
-    let pulseAnim = null, activeId = null; // <<< para el pulso
+    let pulseAnim = null, activeId = null;
 
     mapboxgl.accessToken = ACCESS_TOKEN;
     map = new mapboxgl.Map({
@@ -259,7 +259,8 @@
       img.src = ICON_URL;
       img.onload = () => {
         if (!map.hasImage('eco')) map.addImage('eco', img, { pixelRatio: 2 });
-        addPointLayers(); // <-- SIN CAMBIOS AQUÍ
+        addPointLayers();
+        setupPointClick(); // <-- NUEVO: activa click en puntos
       };
 
       if (stateBounds) { map.fitBounds(stateBounds, { padding: 40, duration: 800 }); }
@@ -268,7 +269,7 @@
       setupNavDots();
     });
 
-    // (CAMBIADO) Capa base de iconos + capa activa (pulso) + NUEVA capa de etiquetas
+    // Capa base de iconos + capa activa (pulso) + capa de etiquetas
     function addPointLayers(){
       // 1) Iconos base (sin texto)
       if (!map.getLayer('bcs-symbols')) {
@@ -299,7 +300,7 @@
         });
       }
 
-      // 3) (NUEVO) Capa de etiquetas SIEMPRE visible y arriba
+      // 3) Capa de etiquetas SIEMPRE visible y arriba
       if (!map.getLayer('bcs-labels')) {
         map.addLayer({
           id:'bcs-labels',
@@ -320,6 +321,24 @@
           }
         });
       }
+    }
+
+    // NUEVO: Permite moverse libremente por el mapa y mostrar tarjeta al hacer clic en punto
+    function setupPointClick() {
+      map.on('click', 'bcs-symbols', function(e) {
+        if (!e.features || !e.features.length) return;
+        const feature = e.features[0];
+        const id = feature.properties.id;
+        // Busca la sección correspondiente y la activa
+        document.querySelectorAll('.story-content').forEach(s => s.classList.remove('active'));
+        const sec = document.querySelector(`.story-section[data-chapter="${id}"] .story-content`);
+        if (sec) {
+          sec.classList.add('active');
+          sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        // Pulso visual en el punto
+        startPulseFor(id);
+      });
     }
 
     // Arrancar / parar pulso
@@ -364,6 +383,7 @@
           const box = entry.target.querySelector('.story-content');
           if (box) box.classList.add('active');
 
+          // Solo muestra el pulso y flyTo si el usuario scrollea a la sección
           if (chap === 'intro') {
             setPolygonVisibility(true);
             stopPulse();
