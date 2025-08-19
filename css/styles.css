@@ -33,6 +33,18 @@ h2 {
   animation: respirar 1.8s infinite;
 }
 
+/* Etiquetas de nombres de estados sobre el mapa */
+.estado-label {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 1em;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 1px 4px #000, 0 0 8px #611232;
+  pointer-events: none;
+  text-align: center;
+  white-space: nowrap;
+}
+
 /* Cierra la capa de tu app */
 }
 
