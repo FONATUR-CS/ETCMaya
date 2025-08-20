@@ -48,7 +48,8 @@
       width: 100vw;
       height: calc(100vh - 56px);
       display: flex;
-      justify-content: flex-start;
+      flex-direction: row;
+      justify-content: space-between;
       align-items: flex-start;
       pointer-events: none;
       z-index: 2;
@@ -65,18 +66,16 @@
       position: relative;
     }
     #story-side {
-      position: absolute;
-      top: 0;
-      left: 0;
       width: 420px;
       min-width: 320px;
       max-width: 92vw;
       height: 100%;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: flex-end;
+      justify-content: flex-start;
       pointer-events: none;
-      z-index: 3;
+      position: relative;
     }
     .story-content {
       background-image: url('../img/patron1.jpg'); 
@@ -93,9 +92,7 @@
       box-shadow: 0 24px 48px rgba(0,0,0,.45);
       pointer-events: auto;
       width: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
+      position: relative;
       z-index: 10;
     }
     .story-content.active {
@@ -103,6 +100,14 @@
       transform: translateY(0);
     }
     #story-main .story-content {
+      margin-left: 40px;
+      margin-right: 0;
+      position: relative;
+      z-index: 10;
+    }
+    #story-side .story-content {
+      margin-right: 40px;
+      margin-left: 0;
       position: relative;
       z-index: 10;
     }
@@ -453,7 +458,7 @@
         });
         // Vuelve a la vista general del estado
         if (stateBounds) {
-          map.flyToBounds(stateBounds, { padding: 40, duration: 1200 });
+          map.fitBounds(stateBounds, { padding: 40, duration: 1200 });
         }
         stopPulse();
       });
