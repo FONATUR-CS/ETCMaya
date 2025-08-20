@@ -48,30 +48,35 @@
       width: 100vw;
       height: calc(100vh - 56px);
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-start;
       align-items: flex-start;
       pointer-events: none;
       z-index: 2;
-    }
-    #story-main, #story-side {
-      height: 100%;
-      display: flex;
-      align-items: flex-start;
-      pointer-events: none;
     }
     #story-main {
       width: 420px;
       min-width: 320px;
       max-width: 92vw;
-      justify-content: flex-start;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      pointer-events: none;
+      position: relative;
     }
     #story-side {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 420px;
       min-width: 320px;
       max-width: 92vw;
+      height: 100%;
+      display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-end;
+      align-items: flex-start;
+      pointer-events: none;
+      z-index: 3;
     }
     .story-content {
       background-image: url('../img/patron1.jpg'); 
@@ -88,12 +93,36 @@
       box-shadow: 0 24px 48px rgba(0,0,0,.45);
       pointer-events: auto;
       width: 100%;
-      position: relative;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 10;
     }
     .story-content.active {
       opacity: 1;
       transform: translateY(0);
+    }
+    #story-main .story-content {
+      position: relative;
       z-index: 10;
+    }
+    #volver-inicio-btn {
+      display: block;
+      margin: 32px 0 0 40px;
+      padding: 12px 24px;
+      background: #EA5188;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      transition: background 0.2s;
+      pointer-events: auto;
+    }
+    #volver-inicio-btn:hover {
+      background: #d13e74;
     }
     .story-content h1 { font-size: 2.2rem; margin-bottom:.5rem; }
     .story-content h2 {
@@ -140,11 +169,15 @@
         width: 100vw;
         max-width: 100vw;
         margin: 0;
+        position: static;
       }
       .story-content {
         width: calc(100vw - 32px);
         margin: 16px;
         position: static;
+      }
+      #volver-inicio-btn {
+        margin: 16px 0 0 16px;
       }
     }
     :root { font-size: 18px; }
@@ -179,8 +212,6 @@
 
   <div id="map"></div>
 
-  <!-- Barra de navegación de puntos eliminada -->
-
   <div id="story-panels">
     <div id="story-main">
       <div class="story-content active">
@@ -189,6 +220,7 @@
         <p>Desplázate para acercarte a cada sitio. Al deslizar en la pantalla hacia arriba o abajo, saltarás a su capítulo correspondiente en el mapa.</p>
         <img src="../img/BCS_1.png" alt="Panorámica de Baja California Sur" loading="lazy">
       </div>
+      <button id="volver-inicio-btn">Volver al inicio</button>
     </div>
     <div id="story-side">
       <div class="story-content" id="card-BCS_1">
@@ -251,9 +283,9 @@
       stateBounds = getGeoJSONBounds(state);
       map.addSource('bcs-poly',{ type:'geojson', data: state });
       map.addLayer({ id:'bcs-fill', type:'fill', source:'bcs-poly',
-        paint:{ 'fill-color':'#2E8B57', 'fill-opacity':0.18 }});
+        paint:{ 'fill-color':'#EA5188', 'fill-opacity':0.18 }}); // Color rosa y transparencia igual
       map.addLayer({ id:'bcs-line', type:'line', source:'bcs-poly',
-        paint:{ 'line-color':'#2E8B57', 'line-width':2 }});
+        paint:{ 'line-color':'#EA5188', 'line-width':2 }});
 
       // Puntos
       pointsData = await fetch(POINTS_GEO).then(r=>r.json());
@@ -391,12 +423,6 @@
       });
     }
 
-    function setPolygonVisibility(visible){
-      const v = visible ? 'visible' : 'none';
-      if (map.getLayer('bcs-fill')) map.setLayoutProperty('bcs-fill','visibility', v);
-      if (map.getLayer('bcs-line')) map.setLayoutProperty('bcs-line','visibility', v);
-    }
-
     function flyToFeatureId(id){
       if (!pointsData) return;
       const f = pointsData.features.find(fe => (fe.properties && String(fe.properties.id) === String(id)));
@@ -416,6 +442,22 @@
       else if (gj.type === 'Polygon' || gj.type === 'MultiPolygon') eachCoord(gj.coordinates);
       return b;
     }
+
+    // Botón "Volver al inicio"
+    document.addEventListener('DOMContentLoaded', function() {
+      const btn = document.getElementById('volver-inicio-btn');
+      btn.addEventListener('click', function() {
+        // Oculta todas las tarjetas de la derecha
+        document.querySelectorAll('#story-side .story-content').forEach(card => {
+          card.classList.remove('active');
+        });
+        // Vuelve a la vista general del estado
+        if (stateBounds) {
+          map.flyToBounds(stateBounds, { padding: 40, duration: 1200 });
+        }
+        stopPulse();
+      });
+    });
   </script>
 </body>
 </html>
