@@ -70,34 +70,8 @@
       min-width: 320px;
       max-width: 92vw;
       height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      justify-content: flex-start;
+      position: relative;
       pointer-events: none;
-      position: relative;
-    }
-    .story-content {
-      background-image: url('../img/patron1.jpg'); 
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      padding: 28px; border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.12);
-      margin: 40px 0 0 40px;
-      transform: translateY(30px); opacity: 0;
-      transition: all .8s cubic-bezier(.25,.46,.45,.94);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 24px 48px rgba(0,0,0,.45);
-      pointer-events: auto;
-      width: 100%;
-      position: relative;
-      z-index: 10;
-    }
-    .story-content.active {
-      opacity: 1;
-      transform: translateY(0);
     }
     #story-main .story-content {
       margin-left: 40px;
@@ -107,9 +81,41 @@
     }
     #story-side .story-content {
       margin-right: 40px;
-      margin-left: 0;
-      position: relative;
+      margin-left: 0 !important;
+      position: absolute;
+      top: 0;
+      right: 0;
       z-index: 10;
+      width: calc(100% - 40px);
+      pointer-events: auto;
+      display: none;
+    }
+    #story-side .story-content.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .story-content {
+      background-image: url('../img/patron1.jpg'); 
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      padding: 28px; border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      margin: 40px 0 0 0;
+      transform: translateY(30px); opacity: 0;
+      transition: all .8s cubic-bezier(.25,.46,.45,.94);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 24px 48px rgba(0,0,0,.45);
+      width: 100%;
+      z-index: 10;
+      pointer-events: auto;
+    }
+    .story-content.active {
+      opacity: 1;
+      transform: translateY(0);
+      display: block;
     }
     #volver-inicio-btn {
       display: block;
@@ -183,6 +189,11 @@
       }
       #volver-inicio-btn {
         margin: 16px 0 0 16px;
+      }
+      #story-side .story-content {
+        position: static;
+        margin: 16px 0 0 0;
+        width: 100%;
       }
     }
     :root { font-size: 18px; }
@@ -463,6 +474,3 @@
         stopPulse();
       });
     });
-  </script>
-</body>
-</html>
