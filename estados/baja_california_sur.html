@@ -40,7 +40,12 @@
     #main-nav a.active, #main-nav a:hover { background:#EA5188; color:#fff; }
 
     #map { position: fixed; top: 56px; left:0; right:0; height: calc(100vh - 56px); z-index:1; }
-    #story { position: relative; z-index: 2; }
+    #story { position: relative; z-index: 2; pointer-events: none; }
+    .story-content,
+    .story-content a,
+    .story-content img {
+      pointer-events: auto;
+    }
 
     .story-section {
       min-height: calc(100vh - 56px);
@@ -260,7 +265,7 @@
       img.onload = () => {
         if (!map.hasImage('eco')) map.addImage('eco', img, { pixelRatio: 2 });
         addPointLayers();
-        setupPointClick(); // <-- NUEVO: activa click en puntos
+        setupPointClick();
       };
 
       if (stateBounds) { map.fitBounds(stateBounds, { padding: 40, duration: 800 }); }
@@ -269,9 +274,7 @@
       setupNavDots();
     });
 
-    // Capa base de iconos + capa activa (pulso) + capa de etiquetas
     function addPointLayers(){
-      // 1) Iconos base (sin texto)
       if (!map.getLayer('bcs-symbols')) {
         map.addLayer({
           id:'bcs-symbols',
@@ -284,8 +287,6 @@
           }
         });
       }
-
-      // 2) Icono activo (para pulso) – sin texto
       if (!map.getLayer('bcs-symbols-active')) {
         map.addLayer({
           id: 'bcs-symbols-active',
@@ -299,8 +300,6 @@
           }
         });
       }
-
-      // 3) Capa de etiquetas SIEMPRE visible y arriba
       if (!map.getLayer('bcs-labels')) {
         map.addLayer({
           id:'bcs-labels',
@@ -323,25 +322,21 @@
       }
     }
 
-    // NUEVO: Permite moverse libremente por el mapa y mostrar tarjeta al hacer clic en punto
     function setupPointClick() {
       map.on('click', 'bcs-symbols', function(e) {
         if (!e.features || !e.features.length) return;
         const feature = e.features[0];
         const id = feature.properties.id;
-        // Busca la sección correspondiente y la activa
         document.querySelectorAll('.story-content').forEach(s => s.classList.remove('active'));
         const sec = document.querySelector(`.story-section[data-chapter="${id}"] .story-content`);
         if (sec) {
           sec.classList.add('active');
           sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-        // Pulso visual en el punto
         startPulseFor(id);
       });
     }
 
-    // Arrancar / parar pulso
     function stopPulse() {
       if (pulseAnim) { pulseAnim.pause(); pulseAnim = null; }
       activeId = null;
@@ -370,7 +365,6 @@
       });
     }
 
-    // Story / “scrollama”
     function setupStory(){
       const options = { threshold: 0.9 };
       const obs = new IntersectionObserver((entries) => {
@@ -378,12 +372,10 @@
           if (!entry.isIntersecting) return;
           const chap = entry.target.dataset.chapter;
 
-          // activar tarjeta
           document.querySelectorAll('.story-content').forEach(s => s.classList.remove('active'));
           const box = entry.target.querySelector('.story-content');
           if (box) box.classList.add('active');
 
-          // Solo muestra el pulso y flyTo si el usuario scrollea a la sección
           if (chap === 'intro') {
             setPolygonVisibility(true);
             stopPulse();
