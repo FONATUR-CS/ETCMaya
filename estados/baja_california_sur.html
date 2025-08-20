@@ -40,25 +40,48 @@
     #main-nav a.active, #main-nav a:hover { background:#EA5188; color:#fff; }
 
     #map { position: fixed; top: 56px; left:0; right:0; height: calc(100vh - 56px); z-index:1; }
-    #story { position: relative; z-index: 2; pointer-events: none; }
+    #story {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      width: 100vw;
+      height: calc(100vh - 56px);
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      pointer-events: none;
+      z-index: 2;
+    }
     .story-content,
     .story-content a,
     .story-content img {
       pointer-events: auto;
     }
-
     .story-section {
-      min-height: calc(100vh - 56px);
-      display:flex; align-items:center; justify-content:flex-end;
-      padding: 0 5%;
+      min-height: unset;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: 0;
+      width: 50vw;
+      height: 100%;
+      position: relative;
     }
     .story-section.intro {
-      justify-content:center;
-      /* Elimina el fondo de color y sombra atrás */
+      justify-content: flex-start;
       background: none !important;
       box-shadow: none !important;
+      width: 50vw;
+      height: 100%;
+      position: relative;
     }
-
+    .story-section:not(.intro) {
+      justify-content: flex-end;
+      width: 50vw;
+      height: 100%;
+      position: relative;
+    }
     .story-content {
       width: 420px; max-width: 92vw;
       background-image: url('../img/patron1.jpg'); 
@@ -68,15 +91,41 @@
       background-attachment: fixed;
       padding: 28px; border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.12);
-      margin-right: 40px;
+      margin: 40px 0 0 40px;
       transform: translateY(30px); opacity: 0;
       transition: all .8s cubic-bezier(.25,.46,.45,.94);
       backdrop-filter: blur(10px);
       box-shadow: 0 24px 48px rgba(0,0,0,.45);
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
     }
-    .story-content.active { transform: translateY(0); opacity:1; }
+    .story-section.intro .story-content {
+      margin: 40px 0 0 40px;
+      left: 0;
+      right: auto;
+      opacity: 1 !important;
+      transform: none !important;
+      position: absolute;
+    }
+    .story-content.active {
+      opacity: 1;
+      transform: translateY(0);
+      z-index: 10;
+      right: 0;
+      left: auto;
+      margin: 40px 40px 0 0;
+      position: absolute;
+    }
+    .story-section.intro .story-content.active {
+      left: 0;
+      right: auto;
+      margin: 40px 0 0 40px;
+      z-index: 10;
+      position: absolute;
+    }
     .story-content h1 { font-size: 2.2rem; margin-bottom:.5rem; }
-
     .story-content h2 {
       font-family: 'Patria', 'Noto Sans', sans-serif;
       font-weight: 700;
@@ -85,7 +134,6 @@
       color:#FFF2D2;
       justify-content:center;
     }
-
     .story-content p  { font-size:12rem; line-height:1.55; color: #eaeaea; justify-content:center;}
     .story-content img { width:100%; height:auto; border-radius:10px; margin-top:12px; }
     .story-content a {
@@ -105,7 +153,6 @@
       font-size: 2.6rem; font-weight: 800; margin-bottom: 12px;
       text-align:center;
     }
-
     .chapter-nav {
       position: fixed; left: 14px; top: 50%; transform: translateY(-50%);
       z-index: 10; display:flex; flex-direction:column; gap:10px;
@@ -113,7 +160,6 @@
     .nav-dot { width: 10px; height:10px; border-radius:50%; background: rgba(255,255,255,.45);
       cursor:pointer; transition:.25s; border:2px solid transparent; }
     .nav-dot.active { background:#00d4ff; box-shadow: 0 0 12px rgba(0,212,255,.55); transform: scale(1.2); }
-
     .mapboxgl-popup-content {
       background: rgba(0,0,0,0.95) !important;
       border-radius: 12px !important;
@@ -121,19 +167,19 @@
       color: white !important;
       padding: 12px !important;
     }
-
     @media (max-width: 768px) {
-      .story-content { width: calc(100% - 32px); margin: 0 16px; }
+      #story { flex-direction: column; }
+      .story-section, .story-section.intro, .story-section:not(.intro) { width: 100vw; }
+      .story-content { width: calc(100vw - 32px); margin: 16px; position: static; }
+      .story-section.intro .story-content,
+      .story-content.active { margin: 16px; position: static; }
     }
-
     :root { font-size: 18px; }
     .story-content h1 { font-size: 2.6rem; }
     .story-content h2 { font-size: 1.9rem; }
     .story-content p  { font-size: 1.15rem; }
-
     #main-nav a { font-size: 1rem; }
     .mapboxgl-popup-content { font-size: 1rem !important; }
-
     @media (max-width: 768px) {
       :root { font-size: 16px; }
       .story-content h2 { font-size: 1.6rem; }
@@ -178,7 +224,6 @@
         <img src="../img/BCS_1.png" alt="Panorámica de Baja California Sur" loading="lazy">
       </div>
     </section>
-
     <section class="story-section" data-chapter="BCS_1">
       <div class="story-content">
         <h2>Isla Espíritu Santo</h2>
@@ -187,7 +232,6 @@
         <img src="../img/01_Espiritu_1.jpg" alt="Isla Espíritu Santo" loading="lazy">
       </div>
     </section>
-
     <section class="story-section" data-chapter="BCS_2">
       <div class="story-content">
         <h2>Bahía de Magdalena</h2>
@@ -196,7 +240,6 @@
         <img src="../img/02_Bahia_Magdalena.jpg" alt="Bahía de Magdalena" loading="lazy">
       </div>
     </section>
-
     <section class="story-section" data-chapter="BCS_3">
       <div class="story-content">
         <h2>Cerro El Pilón</h2>
@@ -205,7 +248,6 @@
         <img src="../img/03_Pilon.jpg" alt="Cerro El Pilón" loading="lazy">
       </div>
     </section>
-
     <section class="story-section" data-chapter="BCS_4">
       <div class="story-content">
         <h2>Cañón del Mezquite</h2>
@@ -214,7 +256,6 @@
         <img src="../img/04_Mezquite.jpg" alt="Cañón del Mezquite" loading="lazy">
       </div>
     </section>
-
     <section class="story-section" data-chapter="BCS_5">
       <div class="story-content">
         <h2>Cañón de Costa Azul</h2>
@@ -270,7 +311,7 @@
 
       if (stateBounds) { map.fitBounds(stateBounds, { padding: 40, duration: 800 }); }
 
-      setupStory();
+      // setupStory(); // Scrollama desactivado
       setupNavDots();
     });
 
@@ -327,11 +368,16 @@
         if (!e.features || !e.features.length) return;
         const feature = e.features[0];
         const id = feature.properties.id;
-        document.querySelectorAll('.story-content').forEach(s => s.classList.remove('active'));
+        // Oculta todas las tarjetas excepto la intro
+        document.querySelectorAll('.story-content').forEach(s => {
+          if (!s.closest('.story-section').classList.contains('intro')) {
+            s.classList.remove('active');
+          }
+        });
+        // Muestra la tarjeta correspondiente del lado derecho
         const sec = document.querySelector(`.story-section[data-chapter="${id}"] .story-content`);
         if (sec) {
           sec.classList.add('active');
-          sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
         startPulseFor(id);
       });
@@ -365,7 +411,9 @@
       });
     }
 
-   /* function setupStory(){
+    // Scrollama desactivado
+    /*
+    function setupStory(){
       const options = { threshold: 0.9 };
       const obs = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -391,14 +439,24 @@
       }, options);
 
       document.querySelectorAll('[data-chapter]').forEach(sec => obs.observe(sec));
-    }*/
+    }
+    */
 
     function setupNavDots(){
       document.querySelectorAll('.nav-dot').forEach(dot => {
         dot.addEventListener('click', () => {
           const chap = dot.dataset.chapter;
-          const target = document.querySelector(`[data-chapter="${chap}"]`);
-          if (target) target.scrollIntoView({ behavior:'smooth', block:'center' });
+          // Oculta todas las tarjetas excepto la intro
+          document.querySelectorAll('.story-content').forEach(s => {
+            if (!s.closest('.story-section').classList.contains('intro')) {
+              s.classList.remove('active');
+            }
+          });
+          // Muestra la tarjeta correspondiente del lado derecho
+          const sec = document.querySelector(`.story-section[data-chapter="${chap}"] .story-content`);
+          if (sec && chap !== 'intro') {
+            sec.classList.add('active');
+          }
         });
       });
     }
