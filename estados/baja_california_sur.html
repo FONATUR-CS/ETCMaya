@@ -123,13 +123,6 @@
       font-size: 2.6rem; font-weight: 800; margin-bottom: 12px;
       text-align:center;
     }
-    .chapter-nav {
-      position: fixed; left: 14px; top: 50%; transform: translateY(-50%);
-      z-index: 10; display:flex; flex-direction:column; gap:10px;
-    }
-    .nav-dot { width: 10px; height:10px; border-radius:50%; background: rgba(255,255,255,.45);
-      cursor:pointer; transition:.25s; border:2px solid transparent; }
-    .nav-dot.active { background:#00d4ff; box-shadow: 0 0 12px rgba(0,212,255,.55); transform: scale(1.2); }
     .mapboxgl-popup-content {
       background: rgba(0,0,0,0.95) !important;
       border-radius: 12px !important;
@@ -186,14 +179,7 @@
 
   <div id="map"></div>
 
-  <nav class="chapter-nav" id="nav">
-    <div class="nav-dot active" data-chapter="intro" title="Vista general"></div>
-    <div class="nav-dot" data-chapter="BCS_1" title="BCS_1"></div>
-    <div class="nav-dot" data-chapter="BCS_2" title="BCS_2"></div>
-    <div class="nav-dot" data-chapter="BCS_3" title="BCS_3"></div>
-    <div class="nav-dot" data-chapter="BCS_4" title="BCS_4"></div>
-    <div class="nav-dot" data-chapter="BCS_5" title="BCS_5"></div>
-  </nav>
+  <!-- Barra de navegación de puntos eliminada -->
 
   <div id="story-panels">
     <div id="story-main">
@@ -284,8 +270,6 @@
       };
 
       if (stateBounds) { map.fitBounds(stateBounds, { padding: 40, duration: 800 }); }
-
-      setupNavDots();
     });
 
     function addPointLayers(){
@@ -358,13 +342,14 @@
       });
     }
 
-    // Mostrar tarjeta del punto en el panel derecho
+    // Mostrar tarjeta del punto en el panel derecho y hacer zoom al punto
     function showSideCard(id) {
       document.querySelectorAll('#story-side .story-content').forEach(card => {
         card.classList.remove('active');
       });
       const card = document.getElementById('card-' + id);
       if (card) card.classList.add('active');
+      flyToFeatureId(id);
     }
 
     function setupPointClick() {
@@ -403,29 +388,6 @@
         easing: 'easeInOutSine',
         loop: true,
         update: () => map.setLayoutProperty('bcs-symbols-active', 'icon-size', state.s)
-      });
-    }
-
-    function setupNavDots(){
-      document.querySelectorAll('.nav-dot').forEach(dot => {
-        dot.addEventListener('click', () => {
-          const chap = dot.dataset.chapter;
-          if (chap === 'intro') {
-            document.querySelectorAll('#story-side .story-content').forEach(card => {
-              card.classList.remove('active');
-            });
-            stopPulse();
-          } else {
-            showSideCard(chap);
-            startPulseFor(chap);
-          }
-        });
-      });
-    }
-
-    function updateDots(current){
-      document.querySelectorAll('.nav-dot').forEach(dot => {
-        dot.classList.toggle('active', dot.dataset.chapter === current);
       });
     }
 
