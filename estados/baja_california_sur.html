@@ -69,7 +69,9 @@
       width: 420px;
       min-width: 320px;
       max-width: 92vw;
-      justify-content: flex-end;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-end;
     }
     .story-content {
       background-image: url('../img/patron1.jpg'); 
@@ -203,7 +205,6 @@
       </div>
     </div>
     <div id="story-side">
-      <!-- Aquí se mostrarán las tarjetas de los puntos -->
       <div class="story-content" id="card-BCS_1">
         <h2>Isla Espíritu Santo</h2>
         <p>Considerada Patrimonio Natural de la Humanidad desde 2007. Posibilidad de nadar con lobos marinos y buceo en zonas someras.</p>
@@ -247,6 +248,7 @@
 
     let map, pointsData = null, stateBounds = null;
     let pulseAnim = null, activeId = null;
+    let breathingAnim = null;
 
     mapboxgl.accessToken = ACCESS_TOKEN;
     map = new mapboxgl.Map({
@@ -278,15 +280,16 @@
         if (!map.hasImage('eco')) map.addImage('eco', img, { pixelRatio: 2 });
         addPointLayers();
         setupPointClick();
+        startBreathingAll();
       };
 
       if (stateBounds) { map.fitBounds(stateBounds, { padding: 40, duration: 800 }); }
 
-      // setupStory(); // Scrollama desactivado
       setupNavDots();
     });
 
     function addPointLayers(){
+      // Todos los puntos con icono y animación de "respirar"
       if (!map.getLayer('bcs-symbols')) {
         map.addLayer({
           id:'bcs-symbols',
@@ -299,6 +302,7 @@
           }
         });
       }
+      // Icono activo para pulso extra
       if (!map.getLayer('bcs-symbols-active')) {
         map.addLayer({
           id: 'bcs-symbols-active',
@@ -307,11 +311,12 @@
           filter: ['==', ['get','id'], '__none__'],
           layout: {
             'icon-image': 'eco',
-            'icon-size': 3.2,
+            'icon-size': 4.2,
             'icon-allow-overlap': true
           }
         });
       }
+      // Etiquetas
       if (!map.getLayer('bcs-labels')) {
         map.addLayer({
           id:'bcs-labels',
@@ -334,6 +339,25 @@
       }
     }
 
+    // Animación de "respirar" para todos los puntos
+    function startBreathingAll() {
+      if (breathingAnim) breathingAnim.pause();
+      let state = { s: 3 };
+      breathingAnim = anime({
+        targets: state,
+        s: [3, 3.7],
+        duration: 1200,
+        direction: 'alternate',
+        easing: 'easeInOutSine',
+        loop: true,
+        update: () => {
+          if (map.getLayer('bcs-symbols')) {
+            map.setLayoutProperty('bcs-symbols', 'icon-size', state.s);
+          }
+        }
+      });
+    }
+
     // Mostrar tarjeta del punto en el panel derecho
     function showSideCard(id) {
       document.querySelectorAll('#story-side .story-content').forEach(card => {
@@ -344,6 +368,7 @@
     }
 
     function setupPointClick() {
+      // Permitir interacción con el mapa y los puntos
       map.on('click', 'bcs-symbols', function(e) {
         if (!e.features || !e.features.length) return;
         const feature = e.features[0];
@@ -369,10 +394,10 @@
       map.setFilter('bcs-symbols-active', ['==', ['get','id'], activeId]);
 
       if (pulseAnim) pulseAnim.pause();
-      const state = { s: 3.2 };
+      const state = { s: 4.2 };
       pulseAnim = anime({
         targets: state,
-        s: [3.2, 4.2],
+        s: [4.2, 5.2],
         duration: 900,
         direction: 'alternate',
         easing: 'easeInOutSine',
@@ -381,46 +406,15 @@
       });
     }
 
-    // Scrollama desactivado
-    /*
-    function setupStory(){
-      const options = { threshold: 0.9 };
-      const obs = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (!entry.isIntersecting) return;
-          const chap = entry.target.dataset.chapter;
-
-          document.querySelectorAll('.story-content').forEach(s => s.classList.remove('active'));
-          const box = entry.target.querySelector('.story-content');
-          if (box) box.classList.add('active');
-
-          if (chap === 'intro') {
-            setPolygonVisibility(true);
-            stopPulse();
-            if (stateBounds) map.flyToBounds(stateBounds, { padding: 40, duration: 1200 });
-          } else {
-            setPolygonVisibility(false);
-            flyToFeatureId(chap);
-            startPulseFor(chap);
-          }
-
-          updateDots(chap);
-        });
-      }, options);
-
-      document.querySelectorAll('[data-chapter]').forEach(sec => obs.observe(sec));
-    }
-    */
-
     function setupNavDots(){
       document.querySelectorAll('.nav-dot').forEach(dot => {
         dot.addEventListener('click', () => {
           const chap = dot.dataset.chapter;
           if (chap === 'intro') {
-            // No hace nada, la tarjeta principal siempre está visible
             document.querySelectorAll('#story-side .story-content').forEach(card => {
               card.classList.remove('active');
             });
+            stopPulse();
           } else {
             showSideCard(chap);
             startPulseFor(chap);
