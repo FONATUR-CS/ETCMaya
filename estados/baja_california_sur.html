@@ -12,7 +12,7 @@
   <!-- (NUEVO) Hoja de estilos del CDN para fuente "Patria" -->
   <link href="https://framework-gb.cdn.gob.mx/gm/v3/assets/styles/main.css" rel="stylesheet">
 
-  <!-- anime.js (para el pulso) -->
+  <!-- anime.js (para el pulso y animaciones) -->
   <script src="https://unpkg.com/animejs@3.2.1/lib/anime.min.js"></script>
 
   <style>
@@ -90,11 +90,11 @@
       width: calc(100% - 40px);
       pointer-events: auto;
       display: none;
+      opacity: 0;
+      transform: scale(0.95);
     }
     #story-side .story-content.active {
       display: block;
-      opacity: 1;
-      transform: translateY(0);
     }
     .story-content {
       background-image: url('../img/patron1.jpg'); 
@@ -105,7 +105,6 @@
       padding: 28px; border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.12);
       margin: 40px 0 0 0;
-      transform: translateY(30px); opacity: 0;
       transition: all .8s cubic-bezier(.25,.46,.45,.94);
       backdrop-filter: blur(10px);
       box-shadow: 0 24px 48px rgba(0,0,0,.45);
@@ -115,7 +114,7 @@
     }
     .story-content.active {
       opacity: 1;
-      transform: translateY(0);
+      transform: scale(1);
       display: block;
     }
     #volver-inicio-btn {
@@ -280,11 +279,11 @@
         top: 0;
         right: 0;
         display: none;
+        opacity: 0;
+        transform: scale(0.95);
       }
       #story-side .story-content.active {
         display: block;
-        opacity: 1;
-        transform: translateY(0);
       }
       #story-side .story-content img {
         width: 100%;
@@ -486,13 +485,43 @@
       });
     }
 
+    // Animación de aparición/desaparición de tarjetas de puntos
+    function animateCardIn(card) {
+      card.style.display = 'block';
+      anime({
+        targets: card,
+        opacity: [0, 1],
+        scale: [0.95, 1],
+        duration: 600,
+        easing: 'easeOutQuad'
+      });
+    }
+    function animateCardOut(card) {
+      anime({
+        targets: card,
+        opacity: [1, 0],
+        scale: [1, 0.95],
+        duration: 400,
+        easing: 'easeInQuad',
+        complete: function() {
+          card.style.display = 'none';
+        }
+      });
+    }
+
     // Mostrar tarjeta del punto en el panel derecho y hacer zoom al punto
     function showSideCard(id) {
       document.querySelectorAll('#story-side .story-content').forEach(card => {
-        card.classList.remove('active');
+        if (card.classList.contains('active')) {
+          card.classList.remove('active');
+          animateCardOut(card);
+        }
       });
       const card = document.getElementById('card-' + id);
-      if (card) card.classList.add('active');
+      if (card) {
+        card.classList.add('active');
+        animateCardIn(card);
+      }
       flyToFeatureId(id);
     }
 
@@ -559,9 +588,12 @@
     document.addEventListener('DOMContentLoaded', function() {
       const btn = document.getElementById('volver-inicio-btn');
       btn.addEventListener('click', function() {
-        // Oculta todas las tarjetas de la derecha
+        // Oculta todas las tarjetas de la derecha con animación
         document.querySelectorAll('#story-side .story-content').forEach(card => {
-          card.classList.remove('active');
+          if (card.classList.contains('active')) {
+            card.classList.remove('active');
+            animateCardOut(card);
+          }
         });
         // Vuelve a la vista general del estado
         if (stateBounds) {
