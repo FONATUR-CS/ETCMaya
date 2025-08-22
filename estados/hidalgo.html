@@ -527,7 +527,7 @@
 
     function setupPointClick() {
       // Permitir interacción con el mapa y los puntos
-      map.on('click', 'bcs-symbols', function(e) {
+      map.on('click', 'hidalgo-symbols', function(e) {
         if (!e.features || !e.features.length) return;
         const feature = e.features[0];
         const id = feature.properties.id;
