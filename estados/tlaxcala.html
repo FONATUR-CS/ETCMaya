@@ -1,11 +1,308 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tlaxcala – Turismo Comunitario</title>
-  <link rel="stylesheet" href="../js/leaflet.css" />
-  <link rel="stylesheet" href="../css/styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tlaxcala – Turismo Comunitario (Story Map)</title>
+
+  <!-- Mapbox GL -->
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet"/>
+
+  <!-- (NUEVO) Hoja de estilos del CDN para fuente "Patria" -->
+  <link href="https://framework-gb.cdn.gob.mx/gm/v3/assets/styles/main.css" rel="stylesheet">
+
+  <!-- anime.js (para el pulso y animaciones) -->
+  <script src="https://unpkg.com/animejs@3.2.1/lib/anime.min.js"></script>
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: 'Noto Sans', system-ui, Arial, sans-serif; color:#fff; background:#000; }
+
+    #main-nav {
+      position: fixed; top: 0; left: 0; width: 100%;
+      background-image: url('../img/patron2.jpg'); 
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: #fff; z-index: 10000;
+      padding: 10px 24px; box-shadow: 0 2px 6px rgba(0,0,0,.2);
+    }
+    #main-nav ul {
+      display: flex;
+      gap: 1rem;
+      justify-content: left;
+      align-items: left;
+      height: 100%;
+      flex-wrap: wrap;
+    }
+    #main-nav a { text-decoration:none; color:#555; font-weight:700; padding:6px 8px; border-radius:4px; }
+    #main-nav a.active, #main-nav a:hover { background:#EA5188; color:#fff; }
+
+    #map { position: fixed; top: 56px; left:0; right:0; height: calc(100vh - 56px); z-index:1; }
+
+    #story-panels {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      width: 100vw;
+      height: calc(100vh - 56px);
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      pointer-events: none;
+      z-index: 2;
+    }
+    #story-main {
+      width: 420px;
+      min-width: 320px;
+      max-width: 92vw;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      pointer-events: none;
+      position: relative;
+    }
+    #story-side {
+      width: 420px;
+      min-width: 320px;
+      max-width: 92vw;
+      height: 100%;
+      position: relative;
+      pointer-events: none;
+    }
+    #story-main .story-content {
+      margin-left: 40px;
+      margin-right: 0;
+      position: relative;
+      z-index: 10;
+    }
+    #story-side .story-content {
+      margin-right: 40px;
+      margin-left: 0 !important;
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 10;
+      width: calc(100% - 40px);
+      pointer-events: auto;
+      display: none;
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    #story-side .story-content.active {
+      display: block;
+    }
+    .story-content {
+      background-image: url('../img/patron1.jpg'); 
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      padding: 28px; border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      margin: 40px 0 0 0;
+      transition: all .8s cubic-bezier(.25,.46,.45,.94);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 24px 48px rgba(0,0,0,.45);
+      width: 100%;
+      z-index: 10;
+      pointer-events: auto;
+    }
+    .story-content.active {
+      opacity: 1;
+      transform: scale(1);
+      display: block;
+    }
+    #volver-inicio-btn {
+      display: block;
+      margin: 32px 0 0 40px;
+      padding: 12px 24px;
+      background: #EA5188;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      transition: background 0.2s;
+      pointer-events: auto;
+    }
+    #volver-inicio-btn:hover {
+      background: #d13e74;
+    }
+    .story-content h1 { font-size: 2.2rem; margin-bottom:.5rem; }
+    .story-content h2 {
+      font-family: 'Patria', 'Noto Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1.9rem;
+      margin-bottom:.35rem;
+      color:#FFF2D2;
+      justify-content:center;
+    }
+    .story-content p  { font-size: 1.15rem; line-height:1.55; color: #eaeaea; justify-content:center;}
+    .story-content img { width:100%; height:auto; border-radius:10px; margin-top:12px; }
+    .story-content a {
+      color: #EA5188;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    .story-content a:hover {
+      color: #F7E07F;
+    }
+    .intro-title {
+      background: none;
+      -webkit-background-clip: initial;
+      background-clip: initial;
+      color: #FFF2D2;
+      -webkit-text-fill-color: #FFF2D2;
+      font-size: 2.6rem; font-weight: 800; margin-bottom: 12px;
+      text-align:center;
+    }
+    .mapboxgl-popup-content {
+      background: rgba(0,0,0,0.95) !important;
+      border-radius: 12px !important;
+      border: 1px solid rgba(0,212,255,0.3) !important;
+      color: white !important;
+      padding: 12px !important;
+    }
+
+    /* Responsive para tablets y laptops */
+    @media (max-width: 1200px) {
+      #story-main, #story-side {
+        width: 340px;
+        min-width: 220px;
+        max-width: 98vw;
+      }
+      #story-main .story-content, #story-side .story-content {
+        padding: 18px;
+        margin: 24px 0 0 0;
+      }
+      #volver-inicio-btn {
+        margin: 18px 0 0 18px;
+        font-size: 1rem;
+        padding: 10px 16px;
+      }
+    }
+
+    /* Responsive para móviles: tarjetas pequeñas arriba izquierda/derecha */
+    @media (max-width: 900px) {
+      #main-nav {
+        padding: 6px 8px;
+      }
+      #main-nav ul {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      #map {
+        top: 48px;
+        height: calc(100vh - 48px);
+      }
+      #story-panels {
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+        width: 100vw;
+        height: calc(100vh - 48px);
+        position: fixed;
+        top: 48px;
+        left: 0;
+        z-index: 2;
+        pointer-events: none;
+      }
+      #story-main {
+        width: 15vw;
+        min-width: 120px;
+        max-width: 180px;
+        height: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 10;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      #story-main .story-content {
+        width: 100%;
+        min-width: 120px;
+        max-width: 180px;
+        margin: 8px 0 0 8px;
+        padding: 8px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        pointer-events: auto;
+      }
+      #story-main .story-content img {
+        width: 100%;
+        max-width: 120px;
+        height: auto;
+        border-radius: 6px;
+        margin-top: 6px;
+      }
+      #volver-inicio-btn {
+        margin: 8px 0 0 8px;
+        font-size: 0.85rem;
+        padding: 6px 10px;
+        border-radius: 6px;
+        width: 90%;
+      }
+      #story-side {
+        width: 15vw;
+        min-width: 120px;
+        max-width: 180px;
+        height: auto;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 10;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+      }
+      #story-side .story-content {
+        width: 100%;
+        min-width: 120px;
+        max-width: 180px;
+        margin: 8px 8px 0 0;
+        padding: 8px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        pointer-events: auto;
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: none;
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      #story-side .story-content.active {
+        display: block;
+      }
+      #story-side .story-content img {
+        width: 100%;
+        max-width: 120px;
+        height: auto;
+        border-radius: 6px;
+        margin-top: 6px;
+      }
+      .story-content h1, .story-content h2 { font-size: 1rem; }
+      .story-content p  { font-size: 0.85rem; }
+    }
+    @media (max-width: 600px) {
+      #main-nav ul { font-size: 0.95rem; }
+      .story-content h1 { font-size: 1.1rem; }
+      .story-content h2 { font-size: 1rem; }
+      .story-content p  { font-size: 0.9rem; }
+      #volver-inicio-btn { font-size: 0.9rem; }
+    }
+  </style>
 </head>
 <body>
 
@@ -13,44 +310,298 @@
     <ul>
       <li><a href="../index.html">Inicio</a></li>
       <li><a href="baja_california_sur.html">Baja California Sur</a></li>
-      <li><a href="hidalgo.html" >Hidalgo</a></li>
+      <li><a href="hidalgo.html">Hidalgo</a></li>
       <li><a href="michoacan.html">Michoacán</a></li>
       <li><a href="morelos.html">Morelos</a></li>
       <li><a href="nayarit.html">Nayarit</a></li>
       <li><a href="oaxaca.html">Oaxaca</a></li>
       <li><a href="puebla.html">Puebla</a></li>
-      <li><a href="tlaxcala.html"class="active">Tlaxcala</a></li>
+      <li><a href="tlaxcala.html" class="active">Tlaxcala</a></li>
       <li><a href="veracruz.html">Veracruz</a></li>
     </ul>
   </nav>
 
-  <div id="container">
-    <!-- Panel izquierdo: scroll-story -->
-    <div id="story">
-      <img src="../img/tittle.png" alt="Turismo Comunitario" loading="lazy">
-      
-      <section data-index="0">
-        <h2>Tlaxcala – Turismo Comunitario</h2>
-        <p>Bienvenido a las experiencias de Turismo Comunitario en Tlaxcala.</p>
-        <img src="../img/TLAXCALA_1.png" alt="Panorámica de Hidalgo" loading="lazy">
-      </section>
+  <div id="map"></div>
 
-      <section data-index="1">
-        <h2>Comunidades Otomí y Tepehua</h2>
-        <p>Descubre las tradiciones, artesanías y senderismo en estas regiones.</p>
-        <img src="../img/Tlaxcala.png" alt="Comunidad Otomí" loading="lazy">
-      </section>
+  <div id="story-panels">
+    <div id="story-main">
+      <div class="story-content active">
+        <h2>Turismo Comunitario en Tlaxcala</h2>
+        <p class="intro-sub">Explora los puntos destacados con este mapa interactivo.</p>
+        <p>Desplázate para acercarte a cada sitio. <br> Puedes moverte libremente por el mapa y dar clic en cada punto de interés, así saltarás a su capítulo correspondiente en el mapa.<br> </p>
+  <img src="../img/tlaxcala_1.png" alt="Panorámica de Tlaxcala" loading="lazy">
+      </div>
+      <button id="volver-inicio-btn">Volver a la vista general</button>
     </div>
-
-    <!-- Panel derecho: mapa centrado al estado -->
-    <div id="map"></div>
+    <div id="story-side">
+  <div class="story-content" id="card-tlaxcala_1">
+        <h2>Parque Nacional La Malinche</h2>
+        <p>Acceso clásico al PN La Malinche desde el Centro Vacacional IMSS Malintzi.</p>
+        <p><a href="https://maps.app.goo.gl/fUxvmA7SowGrV9x77" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <img src="../img/tlaxcala_2.jpg" alt="Parque Nacional La Malinche" loading="lazy">
+      </div>
+  <div class="story-content" id="card-tlaxcala_2">
+        <h2>Santuario de las Luciérnagas (Piedra Canteada)</h2>
+        <p>Área comunitaria para observar luciérnagas en temporada, con guías locales.</p>
+        <p><a href="https://maps.app.goo.gl/hWQ96rfVX56GHXbb6" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <img src="../img/tlaxcala_3.jpg" alt="Santuario de las Luciérnagas" loading="lazy">
+      </div>
+  <div class="story-content" id="card-tlaxcala_3">
+        <h2>Laguna de Atlangatepec</h2>
+        <p>Cuerpo de agua de alta planicie con humedales y aves migratorias.</p>
+        <p><a href="https://maps.app.goo.gl/1BqY9wPv3XzDKgsq9" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <img src="../img/tlaxcala_4.jpg" alt="Laguna de Atlangatepec" loading="lazy">
+      </div>
+  <div class="story-content" id="card-tlaxcala_4">
+        <h2>Laguna de Acuitlapilco</h2>
+        <p>Laguna cercana a la capital con miradores informales y muelles sencillos.</p>
+        <p><a href="https://maps.app.goo.gl/DFS7vWHNWHjZ4TeW9" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <img src="../img/tlaxcala_5.jpg" alt="Laguna de Acuitlapilco" loading="lazy">
+      </div>
+  <div class="story-content" id="card-tlaxcala_5">
+        <h2>Presa de Apizaquito</h2>
+        <p>Pequeño embalse en zona semiurbana frecuentado por locales.</p>
+        <p><a href="https://maps.app.goo.gl/5tab1vEhizCkq5z86" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <img src="../img/tlaxcala_6.jpg" alt="Presa de Apizaquito" loading="lazy">
+      </div>
+    </div>
   </div>
 
-  <script src="../js/leaflet.js"></script>
-  <script src="../js/scrollama.min.js"></script>
-  <script src="../js/main.js"></script>
+  <script>
+    // === CONFIG ===
+    const ACCESS_TOKEN = 'pk.eyJ1IjoiY2hheXZvbHRhIiwiYSI6ImNsdGRlNml1NDAyaXgyanJ3eXYzdGQ0MmEifQ.VH5UyDCjvPQ1X_KrkkHcZQ';
+    const BASE = '../';
+    const STATE_GEO  = BASE + 'data/tlaxcala.geojson';
+    const POINTS_GEO = BASE + 'data/5_Puntos_tlaxcala.geojson';
+    const ICON_URL   = BASE + 'img/eco.svg';
+
+    let map, pointsData = null, stateBounds = null;
+    let pulseAnim = null, activeId = null;
+    let breathingAnim = null;
+
+    mapboxgl.accessToken = ACCESS_TOKEN;
+    map = new mapboxgl.Map({
+      container:'map',
+      style:'mapbox://styles/mapbox/satellite-streets-v12',
+      center:[-102.5528, 23.6345],
+      zoom:5, pitch:0, bearing:0, projection:'globe'
+    });
+    map.addControl(new mapboxgl.NavigationControl({ visualizePitch:true }), 'top-right');
+
+    map.on('load', async () => {
+      // Estado
+      const state = await fetch(STATE_GEO).then(r=>r.json());
+      stateBounds = getGeoJSONBounds(state);
+      map.addSource('tlaxcala-poly',{ type:'geojson', data: state });
+      map.addLayer({ id:'tlaxcala-fill', type:'fill', source:'tlaxcala-poly',
+        paint:{ 'fill-color':'#EA5188', 'fill-opacity':0.18 }}); // Color rosa y transparencia igual
+      map.addLayer({ id:'tlaxcala-line', type:'line', source:'tlaxcala-poly',
+        paint:{ 'line-color':'#EA5188', 'line-width':2 }});
+
+      // Puntos
+      pointsData = await fetch(POINTS_GEO).then(r=>r.json());
+      map.addSource('tlaxcala-points',{ type:'geojson', data: pointsData });
+
+      // Icono
+      const img = new Image(32,32);
+      img.src = ICON_URL;
+      img.onload = () => {
+        if (!map.hasImage('eco')) map.addImage('eco', img, { pixelRatio: 2 });
+        addPointLayers();
+        setupPointClick();
+        startBreathingAll();
+      };
+
+      if (stateBounds) { map.fitBounds(stateBounds, { padding: 40, duration: 800 }); }
+    });
+
+    function addPointLayers(){
+      // Todos los puntos con icono y animación de "respirar"
+      if (!map.getLayer('tlaxcala-symbols')) {
+        map.addLayer({
+          id:'tlaxcala-symbols',
+          type:'symbol',
+          source:'tlaxcala-points',
+          layout:{
+            'icon-image': 'eco',
+            'icon-size': 3,
+            'icon-allow-overlap': true
+          }
+        });
+      }
+      // Icono activo para pulso extra
+      if (!map.getLayer('tlaxcala-symbols-active')) {
+        map.addLayer({
+          id: 'tlaxcala-symbols-active',
+          type: 'symbol',
+          source: 'tlaxcala-points',
+          filter: ['==', ['get','id'], '__none__'],
+          layout: {
+            'icon-image': 'eco',
+            'icon-size': 4.2,
+            'icon-allow-overlap': true
+          }
+        });
+      }
+      // Etiquetas
+      if (!map.getLayer('tlaxcala-labels')) {
+        map.addLayer({
+          id:'tlaxcala-labels',
+          type:'symbol',
+          source:'tlaxcala-points',
+          layout:{
+            'text-field': ['get','Name'],
+            'text-size': 14,
+            'text-offset': [0, 2.2],
+            'text-anchor': 'top',
+            'text-allow-overlap': true,
+            'text-ignore-placement': true
+          },
+          paint:{
+            'text-color':'#ffffff',
+            'text-halo-color':'#000000',
+            'text-halo-width': 1.5
+          }
+        });
+      }
+    }
+
+    // Animación de "respirar" para todos los puntos
+    function startBreathingAll() {
+      if (breathingAnim) breathingAnim.pause();
+      let state = { s: 3 };
+      breathingAnim = anime({
+        targets: state,
+        s: [3, 3.7],
+        duration: 1200,
+        direction: 'alternate',
+        easing: 'easeInOutSine',
+        loop: true,
+        update: () => {
+          if (map.getLayer('tlaxcala-symbols')) {
+            map.setLayoutProperty('tlaxcala-symbols', 'icon-size', state.s);
+          }
+        }
+      });
+    }
+
+    // Animación de aparición/desaparición de tarjetas de puntos
+    function animateCardIn(card) {
+      card.style.display = 'block';
+      anime({
+        targets: card,
+        opacity: [0, 1],
+        scale: [0.95, 1],
+        duration: 600,
+        easing: 'easeOutQuad'
+      });
+    }
+    function animateCardOut(card) {
+      anime({
+        targets: card,
+        opacity: [1, 0],
+        scale: [1, 0.95],
+        duration: 400,
+        easing: 'easeInQuad',
+        complete: function() {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Mostrar tarjeta del punto en el panel derecho y hacer zoom al punto
+    function showSideCard(id) {
+      document.querySelectorAll('#story-side .story-content').forEach(card => {
+        if (card.classList.contains('active')) {
+          card.classList.remove('active');
+          animateCardOut(card);
+        }
+      });
+      const card = document.getElementById('card-' + id);
+      if (card) {
+        card.classList.add('active');
+        animateCardIn(card);
+      }
+      flyToFeatureId(id);
+    }
+
+    function setupPointClick() {
+      // Permitir interacción con el mapa y los puntos
+      map.on('click', 'tlaxcala-symbols', function(e) {
+        if (!e.features || !e.features.length) return;
+        const feature = e.features[0];
+        const id = feature.properties.id;
+        showSideCard(id);
+        startPulseFor(id);
+      });
+    }
+
+    function stopPulse() {
+      if (pulseAnim) { pulseAnim.pause(); pulseAnim = null; }
+      activeId = null;
+      if (map.getLayer('tlaxcala-symbols-active')) {
+        map.setFilter('tlaxcala-symbols-active', ['==', ['get','id'], '__none__']);
+      }
+    }
+    function startPulseFor(id) {
+      if (!map.getLayer('tlaxcala-symbols-active')) return;
+      const targetId = String(id);
+      if (activeId === targetId) return;
+
+      activeId = targetId;
+      map.setFilter('tlaxcala-symbols-active', ['==', ['get','id'], activeId]);
+
+      if (pulseAnim) pulseAnim.pause();
+      const state = { s: 4.2 };
+      pulseAnim = anime({
+        targets: state,
+        s: [4.2, 5.2],
+        duration: 900,
+        direction: 'alternate',
+        easing: 'easeInOutSine',
+        loop: true,
+        update: () => map.setLayoutProperty('tlaxcala-symbols-active', 'icon-size', state.s)
+      });
+    }
+
+    function flyToFeatureId(id){
+      if (!pointsData) return;
+      const f = pointsData.features.find(fe => (fe.properties && String(fe.properties.id) === String(id)));
+      if (!f) return;
+      const coords = f.geometry.coordinates; // [lng,lat]
+      map.flyTo({ center: coords, zoom: 9.5, pitch: 35, bearing: 0, duration: 1400, essential: true });
+    }
+
+    function getGeoJSONBounds(gj){
+      const b = new mapboxgl.LngLatBounds();
+      const eachCoord = (coords) => {
+        if (typeof coords[0] === 'number') b.extend(coords);
+        else coords.forEach(eachCoord);
+      };
+      if (gj.type === 'FeatureCollection') gj.features.forEach(ft => eachCoord(ft.geometry.coordinates));
+      else if (gj.type === 'Feature') eachCoord(gj.geometry.coordinates);
+      else if (gj.type === 'Polygon' || gj.type === 'MultiPolygon') eachCoord(gj.coordinates);
+      return b;
+    }
+
+    // Botón "Volver al inicio"
+    document.addEventListener('DOMContentLoaded', function() {
+      const btn = document.getElementById('volver-inicio-btn');
+      btn.addEventListener('click', function() {
+        // Oculta todas las tarjetas de la derecha con animación
+        document.querySelectorAll('#story-side .story-content').forEach(card => {
+          if (card.classList.contains('active')) {
+            card.classList.remove('active');
+            animateCardOut(card);
+          }
+        });
+        // Vuelve a la vista general del estado
+        if (stateBounds) {
+          map.fitBounds(stateBounds, { padding: 40, duration: 1200 });
+        }
+        stopPulse();
+      });
+    });
+  </script>
 </body>
-
 </html>
-
-
