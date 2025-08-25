@@ -1,0 +1,122 @@
+{
+  "type": "FeatureCollection",
+  "name": "sitios_naturales_oaxaca",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Hierve el Agua",
+        "municipio": "San Lorenzo Albarradas",
+        "tipo": "Formación travertina / cascadas petrificadas",
+        "actividades": [
+          "miradores",
+          "senderismo",
+          "fotografía"
+        ],
+        "descripcion": "Manantiales carbonatados que forman 'cascadas' petrificadas y pozas panorámicas.",
+        "recomendaciones": "Evitar horas de mayor calor; calzado con suela para roca húmeda.",
+        "id": "oaxaca_1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -96.2673,
+          16.8598
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Parque Nacional Huatulco (Bahías)",
+        "municipio": "Santa María Huatulco",
+        "tipo": "Parque Nacional / litoral",
+        "actividades": [
+          "snorkel",
+          "nado",
+          "senderos interpretativos"
+        ],
+        "descripcion": "Sistema de bahías con arrecifes y selva baja caducifolia, múltiples playas protegidas.",
+        "recomendaciones": "Usar bloqueador biodegradable; respetar zonas de anidación.",
+        "id": "oaxaca_2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -96.137,
+          15.768
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Pueblos Mancomunados (Benito Juárez)",
+        "municipio": "Ixtlán de Juárez",
+        "tipo": "Bosque templado / turismo comunitario",
+        "actividades": [
+          "senderismo",
+          "MTB",
+          "tirolesa",
+          "cabañas"
+        ],
+        "descripcion": "Red de ecoturismo serrano con miradores y rutas entre comunidades.",
+        "recomendaciones": "Clima fresco; reservar servicios comunitarios con antelación.",
+        "id": "oaxaca_3"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -96.468,
+          17.15
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Laguna de Manialtepec",
+        "municipio": "San Pedro Mixtepec",
+        "tipo": "Laguna costera (bioluminiscencia estacional)",
+        "actividades": [
+          "kayak",
+          "paseo nocturno",
+          "observación de aves"
+        ],
+        "descripcion": "Sistema lagunar con manglar; ocasional bioluminiscencia en época cálida.",
+        "recomendaciones": "Mejor experiencia de bioluminiscencia en noches sin luna.",
+        "id": "oaxaca_4"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -97.151,
+          15.963
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Cascadas de Apoala",
+        "municipio": "Santiago Apoala",
+        "tipo": "Cascadas / cañón",
+        "actividades": [
+          "senderismo",
+          "nado en pozas",
+          "fotografía"
+        ],
+        "descripcion": "Cascadas y paredones calizos en un cañón de la Mixteca alta.",
+        "recomendaciones": "Camino de terracería; preguntar por guías locales en el pueblo.",
+        "id": "oaxaca_5"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -97.0198,
+          17.6246
+        ]
+      }
+    }
+  ]
+}

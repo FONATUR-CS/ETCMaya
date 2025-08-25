@@ -1,0 +1,120 @@
+{
+  "type": "FeatureCollection",
+  "name": "sitios_naturales_nayarit",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Parque Nacional Islas Marietas (Playa del Amor)",
+        "municipio": "Bahía de Banderas",
+        "tipo": "Parque Nacional / islas",
+        "actividades": [
+          "avistamiento",
+          "snorkel (con permiso)",
+          "fotografía"
+        ],
+        "descripcion": "Arco volcánico insular con fauna marina; acceso regulado a Playa del Amor.",
+        "recomendaciones": "Reservar con touroperador autorizado; respetar cupos y zonas restringidas.",
+        "id": "nayarit_1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -105.5719,
+          20.7007
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Parque Nacional Isla Isabel",
+        "municipio": "Santiago Ixcuintla (mar adyacente)",
+        "tipo": "Parque Nacional / isla oceánica",
+        "actividades": [
+          "observación de aves marinas",
+          "senderismo ligero",
+          "fotografía"
+        ],
+        "descripcion": "Isla volcánica con colonias de aves (piqueros) y miradores naturales.",
+        "recomendaciones": "Acceso por mar con permisos; llevar equipo básico y respetar fauna.",
+        "id": "nayarit_2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -105.889,
+          21.85
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Volcán Ceboruco (cráter)",
+        "municipio": "Jala",
+        "tipo": "Volcán",
+        "actividades": [
+          "senderismo",
+          "geoturismo",
+          "miradores"
+        ],
+        "descripcion": "Edificio volcánico con fumarolas y vistas del valle.",
+        "recomendaciones": "Clima cambiante en cumbre; llevar agua y protección solar.",
+        "id": "nayarit_3"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -104.433,
+          21.109
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Laguna de Santa María del Oro",
+        "municipio": "Santa María del Oro",
+        "tipo": "Lago de cráter",
+        "actividades": [
+          "kayak",
+          "nado recreativo",
+          "gastronomía local"
+        ],
+        "descripcion": "Maar con aguas turquesa rodeado de paredones volcánicos.",
+        "recomendaciones": "No usar jabones en el lago; zonas con distinta profundidad.",
+        "id": "nayarit_4"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -104.575,
+          21.339
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "La Tovara (manantiales y manglar)",
+        "municipio": "San Blas",
+        "tipo": "Manantial / manglar",
+        "actividades": [
+          "paseo en panga",
+          "observación de cocodrilos y aves"
+        ],
+        "descripcion": "Canales de manglar y ojos de agua dulce en el sistema estuarino de San Blas.",
+        "recomendaciones": "Repelente de insectos y respeto a la fauna; circuito guiado.",
+        "id": "nayarit_5"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -105.201,
+          21.516
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "type": "FeatureCollection",
+  "name": "sitios_naturales_tlaxcala",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tlaxcala_1",
+        "nombre": "Parque Nacional La Malinche (Centro Malintzi)",
+        "municipio": "Huamantla / Calpulalpan (área del parque)",
+        "tipo": "Parque Nacional / alta montaña",
+        "actividades": [
+          "senderismo",
+          "ascenso",
+          "camping"
+        ],
+        "descripcion": "Acceso clásico al PN La Malinche desde el Centro Vacacional IMSS Malintzi.",
+        "recomendaciones": "Clima frío de altura; comenzar temprano y llevar abrigo."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -98.032,
+          19.277
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tlaxcala_2",
+        "nombre": "Santuario de las Luciérnagas (Piedra Canteada)",
+        "municipio": "Nanacamilpa de Mariano Arista",
+        "tipo": "Bosque templado / avistamiento estacional",
+        "actividades": [
+          "caminata nocturna",
+          "observación de luciérnagas (jun–ago)"
+        ],
+        "descripcion": "Área comunitaria para observar luciérnagas en temporada, con guías locales.",
+        "recomendaciones": "Respetar silencio y no usar luz blanca; reservar con anticipación."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -98.563,
+          19.497
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tlaxcala_3",
+        "nombre": "Laguna de Atlangatepec",
+        "municipio": "Atlangatepec",
+        "tipo": "Laguna endorreica",
+        "actividades": [
+          "observación de aves",
+          "fotografía",
+          "paseo en orilla"
+        ],
+        "descripcion": "Cuerpo de agua de alta planicie con humedales y aves migratorias.",
+        "recomendaciones": "Binoculares y respeto a áreas de anidación."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -98.166,
+          19.531
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tlaxcala_4",
+        "nombre": "Laguna de Acuitlapilco",
+        "municipio": "Tlaxcala de Xicohténcatl",
+        "tipo": "Laguna periurbana",
+        "actividades": [
+          "caminata suave",
+          "fotografía",
+          "observación casual de aves"
+        ],
+        "descripcion": "Laguna cercana a la capital con miradores informales y muelles sencillos.",
+        "recomendaciones": "Respeta zonas de vegetación y no dejes residuos."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -98.24,
+          19.29
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tlaxcala_5",
+        "nombre": "Presa de Apizaquito",
+        "municipio": "Apizaco",
+        "tipo": "Embalse / recreación local",
+        "actividades": [
+          "paseo",
+          "fotografía",
+          "observación casual"
+        ],
+        "descripcion": "Pequeño embalse en zona semiurbana frecuentado por locales.",
+        "recomendaciones": "Respetar restricciones locales y orillas."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -98.13,
+          19.425
+        ]
+      }
+    }
+  ]
+}

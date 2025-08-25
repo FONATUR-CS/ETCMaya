@@ -1,0 +1,121 @@
+{
+  "type": "FeatureCollection",
+  "name": "sitios_naturales_veracruz",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "veracruz_1",
+        "nombre": "Parque Nacional Pico de Orizaba (Citlaltépetl)",
+        "municipio": "Calcahualco / La Perla (accesos)",
+        "tipo": "Parque Nacional / volcán más alto de México",
+        "actividades": [
+          "alta montaña",
+          "senderismo",
+          "fotografía de cumbres"
+        ],
+        "descripcion": "Volcán estratificado en la frontera Puebla–Veracruz; vistas espectaculares.",
+        "recomendaciones": "Altitud extrema; no ascender sin guía y equipo adecuado."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -97.2696,
+          19.0303
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "veracruz_2",
+        "nombre": "Parque Nacional Cofre de Perote (Nauhcampatépetl)",
+        "municipio": "Perote / Xico / Acajete (área del parque)",
+        "tipo": "Parque Nacional / montaña",
+        "actividades": [
+          "senderismo",
+          "4x4 a la antena",
+          "observación de paisaje"
+        ],
+        "descripcion": "Macizo volcánico con cumbre rocosa y bosque de coníferas.",
+        "recomendaciones": "Ráfagas de viento y frío; revisar acceso vehicular."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -97.1467,
+          19.4911
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "veracruz_3",
+        "nombre": "Cascada de Texolo",
+        "municipio": "Xico",
+        "tipo": "Cascada / cañón",
+        "actividades": [
+          "senderismo por miradores",
+          "fotografía",
+          "puentes"
+        ],
+        "descripcion": "Cascada encañonada con miradores y puentes; vegetación húmeda de montaña.",
+        "recomendaciones": "Escalinatas empinadas; calzado con buen agarre."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -96.9775,
+          19.4153
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "veracruz_4",
+        "nombre": "Salto de Eyipantla",
+        "municipio": "San Andrés Tuxtla",
+        "tipo": "Cascada",
+        "actividades": [
+          "miradores",
+          "fotografía",
+          "mercado local"
+        ],
+        "descripcion": "Cascada ancha y potente en la región de Los Tuxtlas.",
+        "recomendaciones": "Rociada de agua abundante; proteger equipo fotográfico."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -95.197,
+          18.402
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "veracruz_5",
+        "nombre": "Reserva Ecológica Nanciyaga (Laguna de Catemaco)",
+        "municipio": "Catemaco",
+        "tipo": "Selva alta perennifolia / laguna",
+        "actividades": [
+          "senderos interpretativos",
+          "paseo en lancha",
+          "observación de fauna"
+        ],
+        "descripcion": "Reserva privada en la ribera de la Laguna de Catemaco con senderos y servicios.",
+        "recomendaciones": "Repelente de insectos y respeto a fauna local."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -95.068,
+          18.446
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "type": "FeatureCollection",
+  "name": "sitios_naturales_puebla",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Parque Nacional Izta-Popo (acceso Puebla, Paso de Cortés)",
+        "municipio": "San Nicolás de los Ranchos",
+        "tipo": "Parque Nacional / alta montaña",
+        "actividades": [
+          "miradores",
+          "senderismo de altura",
+          "observación de volcanes"
+        ],
+        "descripcion": "Paso de alta montaña entre Iztaccíhuatl y Popocatépetl con vistas espectaculares.",
+        "recomendaciones": "Clima frío y viento; revisar alertas volcánicas y portar abrigo.",
+        "id": "puebla_1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -98.641,
+          19.093
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Valle de Piedras Encimadas",
+        "municipio": "Zacatlán",
+        "tipo": "Paisaje kárstico / formaciones rocosas",
+        "actividades": [
+          "senderismo",
+          "cabalgata",
+          "fotografía"
+        ],
+        "descripcion": "Valle con monolitos de roca sobrepuesta en bosque de niebla.",
+        "recomendaciones": "Terreno húmedo; llevar impermeable en temporada de lluvias.",
+        "id": "puebla_2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -97.958,
+          19.907
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Cascadas de Quetzalapan",
+        "municipio": "Chignahuapan/Zacatlán",
+        "tipo": "Cascada",
+        "actividades": [
+          "senderismo por escalinatas",
+          "tirolesa",
+          "fotografía"
+        ],
+        "descripcion": "Cascada encañonada con infraestructura turística y miradores.",
+        "recomendaciones": "Muchas escaleras; considerar condición física y calzado con agarre.",
+        "id": "puebla_3"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -97.865,
+          19.939
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Laguna de Alchichica",
+        "municipio": "Tepeyahualco",
+        "tipo": "Maar / lago salino",
+        "actividades": [
+          "fotografía geológica",
+          "observación de estromatolitos",
+          "nado (con precaución)"
+        ],
+        "descripcion": "Cráter volcánico con aguas salobres y estructuras carbonatadas.",
+        "recomendaciones": "No dañar estromatolitos; viento fuerte común en la orilla.",
+        "id": "puebla_4"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -97.403,
+          19.411
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Reserva de la Biósfera Tehuacán-Cuicatlán (Jardín Helia Bravo Hollis)",
+        "municipio": "Zapotitlán Salinas",
+        "tipo": "Desierto rosetófilo / cactáceas gigantes",
+        "actividades": [
+          "senderismo interpretativo",
+          "fotografía",
+          "centro de visitantes"
+        ],
+        "descripcion": "Zona núcleo con cardonales y senderos señalizados; museo de sitio.",
+        "recomendaciones": "Alta radiación; sombrero y agua indispensable.",
+        "id": "puebla_5"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -97.466,
+          18.321
+        ]
+      }
+    }
+  ]
+}
