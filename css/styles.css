@@ -197,8 +197,8 @@ html, body {
 #footer-banner img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  padding: 0; /* Elimina padding para que ocupe todo el espacio */
+  object-fit: contain;
+  padding: 4px 12px;
   display: block;
 }
 
