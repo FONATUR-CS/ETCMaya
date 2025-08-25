@@ -569,7 +569,7 @@
       const f = pointsData.features.find(fe => (fe.properties && String(fe.properties.id) === String(id)));
       if (!f) return;
       const coords = f.geometry.coordinates; // [lng,lat]
-      map.flyTo({ center: coords, zoom: 9.5, pitch: 35, bearing: 0, duration: 1400, essential: true });
+      map.flyTo({ center: coords, zoom: 12, pitch: 35, bearing: 0, duration: 1400, essential: true });
     }
 
     function getGeoJSONBounds(gj){
@@ -605,3 +605,4 @@
   </script>
 </body>
 </html>
+
