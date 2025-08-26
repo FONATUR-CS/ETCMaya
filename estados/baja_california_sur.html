@@ -389,15 +389,14 @@
     map.addControl(new mapboxgl.NavigationControl({ visualizePitch:true }), 'top-right');
 
     map.on('load', async () => {
-        // Agrega la fuente DEM  nuevos cambios
-        map.addSource('mapbox-dem', {
-          "type": "raster-dem",
-          "url": "mapbox://mapbox.terrain-rgb",
-          "tileSize": 512,
-          "maxzoom": 14
-        });
-        // Activa el terreno 3D  nuevos cambios
-        map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 }
+      // --- AQUI VA EL CAMBIO ---
+  map.addSource('mapbox-dem', {
+    "type": "raster-dem",
+    "url": "mapbox://mapbox.terrain-rgb",
+    "tileSize": 512,
+    "maxzoom": 14
+  });
+  map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
       // Estado
       const state = await fetch(STATE_GEO).then(r=>r.json());
       stateBounds = getGeoJSONBounds(state);
