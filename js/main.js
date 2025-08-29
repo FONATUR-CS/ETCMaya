@@ -36,17 +36,17 @@ function initMap() {
 
   // 3. Slug map…
   const slugMap = {
-    'Campeche':                        'campeche',
-    'Chiapas':                         'chiapas',
-    'Tabasco':                         'tabasco',
-    'Quintana Roo':                    'qroo',
-    'Yucatán':                         'yucatan',
+    'Campeche':                        'Campeche',
+    'Chiapas':                         'Chiapas',
+    'Tabasco':                         'Tabasco',
+    'Quintana Roo':                    'Quintana Roo',
+    'Yucatán':                         'Yucatán',
     
   };
 
   // 4. URL de polígonos
   const geoUrl = pageKey === 'index'
-    ? `${basePath}data/Estados_1.geojson`
+    ? `${basePath}data/Estados_2.geojson`
     : `${basePath}data/${pageKey}.geojson`;
 
   // 5. Cargar polígonos
