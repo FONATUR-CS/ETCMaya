@@ -36,11 +36,11 @@ function initMap() {
 
   // 3. Slug map…
   const slugMap = {
-    'Campeche':                        'Campeche',
-    'Chiapas':                         'Chiapas',
-    'Tabasco':                         'Tabasco',
-    'Quintana Roo':                    'Quintana Roo',
-    'Yucatán':                         'Yucatán',
+    'Campeche':                        'campeche',
+    'Chiapas':                         'chiapas',
+    'Tabasco':                         'tabasco',
+    'Quintana Roo':                    'qroo',
+    'Yucatán':                         'yucatan',
     
   };
 
