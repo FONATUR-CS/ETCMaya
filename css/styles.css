@@ -85,7 +85,7 @@ html, body {
   font-family: 'Noto Sans', sans-serif;
   color: #fff;
   /* Fondo con imagen */
-  background-image: url('../img/patron1.jpg');
+  background-image: url('../img/patron3.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -141,7 +141,7 @@ html, body {
   padding-top: 24px;
   width: 50%;
   padding: 30px 40px;
-  background-image: url('../img/patron1.jpg');
+  background-image: url('../img/patron3.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
