@@ -117,7 +117,7 @@ html, body {
 }
 #main-nav > * { position: relative; z-index: 1; }
 
-#main-nav a { color: #3a0732; }
+#main-nav a { color: #62cdb4; }
 #main-nav a:hover,
 #main-nav a.active {
   background: #c2a9d1;
@@ -229,7 +229,7 @@ html, body {
 }
 #story ul { margin-left: 1.2em; list-style-type: disc; }
 #story li { margin-bottom: 0.6em; transition: color 0.3s; }
-#story li a { text-decoration: none; color: #EA5188; }
+#story li a { text-decoration: none; color: #62cdb4; } /* color de selección en la barra superior */
 #story li a:hover { text-decoration: underline; color: #fff; }
 
 /* PANEL DERECHO (MAPA)
