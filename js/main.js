@@ -115,7 +115,7 @@ function initMap() {
           }
         });
       }
-*/
+
       // ─── Scrollama para INDEX ───
       /*
       if (pageKey === 'index') {
@@ -142,7 +142,7 @@ function initMap() {
       }
       */
       // ─── Scrollama y puntos para BCS ───
-     /* if (pageKey === 'baja_california_sur') {
+      if (pageKey === 'baja_california_sur') {
         // 1) Icono eco.svg
         const ecoIcon = L.icon({
           iconUrl: `${basePath}img/eco.svg`,
