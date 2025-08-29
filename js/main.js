@@ -36,15 +36,12 @@ function initMap() {
 
   // 3. Slug map…
   const slugMap = {
-    'Baja California Sur':             'baja_california_sur',
-    'Hidalgo':                         'hidalgo',
-    'Michoacán de Ocampo':             'michoacan',
-    'Morelos':                         'morelos',
-    'Nayarit':                         'nayarit',
-    'Oaxaca':                          'oaxaca',
-    'Puebla':                          'puebla',
-    'Tlaxcala':                        'tlaxcala',
-    'Veracruz de Ignacio de la Llave': 'veracruz'
+    'Campeche':                        'campeche',
+    'Chiapas':                         'chiapas',
+    'Tabasco':                         'tabasco',
+    'Quintana Roo':                    'qroo',
+    'Yucatán':                         'yucatan',
+    
   };
 
   // 4. URL de polígonos
@@ -145,7 +142,7 @@ function initMap() {
       }
       */
       // ─── Scrollama y puntos para BCS ───
-      if (pageKey === 'baja_california_sur') {
+     /* if (pageKey === 'baja_california_sur') {
         // 1) Icono eco.svg
         const ecoIcon = L.icon({
           iconUrl: `${basePath}img/eco.svg`,
