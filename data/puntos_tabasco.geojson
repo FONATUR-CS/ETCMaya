@@ -1,0 +1,18 @@
+{
+"type": "FeatureCollection",
+"name": "estado_Tabasco",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"xy_coordinate_resolution": 1e-15,
+"features": [
+{ "type": "Feature", "properties": { "nombre": "ETC_48", "localidad": "Frontera", "municipio": "Centla", "estado": "Tabasco", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "tabasco_1" }, "geometry": { "type": "Point", "coordinates": [ -92.6532, 18.532 ] } },
+{ "type": "Feature", "properties": { "nombre": "ETC_49", "localidad": "Jonuta", "municipio": "Jonuta", "estado": "Tabasco", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "tabasco_2" }, "geometry": { "type": "Point", "coordinates": [ -92.0798, 17.9085 ] } },
+{ "type": "Feature", "properties": { "nombre": "ETC_50", "localidad": "Quintín Aráuz", "municipio": "Centla", "estado": "Tabasco", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "tabasco_3" }, "geometry": { "type": "Point", "coordinates": [ -92.5487, 18.3321 ] } },
+{ "type": "Feature", "properties": { "nombre": "ETC_51", "localidad": "Poza Redonda 3ra sección", "municipio": "Cárdenas", "estado": "Tabasco", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "tabasco_4" }, "geometry": { "type": "Point", "coordinates": [ -93.4936, 18.2622 ] } },
+{ "type": "Feature", "properties": { "nombre": "ETC_52", "localidad": "Villahermosa", "municipio": "Centro", "estado": "Tabasco", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "tabasco_5" }, "geometry": { "type": "Point", "coordinates": [ -92.9143, 17.9964 ] } },
+{ "type": "Feature", "properties": { "nombre": "ETC_53", "localidad": "Tacotalpa", "municipio": "Tacotalpa", "estado": "Tabasco", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "tabasco_6" }, "geometry": { "type": "Point", "coordinates": [ -92.7736, 17.461 ] } },
+{ "type": "Feature", "properties": { "nombre": "ETC_54", "localidad": "Comalcalco", "municipio": "Comalcalco", "estado": "Tabasco", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "tabasco_7" }, "geometry": { "type": "Point", "coordinates": [ -93.2357, 18.1865 ] } },
+{ "type": "Feature", "properties": { "nombre": "ETC_55", "localidad": "Betania", "municipio": "Comalcalco", "estado": "Tabasco", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "tabasco_8" }, "geometry": { "type": "Point", "coordinates": [ -93.3096, 18.283 ] } },
+{ "type": "Feature", "properties": { "nombre": "ETC_56", "localidad": "San Isidro", "municipio": "Centla", "estado": "Tabasco", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "tabasco_9" }, "geometry": { "type": "Point", "coordinates": [ -92.6475, 18.4077 ] } },
+{ "type": "Feature", "properties": { "nombre": "ETC_57", "localidad": null, "municipio": "Nacajuca", "estado": "Tabasco", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "tabasco_10" }, "geometry": { "type": "Point", "coordinates": [ -92.954, 18.1032 ] } }
+]
+}
