@@ -16,13 +16,433 @@
   <script src="https://unpkg.com/animejs@3.2.1/lib/anime.min.js"></script>
 
   <style>
-    /* ... tus estilos originales ... */
-    /* Mantén igual la sección <style> de tu archivo */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: 'Noto Sans', system-ui, Arial, sans-serif; color:#fff; background:#000; }
+
+    #main-nav {
+      position: fixed; top: 0; left: 0; width: 100%;
+      background-image: url('../img/patron2.jpg'); 
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: #fff; z-index: 10000;
+      padding: 10px 24px; box-shadow: 0 2px 6px rgba(0,0,0,.2);
+    }
+    #main-nav ul {
+      display: flex;
+      gap: 1rem;
+      justify-content: left;
+      align-items: left;
+      height: 100%;
+      flex-wrap: wrap;
+    }
+    #main-nav a { text-decoration:none; color:#555; font-weight:700; padding:6px 8px; border-radius:4px; }
+    #main-nav a.active, #main-nav a:hover { background:#62cdb4; color:#fff; }
+
+    #map { position: fixed; top: 56px; left:0; right:0; height: calc(100vh - 56px); z-index:1; }
+
+    #story-panels {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      width: 100vw;
+      height: calc(100vh - 56px);
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      pointer-events: none;
+      z-index: 2;
+    }
+    #story-main {
+      width: 420px;
+      min-width: 320px;
+      max-width: 92vw;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      pointer-events: none;
+      position: relative;
+    }
+    #story-side {
+      width: 420px;
+      min-width: 320px;
+      max-width: 92vw;
+      height: 100%;
+      position: relative;
+      pointer-events: none;
+    }
+    #story-main .story-content {
+      margin-left: 40px;
+      margin-right: 0;
+      position: relative;
+      z-index: 10;
+    }
+    #story-side .story-content {
+      margin-right: 40px;
+      margin-left: 0 !important;
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 10;
+      width: calc(100% - 40px);
+      pointer-events: auto;
+      display: none;
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    #story-side .story-content.active {
+      display: block;
+    }
+    .story-content {
+      background-image: url('../img/patron3.jpg'); 
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      padding: 28px; border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      margin: 40px 0 0 0;
+      transition: all .8s cubic-bezier(.25,.46,.45,.94);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 24px 48px rgba(0,0,0,.45);
+      width: 100%;
+      z-index: 10;
+      pointer-events: auto;
+    }
+    .story-content.active {
+      opacity: 1;
+      transform: scale(1);
+      display: block;
+    }
+    #volver-inicio-btn {
+      display: block;
+      margin: 32px 0 0 40px;
+      padding: 12px 24px;
+      background: #62cdb4;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      transition: background 0.2s;
+      pointer-events: auto;
+    }
+    #volver-inicio-btn:hover {
+      background: #d13e74;
+    }
+    .story-content h1 { font-size: 2.2rem; margin-bottom:.5rem; }
+    .story-content h2 {
+      font-family: 'Patria', 'Noto Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1.9rem;
+      margin-bottom:.35rem;
+      color:#FFF2D2;
+      justify-content:center;
+    }
+    .story-content p  { font-size: 1.15rem; line-height:1.55; color: #eaeaea; justify-content:center;}
+    .story-content img { width:100%; height:auto; border-radius:10px; margin-top:12px; }
+    .story-content a {
+      color: #bae7db;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    .story-content a:hover {
+      color: #F7E07F;
+    }
+    .intro-title {
+      background: none;
+      -webkit-background-clip: initial;
+      background-clip: initial;
+      color: #FFF2D2;
+      -webkit-text-fill-color: #FFF2D2;
+      font-size: 2.6rem; font-weight: 800; margin-bottom: 12px;
+      text-align:center;
+    }
+    .mapboxgl-popup-content {
+      background: rgba(0,0,0,0.95) !important;
+      border-radius: 12px !important;
+      border: 1px solid rgba(0,212,255,0.3) !important;
+      color: white !important;
+      padding: 12px !important;
+    }
+
+    /* Responsive para tablets y laptops */
+    @media (max-width: 1200px) {
+      #story-main, #story-side {
+        width: 340px;
+        min-width: 220px;
+        max-width: 98vw;
+      }
+      #story-main .story-content, #story-side .story-content {
+        padding: 18px;
+        margin: 24px 0 0 0;
+      }
+      #volver-inicio-btn {
+        margin: 18px 0 0 18px;
+        font-size: 1rem;
+        padding: 10px 16px;
+      }
+    }
+
+    /* Responsive para móviles: tarjetas pequeñas arriba izquierda/derecha */
+    @media (max-width: 900px) {
+      #main-nav {
+        padding: 6px 8px;
+      }
+      #main-nav ul {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      #map {
+        top: 48px;
+        height: calc(100vh - 48px);
+      }
+      #story-panels {
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+        width: 100vw;
+        height: calc(100vh - 48px);
+        position: fixed;
+        top: 48px;
+        left: 0;
+        z-index: 2;
+        pointer-events: none;
+      }
+      #story-main {
+        width: 15vw;
+        min-width: 120px;
+        max-width: 180px;
+        height: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 10;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      #story-main .story-content {
+        width: 100%;
+        min-width: 120px;
+        max-width: 180px;
+        margin: 8px 0 0 8px;
+        padding: 8px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        pointer-events: auto;
+      }
+      #story-main .story-content img {
+        width: 100%;
+        max-width: 120px;
+        height: auto;
+        border-radius: 6px;
+        margin-top: 6px;
+      }
+      #volver-inicio-btn {
+        margin: 8px 0 0 8px;
+        font-size: 0.85rem;
+        padding: 6px 10px;
+        border-radius: 6px;
+        width: 90%;
+      }
+      #story-side {
+        width: 15vw;
+        min-width: 120px;
+        max-width: 180px;
+        height: auto;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 10;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+      }
+      #story-side .story-content {
+        width: 100%;
+        min-width: 120px;
+        max-width: 180px;
+        margin: 8px 8px 0 0;
+        padding: 8px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        pointer-events: auto;
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: none;
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      #story-side .story-content.active {
+        display: block;
+      }
+      #story-side .story-content img {
+        width: 100%;
+        max-width: 120px;
+        height: auto;
+        border-radius: 6px;
+        margin-top: 6px;
+      }
+      .story-content h1, .story-content h2 { font-size: 1rem; }
+      .story-content p  { font-size: 0.85rem; }
+    }
+    @media (max-width: 600px) {
+      #main-nav ul { font-size: 0.95rem; }
+      .story-content h1 { font-size: 1.1rem; }
+      .story-content h2 { font-size: 1rem; }
+      .story-content p  { font-size: 0.9rem; }
+      #volver-inicio-btn { font-size: 0.9rem; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- ... tu HTML original ... -->
+  <nav id="main-nav">
+    <ul>
+      <li><a href="../index.html">Inicio</a></li>
+      <li><a href="campeche.html">Campeche</a></li>
+      <li><a href="chiapas.html">Chiapas</a></li>
+      <li><a href="qroo.html">Quintana Roo</a></li>
+      <li><a href="tabasco.html">Tabasco</a></li>
+      <li><a href="yucatan.html">Yucatán</a></li>
+    </ul>
+  </nav>
+
+  <div id="map"></div>
+
+  <div id="story-panels">
+    <div id="story-main">
+      <div class="story-content active">
+        <h2>Turismo Comunitario en Campeche</h2>
+        <p class="intro-sub">Explora los puntos destacados con este mapa interactivo.</p>
+        <p>Desplázate para acercarte a cada sitio. <br> Puedes moverte libremente por el mapa y dar clic en cada punto de interés, así saltarás a su capítulo correspondiente en el mapa.<br> </p>
+        <img src="../img/campeche_X.jpg" alt="Panorámica de Campeche" loading="lazy">
+      </div>
+      <button id="volver-inicio-btn">Volver a la vista general</button>
+    </div>
+    <div id="story-side">
+      <div class="story-content" id="card-campeche_1">
+        <h2>Santuario de Meliponas</h2>
+        <p>Localidad: Tankuché.<br> Municipio: Calkiní.<br> Estado: Campeche.</p>
+        <p>Vive una mágica experiencia sensorial y cultural donde conectarás con la naturaleza y las raíces mayas.</p>
+        <p>También, serás espectador de un ritual maya, el cual tiene como objetivo, agradecer por las cosechas, podrás presenciar de primera mano el respeto que se tiene a la naturaleza.</p>
+        <p>Categoria: Silvicultura</p>
+        <p><a href="https://www.facebook.com/mielpat" target="_blank" rel="noopener noreferrer">Visita sus redes sociales</a></p>
+        <p><a href="https://maps.app.goo.gl/gXrHUoPfsmwm9Qmb6" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <img src="../img/campeche_1.jpg" alt="Santuario" loading="lazy">
+      </div>
+      <div class="story-content" id="card-campeche_2">
+        <h2>Rescate de la flora nativa y los saberes mayas</h2>
+        <p>Localidad: Bécal.<br> Municipio: Calkiní.<br> Estado: Campeche.</p>
+        <p>Embárcate en ésta experiencia única, donde podrás conocer más sobre los árboles que te rodean en la selva maya y sobre los saberes y técnicas tradicionales de ésta fascinante cultura.</p>
+        <p>La experiencia culmina con una degustación de platillos tradicionales elaborados en un auténtico fogón maya (K’óoben) o Pib, con ingredientes frescos del huerto.</p>
+        <p>Categoria: Senderismo - Gastronomía</p>
+        <p><a href="https://www.facebook.com/profile.php?id=100063910065910" target="_blank" rel="noopener noreferrer">Visita sus redes sociales</a></p>
+        <p><a href="https://maps.app.goo.gl/ZZiwVSYvmCv3YeADA" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <img src="../img/campeche_2.jpg" alt="Flora" loading="lazy">
+      </div>
+      <div class="story-content" id="card-campeche_3">
+        <h2>Pomuch pan y difuntos</h2>
+        <p>Localidad: Pomuch.<br> Municipio: Calakmul.<br> Estado: Campeche.</p>
+        <p>Vive la experiencia en Pomuch con tradiciones vivas, sabores ancestrales y cultura maya Sumérgete en una experiencia única en Pomuch, una pequeña comunidad llena de historia, tradiciones y sabores.</p>
+        <p>Ven a Pomuch y vive una experiencia llena de mucha cultura, donde el pasado se honra y el presente se comparte con orgullo. </p>
+        <p>Categoria: Senderismo - Gastronomía</p>
+        <p><a href="No hay">Visita sus redes sociales</a></p>
+        <p><a href="https://maps.app.goo.gl/5i4HvSXz5X9iThFH8" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <img src="../img/campeche_3.jpg" alt="Pan" loading="lazy">
+      </div>
+      <div class="story-content" id="card-campeche_4">
+        <h2>Meliponicultura tradiciones maya y de Tankuche</h2>
+        <p>Localidad: Tankuché.<br> Municipio: Calkiní.<br> Estado: Campeche.</p>
+        <p>En esta experiencia cultural, los visitantes son recibidos en el parador Eco Tankuché, punto de partida de un recorrido lleno de saberes, creatividad y tradición.</p>
+        <p>Una experiencia auténtica para descubrir el alma artesanal, gastronómica y natural de Tankuché. Conecta con sus raíces, sé parte de sus tradiciones.</p>
+        <p>Categoria: Silvicultura</p>
+        <p><a href="https://www.facebook.com/ecotankuche" target="_blank" rel="noopener noreferrer">Visita sus redes sociales</a></p>
+        <p><a href="https://maps.app.goo.gl/2JqK699YgRWnb9nP6" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <img src="../img/campeche_4.jpg" alt="4" loading="lazy">
+      </div>
+      <div class="story-content" id="card-campeche_5">
+        <h2>Los cielos maya de Calakmul</h2>
+        <p>Localidad: Calakmul.<br> Municipio: Calakmul.<br> Estado: Campeche.</p>
+        <p>Vive un día inolvidable en la antigua ciudad maya de Calakmul, esta experiencia de un día completo te sumerge en la grandeza de Calakmul, una de las ciudades más emblemáticas del mundo maya.</p>
+        <p>Sumérgete en la sabiduría ancestral de los mayas y vive una jornada llena de historia, cultura, sabores y estrellas en Calakmul.</p>
+        <p>Categoria: Senderismo - Gastronomía</p>
+        <p><a href="https://www.facebook.com/CampamentoYAAXCHE" target="_blank" rel="noopener noreferrer">Visita sus redes sociales</a></p>
+        <p><a href="https://maps.app.goo.gl/z5aDYME4pLrWeCct8" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <img src="../img/campeche_5.jpg" alt="5" loading="lazy">
+      </div>
+        <div class="story-content" id="card-campeche_6">
+        <h2>La raíz del futuro “La Mancolona”</h2>
+        <p>Localidad: Eugenio Echeverría Castellot.<br> Municipio: Calakmul.<br> Estado: Campeche.</p>
+        <p>VUbicada al norte de Xpujil, en el municipio de Calakmul, la comunidad Unión 20 de junio está conformada por colonos de las etnias Tzeltal, Ch’ol y Tzotzil, provenientes del estado de Chiapas, quienes orgullosamente conservan y comparten sus tradiciones vivas.</p>
+        <p>Si buscas un turismo auténtico, lleno de tradición, aprendizaje y conexión con la naturaleza, “La Raíz del Futuro” en Unión 20 de junio es el lugar ideal para ti.</p>
+        <p>Categoria: Senderismo - Gastronomía</p>
+        <p><a href="https://www.facebook.com/visitcalakmul" target="_blank" rel="noopener noreferrer">Visita sus redes sociales</a></p>
+        <p><a href="https://maps.app.goo.gl/2e8LcRBvpgt988gXA" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <img src="../img/campeche_6.jpg" alt="6" loading="lazy">
+      </div>
+        <div class="story-content" id="card-campeche_7">
+        <h2>La Casa del Cocodrilo “Wotoch Aayín”</h2>
+        <p>Localidad: Isla Arena.<br> Municipio: Calkiní.<br> Estado: Campeche.</p>
+        <p>Aventúrate a disfrutar de esta increíble experiencia donde podrás convivir con la naturaleza y con especies que tal vez nunca imaginaste.</p>
+        <p>Este recorrido, finaliza en el restaurante del lugar, donde podrás disfrutar, si así lo deseas, de comidas y bebidas deliciosas. </p>
+        <p>Categoria: Senderismo</p>
+        <p><a href="https://www.facebook.com/profile.php?id=1000642409510070" target="_blank" rel="noopener noreferrer">Visita sus redes sociales</a></p>
+        <p><a href="https://maps.app.goo.gl/7ELnCDJekKz9AZee6" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <img src="../img/campeche_7.jpg" alt="Pan" loading="lazy">
+      </div>
+        <div class="story-content" id="card-campeche_8">
+        <h2>Flamencos de Isla Arena </h2>
+        <p>Localidad: Isla Arena.<br> Municipio: Calkiní.<br> Estado: Campeche.</p>
+        <p>Descubre la riqueza natural en la Isla Arena Flamencos.</p>
+        <p>Prepárate para iniciar con un recorrido en canoa a través de los canales los cuales te conducen con un túnel de manglar en el cual estás en contacto directo con la naturaleza dentro de la Reserva de la Biosfera Ría Celestún. </p>
+        <p>Categoria: Senderismo - Gastronomía</p>
+        <p><a href="https://www.facebook.com/profile.php?id=100063496751247" target="_blank" rel="noopener noreferrer">Visita sus redes sociales</a></p>
+        <p><a href="https://maps.app.goo.gl/5i4HvSXz5X9iThFH8" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <img src="../img/campeche_8.jpg" alt="Pan" loading="lazy">
+      </div>
+        <div class="story-content" id="card-campeche_9">
+        <h2>Corredor artesanal “20 de noviembre”</h2>
+        <p>Localidad: Ejido 20 de noviembre.<br> Municipio: Calakmul.<br> Estado: Campeche.</p>
+        <p>En la comunidad 20 de Noviembre podrás aventurarte a vivir una experiencia inmersiva única en los diez diferentes talleres artesanales donde se trabajan textiles en bordados a punto de cruz y máquina de coser.</p>
+        <p>Además de recorridos por Meliponario de la comunidad, elaboración de vasijas de variedades de fibras naturales y de bisutería con semillas recicladas, misma que incluye una deleitante cata de té</p>
+        <p>Categoria:Artesanías</p>
+        <p><a href="https://www.facebook.com/CampecheTurismoMx" target="_blank" rel="noopener noreferrer">Visita sus redes sociales</a></p>
+        <p><a href="https://maps.app.goo.gl/Era1kwKQpSvK8H1Y6" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <img src="../img/campeche_9.jpg" alt="9" loading="lazy">
+      </div>
+      <div class="story-content" id="card-campeche_10">
+        <h2>Cenotes y Belleza Natural de Miguel Colorado</h2>
+        <p>Localidad: Pomuch.<br> Municipio: Calakmul.<br> Estado: Campeche.</p>
+        <p>Sumérgete en una experiencia auténtica y enriquecedora con una cooperativa familiar con más de 20 años de trayectoria en Miguel Colorado.</p>
+        <p>Certificados por el Gobierno de México, esta cooperativa te invita a explorar la asombrosa biodiversidad de la región mientras contribuyes a su conservación.</p>
+        <p>Categoria: Senderismo</p>
+        <p><a href="https://www.facebook.com/reyecitosukuchiljeele" target="_blank" rel="noopener noreferrer">Visita sus redes sociales</a></p>
+        <p><a href="https://maps.app.goo.gl/wUKjHcDg9n7Aabcm6" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <img src="../img/campeche_10.jpg" alt="10" loading="lazy">
+      </div>
+      <div class="story-content" id="card-campeche_11">
+        <h2>Caminata por la Selva de Calakmul hacia el Hormiguero</h2>
+        <p>Localidad: Eugenio Echeverria Castellot II.<br> Municipio: Calakmul.<br> Estado: Campeche.</p>
+        <p>Descubre la riqueza natural e histórica de la comunidad Eugenio Echeverría Castellot II en Campeche con una experiencia única que te conecta con la selva maya y el antiguo sitio arqueológico "El Hormiguero".</p>
+        <p>Opción 1: Amanecer en la Selva y Arqueología</p>
+        <p>Opción 2: Atardecer, Naturaleza y Noche en la Comunidad</p>
+        <p>Categoria: Senderismo</p>
+        <p><a href="https://www.facebook.com/visitcalakmul" target="_blank" rel="noopener noreferrer">Visita sus redes sociales</a></p>
+        <p><a href="https://maps.app.goo.gl/N9CDrRtBviB1KcpZA" target="_blank" rel="noopener noreferrer">¿Cómo llegar?</a></p>
+        <img src="../img/campeche_11.jpg" alt="11" loading="lazy">
+      </div>
+    </div>
+  </div>
 
   <script>
     // === CONFIG ===
@@ -47,40 +467,32 @@
 
     map.on('load', async () => {
       // -
-      map.addSource('mapbox-dem', {
-        "type": "raster-dem",
-        "url": "mapbox://mapbox.terrain-rgb",
-        "tileSize": 512,
-        "maxzoom": 14
-      });
-      map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
-
+  map.addSource('mapbox-dem', {
+    "type": "raster-dem",
+    "url": "mapbox://mapbox.terrain-rgb",
+    "tileSize": 512,
+    "maxzoom": 14
+  });
+  map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
       // Estado
       const state = await fetch(STATE_GEO).then(r=>r.json());
       stateBounds = getGeoJSONBounds(state);
       map.addSource('campeche-poly',{ type:'geojson', data: state });
       map.addLayer({ id:'campeche-fill', type:'fill', source:'campeche-poly',
-        paint:{ 'fill-color':'#EA5188', 'fill-opacity':0.18 }});
+        paint:{ 'fill-color':'#EA5188', 'fill-opacity':0.18 }}); // Color rosa y transparencia igual
       map.addLayer({ id:'campeche-line', type:'line', source:'campeche-poly',
         paint:{ 'line-color':'#EA5188', 'line-width':2 }});
 
-      // Puntos con CLUSTERING habilitado
+      // Puntos
       pointsData = await fetch(POINTS_GEO).then(r=>r.json());
-      map.addSource('campeche-points', {
-        type: 'geojson',
-        data: pointsData,
-        cluster: true,
-        clusterMaxZoom: 14,
-        clusterRadius: 50
-      });
+      map.addSource('campeche-points',{ type:'geojson', data: pointsData });
 
       // Icono
       const img = new Image(32,32);
       img.src = ICON_URL;
       img.onload = () => {
         if (!map.hasImage('eco')) map.addImage('eco', img, { pixelRatio: 2 });
-        addClusterLayers();
-        setupClusterClick();
+        addPointLayers();
         setupPointClick();
         startBreathingAll();
       };
@@ -88,61 +500,27 @@
       if (stateBounds) { map.fitBounds(stateBounds, { padding: 40, duration: 800 }); }
     });
 
-    // --- CLUSTERING LAYERS ---
-    function addClusterLayers() {
-      // Círculo para clusters
-      map.addLayer({
-        id: 'clusters',
-        type: 'circle',
-        source: 'campeche-points',
-        filter: ['has', 'point_count'],
-        paint: {
-          'circle-color': '#F7E07F',
-          'circle-radius': [
-            'step',
-            ['get', 'point_count'],
-            23,  // radio para 1-9 puntos agrupados
-            10, 28,  // radio para 10-24 puntos agrupados
-            25, 35   // radio para 25+ puntos agrupados
-          ],
-          'circle-stroke-width': 2,
-          'circle-stroke-color': '#EA5188'
-        }
-      });
-      // Número de puntos en el cluster
-      map.addLayer({
-        id: 'cluster-count',
-        type: 'symbol',
-        source: 'campeche-points',
-        filter: ['has', 'point_count'],
-        layout: {
-          'text-field': ['get', 'point_count'],
-          'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-          'text-size': 14
-        },
-        paint: {
-          'text-color': '#EA5188'
-        }
-      });
-      // Puntos individuales (no agrupados)
-      map.addLayer({
-        id: 'unclustered-point',
-        type: 'symbol',
-        source: 'campeche-points',
-        filter: ['!', ['has', 'point_count']],
-        layout: {
-          'icon-image': 'eco',
-          'icon-size': 3,
-          'icon-allow-overlap': true
-        }
-      });
+    function addPointLayers(){
+      // Todos los puntos con icono y animación de "respirar"
+      if (!map.getLayer('campeche-symbols')) {
+        map.addLayer({
+          id:'campeche-symbols',
+          type:'symbol',
+          source:'campeche-points',
+          layout:{
+            'icon-image': 'eco',
+            'icon-size': 3,
+            'icon-allow-overlap': true
+          }
+        });
+      }
       // Icono activo para pulso extra
       if (!map.getLayer('campeche-symbols-active')) {
         map.addLayer({
           id: 'campeche-symbols-active',
           type: 'symbol',
           source: 'campeche-points',
-          filter: ['all', ['!', ['has', 'point_count']], ['==', ['get','id'], '__none__']],
+          filter: ['==', ['get','id'], '__none__'],
           layout: {
             'icon-image': 'eco',
             'icon-size': 4.2,
@@ -156,7 +534,6 @@
           id:'campeche-labels',
           type:'symbol',
           source:'campeche-points',
-          filter: ['!', ['has', 'point_count']],
           layout:{
             'text-field': ['get','Name'],
             'text-size': 14,
@@ -174,7 +551,7 @@
       }
     }
 
-    // --- Animaciones y lógica original ---
+    // Animación de "respirar" para todos los puntos
     function startBreathingAll() {
       if (breathingAnim) breathingAnim.pause();
       let state = { s: 3 };
@@ -186,13 +563,14 @@
         easing: 'easeInOutSine',
         loop: true,
         update: () => {
-          if (map.getLayer('unclustered-point')) {
-            map.setLayoutProperty('unclustered-point', 'icon-size', state.s);
+          if (map.getLayer('campeche-symbols')) {
+            map.setLayoutProperty('campeche-symbols', 'icon-size', state.s);
           }
         }
       });
     }
 
+    // Animación de aparición/desaparición de tarjetas de puntos
     function animateCardIn(card) {
       card.style.display = 'block';
       anime({
@@ -216,6 +594,7 @@
       });
     }
 
+    // Mostrar tarjeta del punto en el panel derecho y hacer zoom al punto
     function showSideCard(id) {
       document.querySelectorAll('#story-side .story-content').forEach(card => {
         if (card.classList.contains('active')) {
@@ -231,43 +610,14 @@
       flyToFeatureId(id);
     }
 
-    // --- CLICK: clusters y puntos individuales ---
-    function setupClusterClick() {
-      map.on('click', 'clusters', function(e) {
-        const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
-        const clusterId = features[0].properties.cluster_id;
-        map.getSource('campeche-points').getClusterExpansionZoom(clusterId, function (err, zoom) {
-          if (err) return;
-          map.easeTo({
-            center: features[0].geometry.coordinates,
-            zoom: zoom,
-            duration: 900
-          });
-        });
-      });
-      // Cursor en clusters
-      map.on('mouseenter', 'clusters', function () {
-        map.getCanvas().style.cursor = 'pointer';
-      });
-      map.on('mouseleave', 'clusters', function () {
-        map.getCanvas().style.cursor = '';
-      });
-    }
-
     function setupPointClick() {
-      map.on('click', 'unclustered-point', function(e) {
+      // Permitir interacción con el mapa y los puntos
+      map.on('click', 'campeche-symbols', function(e) {
         if (!e.features || !e.features.length) return;
         const feature = e.features[0];
         const id = feature.properties.id;
         showSideCard(id);
         startPulseFor(id);
-      });
-      // Cursor en puntos individuales
-      map.on('mouseenter', 'unclustered-point', function () {
-        map.getCanvas().style.cursor = 'pointer';
-      });
-      map.on('mouseleave', 'unclustered-point', function () {
-        map.getCanvas().style.cursor = '';
       });
     }
 
@@ -275,7 +625,7 @@
       if (pulseAnim) { pulseAnim.pause(); pulseAnim = null; }
       activeId = null;
       if (map.getLayer('campeche-symbols-active')) {
-        map.setFilter('campeche-symbols-active', ['all', ['!', ['has', 'point_count']], ['==', ['get','id'], '__none__']]);
+        map.setFilter('campeche-symbols-active', ['==', ['get','id'], '__none__']);
       }
     }
     function startPulseFor(id) {
@@ -284,7 +634,7 @@
       if (activeId === targetId) return;
 
       activeId = targetId;
-      map.setFilter('campeche-symbols-active', ['all', ['!', ['has', 'point_count']], ['==', ['get','id'], activeId]]);
+      map.setFilter('campeche-symbols-active', ['==', ['get','id'], activeId]);
 
       if (pulseAnim) pulseAnim.pause();
       const state = { s: 4.2 };
@@ -323,12 +673,14 @@
     document.addEventListener('DOMContentLoaded', function() {
       const btn = document.getElementById('volver-inicio-btn');
       btn.addEventListener('click', function() {
+        // Oculta todas las tarjetas de la derecha con animación
         document.querySelectorAll('#story-side .story-content').forEach(card => {
           if (card.classList.contains('active')) {
             card.classList.remove('active');
             animateCardOut(card);
           }
         });
+        // Vuelve a la vista general del estado
         if (stateBounds) {
           map.fitBounds(stateBounds, { padding: 40, duration: 1200 });
         }
