@@ -1,8 +1,7 @@
 {
 "type": "FeatureCollection",
-"name": "estado_Campeche",
+"name": "puntos_campeche",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-"xy_coordinate_resolution": 1e-15,
 "features": [
 { "type": "Feature", "properties": { "nombre": "ETC_1", "localidad": "Tankuche", "municipio": "Calkiní", "estado": "Campeche", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "campeche_1" }, "geometry": { "type": "Point", "coordinates": [ -90.2431, 20.5088 ] } },
 { "type": "Feature", "properties": { "nombre": "ETC_2", "localidad": "Bécal", "municipio": "Calkiní", "estado": "Campeche", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "campeche_2" }, "geometry": { "type": "Point", "coordinates": [ -90.0281, 20.4419 ] } },
@@ -12,7 +11,7 @@
 { "type": "Feature", "properties": { "nombre": "ETC_6", "localidad": "Eugenio Echeverría Castellot", "municipio": "Calakmul", "estado": "Campeche", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "campeche_6" }, "geometry": { "type": "Point", "coordinates": [ -89.4421, 18.3988 ] } },
 { "type": "Feature", "properties": { "nombre": "ETC_7", "localidad": "Isla Arena", "municipio": "Calkiní", "estado": "Campeche", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "campeche_7" }, "geometry": { "type": "Point", "coordinates": [ -90.4538, 20.6978 ] } },
 { "type": "Feature", "properties": { "nombre": "ETC_8", "localidad": "Isla Arena", "municipio": "Calkiní", "estado": "Campeche", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "campeche_8" }, "geometry": { "type": "Point", "coordinates": [ -90.4541, 20.6983 ] } },
-{ "type": "Feature", "properties": { "nombre": "ETC_9", "localidad": "Ejido 20 de noviembre", "municipio": "Calakmul", "estado": "Campeche", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "campeche_9" }, "geometry": { "type": "Point", "coordinates": [ -90.4856, 19.8331 ] } },
+{ "type": "Feature", "properties": { "nombre": "ETC_9", "localidad": "Ejido 20 de noviembre", "municipio": "Calakmul", "estado": "Campeche", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "campeche_9" }, "geometry": { "type": "Point", "coordinates": [ -89.307217212290908, 18.450881107112053 ] } },
 { "type": "Feature", "properties": { "nombre": "ETC_10", "localidad": "Miguel Colorado", "municipio": "Champotón", "estado": "Campeche", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "campeche_10" }, "geometry": { "type": "Point", "coordinates": [ -90.6466, 18.8123 ] } },
 { "type": "Feature", "properties": { "nombre": "ETC_11", "localidad": "Eugenio Echeverria Castellot II", "municipio": "Calakmul", "estado": "Campeche", "descripcion": null, "fuente": "Base ETC Peninsula 57.csv", "id": "campeche_11" }, "geometry": { "type": "Point", "coordinates": [ -89.4421, 18.3988 ] } }
 ]
